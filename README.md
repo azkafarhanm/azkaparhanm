@@ -12,10 +12,12 @@ I document my learning journey here to stay motivated and keep growing:
 
 ### ⚙️ JavaScript Journey
 * **JavaScript Fundamentals**
-  ![JS Certificate 1](JS1.jpg)
+
+![JS Certificate 1](JS1.jpg)
 
 * **Modern JavaScript for Beginners**
-  ![JS Certificate 2](JS2.jpg)
+
+![JS Certificate 2](JS2.jpg)
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
