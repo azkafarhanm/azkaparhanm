@@ -8,7 +8,7 @@ I document my learning journey here to stay motivated and keep growing:
 ### 📑 Web Development Fundamentals
 * **HTML Fundamentals**
 
-![HTML Certificate](HTML Certificate_page-0001.jpg)
+![HTML Certificate](HTML%20Certificate_page-0001.jpg)
 
 ### ⚙️ JavaScript Journey
 * **JavaScript Fundamentals**
