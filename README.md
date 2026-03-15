@@ -19,5 +19,8 @@ I document my learning journey here to stay motivated and keep growing:
 
 ![JS Certificate 2](JS2.jpg)
 
+### 🎨 CSS & Design Journey
+* **CSS Fundamentals**
+![CSS Certificate](CSSCertificate_page-0001.jpg)
 ---
 *"Keep learning, keep creating, and stay inspired!"*
