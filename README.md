@@ -22,5 +22,7 @@ I document my learning journey here to stay motivated and keep growing:
 ### 🎨 CSS & Design Journey
 * **CSS Fundamentals**
 ![CSS Certificate](CSSCertificate_page-0001.jpg)
+
+* [March 15, 2026] Reading YDKJS: Understanding the core philosophy of what JavaScript really is.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
