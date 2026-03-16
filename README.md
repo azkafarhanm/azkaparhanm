@@ -24,5 +24,6 @@ I document my learning journey here to stay motivated and keep growing:
 ![CSS Certificate](CSSCertificate_page-0001.jpg)
 
 * [March 15, 2026] Reading YDKJS: Understanding the core philosophy of what JavaScript really is.
+* [March 16, 2026] Learning JS Fundamentals: Mastered the concept of Values (Strings, Numbers, and Booleans) and improved my technical English.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
