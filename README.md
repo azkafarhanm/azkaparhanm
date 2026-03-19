@@ -28,5 +28,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 17, 2026] Multi-language expansion: Starting my Python journey while continuing JavaScript deep dives.
 * [March 17, 2026] Python Debugging: Fixed my first SyntaxError (unterminated string literal) and learned the importance of closing quote marks.
 * [March 18, 2026] Python Day 2: Understanding Variables, using built-in functions like len() and type(), and learning snake_case naming conventions.
+* [March 19, 2026] HTML Fundamentals: Learned about Form structures, Labels, and different Input types for user interaction.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
