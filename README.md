@@ -30,5 +30,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 18, 2026] Python Day 2: Understanding Variables, using built-in functions like len() and type(), and learning snake_case naming conventions.
 * [March 19, 2026] HTML Fundamentals: Learned about Form structures, Labels, and different Input types for user interaction.
 * [March 19, 2026] HTML Form Mastery: Learned the three types of buttons (Submit, Reset, and Button) and their specific functional roles.
+* [March 19, 2026] JS Deep Dive: Learning Chapter 2 of YDKJS - Understanding Values, Variables (let vs const), Functions, and Strict Equality.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
