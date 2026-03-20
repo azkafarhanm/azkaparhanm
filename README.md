@@ -32,5 +32,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 19, 2026] HTML Form Mastery: Learned the three types of buttons (Submit, Reset, and Button) and their specific functional roles.
 * [March 19, 2026] JS Deep Dive: Learning Chapter 2 of YDKJS - Understanding Values, Variables (let vs const), Functions, and Strict Equality.
 * [March 19, 2026] Python Logic: Learned about Explicit Type Conversion (Casting) using str() and the difference between Python and JavaScript concatenation.
+* [March 20, 2026] Python Logic Mastery: Learned Nested if-else structures to handle multi-level decision making and practiced proper indentation.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
