@@ -34,5 +34,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 19, 2026] Python Logic: Learned about Explicit Type Conversion (Casting) using str() and the difference between Python and JavaScript concatenation.
 * [March 20, 2026] Python Logic Mastery: Learned Nested if-else structures to handle multi-level decision making and practiced proper indentation.
 * [March 20, 2026] HTML Form Security: Learned about Client-side Validation and how attributes like 'required' and 'pattern' improve user experience and data accuracy.
+* [March 20, 2026] UI/UX Fundamentals: Learned about Form States (Default, Focus, Error, and Success) and how they guide the user through a for
 ---
 *"Keep learning, keep creating, and stay inspired!"*
