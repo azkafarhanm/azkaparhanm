@@ -39,5 +39,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 20, 2026] Python Day 3: Mastering Operators - Practiced Arithmetic, Comparison, and Logical operations, including Modulus (%) and Floor Division (//).
 * [March 21, 2026] Python Interaction: Learned how to use the input() function to capture user data and practiced Type Casting to handle numerical inputs.
 * [March 21, 2026] JS Architecture: Explored YDKJS Chapter 4 - Understanding the Three Pillars of JS: Scope/Closures, Prototypes, and Types/Coercion.
+* [March 21, 2026] Python Day 4: Mastered String manipulation, including Escape Sequences, Indexing (starting at 0), Slicing, and common String Methods.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
