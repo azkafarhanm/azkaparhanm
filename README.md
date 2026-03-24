@@ -40,5 +40,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 21, 2026] Python Interaction: Learned how to use the input() function to capture user data and practiced Type Casting to handle numerical inputs.
 * [March 21, 2026] JS Architecture: Explored YDKJS Chapter 4 - Understanding the Three Pillars of JS: Scope/Closures, Prototypes, and Types/Coercion.
 * [March 21, 2026] Python Day 4: Mastered String manipulation, including Escape Sequences, Indexing (starting at 0), Slicing, and common String Methods.
+* [March 24, 2026] Python Formatting: Finished the Formatted Output module. Mastered f-strings for cleaner, more readable code.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
