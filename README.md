@@ -47,5 +47,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 25, 2026]
     * **JavaScript (YDKJS):** Successfully graduated from **Book 1: Get Started**. 🎓
     * **JavaScript (Book 2):** Started **Chapter 1: Scope & Closures**. Learned about "Rules for Looking" and Global vs. Local scope.
+* [March 26, 2026] Control Flow: Learned the "continue" statement. Understood how to skip specific iterations in a loop.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
