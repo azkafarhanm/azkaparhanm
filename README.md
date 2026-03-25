@@ -43,5 +43,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 24, 2026] Python Formatting: Finished the Formatted Output module. Mastered f-strings for cleaner, more readable code.
 * [March 24, 2026] Environment Setup: Successfully configured Git and PowerShell on a new device. Resolved credential conflicts and synced local workspace with GitHub.
 * [March 25, 2026] Control Flow: Mastered While Loops. Learned how to repeat blocks of code based on conditions and how to use incrementing variables.
+* [March 25, 2026] Data Structures: Completed Day 5. Learned about Lists, indexing (starting at 0), and list methods like len().
 ---
 *"Keep learning, keep creating, and stay inspired!"*
