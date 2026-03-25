@@ -44,5 +44,8 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 24, 2026] Environment Setup: Successfully configured Git and PowerShell on a new device. Resolved credential conflicts and synced local workspace with GitHub.
 * [March 25, 2026] Control Flow: Mastered While Loops. Learned how to repeat blocks of code based on conditions and how to use incrementing variables.
 * [March 25, 2026] Data Structures: Completed Day 5. Learned about Lists, indexing (starting at 0), and list methods like len().
+* [March 25, 2026]
+    * **JavaScript (YDKJS):** Successfully graduated from **Book 1: Get Started**. 🎓
+    * **JavaScript (Book 2):** Started **Chapter 1: Scope & Closures**. Learned about "Rules for Looking" and Global vs. Local scope.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
