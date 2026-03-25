@@ -42,5 +42,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 21, 2026] Python Day 4: Mastered String manipulation, including Escape Sequences, Indexing (starting at 0), Slicing, and common String Methods.
 * [March 24, 2026] Python Formatting: Finished the Formatted Output module. Mastered f-strings for cleaner, more readable code.
 * [March 24, 2026] Environment Setup: Successfully configured Git and PowerShell on a new device. Resolved credential conflicts and synced local workspace with GitHub.
+* [March 25, 2026] Control Flow: Mastered While Loops. Learned how to repeat blocks of code based on conditions and how to use incrementing variables.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
