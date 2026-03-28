@@ -49,5 +49,6 @@ I document my learning journey here to stay motivated and keep growing:
     * **JavaScript (Book 2):** Started **Chapter 1: Scope & Closures**. Learned about "Rules for Looking" and Global vs. Local scope.
 * [March 26, 2026] Control Flow: Learned the "continue" statement. Understood how to skip specific iterations in a loop.
 * [March 27, 2026] Loops: Mastered the range() function. Learned about Start, Stop, and Step parameters for number generation.
+* [March 28, 2026] Loops: Mastered the range() function. Learned about Start, Stop, and Step parameters for generating number sequences.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
