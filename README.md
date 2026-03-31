@@ -52,6 +52,7 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 28, 2026] Loops: Mastered the range() function. Learned about Start, Stop, and Step parameters for generating number sequences.
 * [March 30, 2026] Python Fundamentals: Completed the Recap on Dynamic Input. Mastered combining input(), type conversion, and f-strings.
 * [March 30, 2026] **Environment Setup:** Successfully installed **Python 3.14.3** and configured the `py` launcher on Windows 11. 🛠️
+* [March 31, 2026] **Data Structures:** Completed Day 5 Lists. Practiced append(), len(), and indexing in Python 3.14.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
