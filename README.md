@@ -56,6 +56,6 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 01, 2026] **Coddy Tech:** Finished "Declare a Function". Learned about def, parameters, and how to create reusable code blocks.
 * [April 01, 2026] **JavaScript (YDKJS):** Started Chapter 2 "Surveying JS". Learned about Variables, Types, Conditionals, and Loops.
 * [April 02, 2026] **Coddy Tech (Arguments):** Learned how to pass information into functions. Practiced using positional and keyword arguments to make code more flexible.
-
+* [April 02, 2026] **JavaScript (YDKJS):** Finished Ch 2 (Surveying JS) and started Ch 3 (Digging to the Roots). Learned about Iterators, Closures, and Prototypes.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
