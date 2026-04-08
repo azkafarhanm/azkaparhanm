@@ -64,4 +64,7 @@ I document my learning journey here to stay motivated and keep growing:
   * Next Goal: Advanced Python structures and real-world projects.
 * [April 06, 2026] **Coddy Tech:** Finished the entire "Python Fundamentals" journey. (Topics: Variables, Returns, and Default Values).
 ---
+* [April 08, 2026] **Day 10 (List Accessing):** Learned about zero-based indexing and accessing elements from a list using both positive and negative indices. 
+  * Concept: `list[0]` for the first item, `list[-1]` for the last item.
+  * Practice: Created `day_10_list_access.py`.
 *"Keep learning, keep creating, and stay inspired!"*
