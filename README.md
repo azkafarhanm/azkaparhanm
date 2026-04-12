@@ -70,3 +70,7 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 09, 2026] **Python Mastery:** Completed the "Accessing List Elements Mastery" lesson on Coddy.tech. Gained full understanding of positive and negative indexing.
 *"Keep learning, keep creating, and stay inspired!"*
 * [April 10, 2026] **Python Mastery:** Completed "Modifying Lists Mastery" on Coddy.tech. Learned how to update and change specific elements in a list using index assignment.
+* [April 12, 2026] **Python Mastery:** Completed "List Methods Mastery" on Coddy.tech. Learned how to use `.append()`, `.insert()`, `.pop()`, and `.sort()` to manage data dynamically.
+---
+*"Keep learning, keep creating, and stay inspired!"*
+
