@@ -73,7 +73,7 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 12, 2026] **Python Mastery:** Completed "List Methods Mastery" on Coddy.tech. Learned how to use `.append()`, `.insert()`, `.pop()`, and `.sort()` to manage data dynamically.
 * [April 13, 2026] **Python Fundamentals:** Completed "Tuples" and "Recap: Reversed List" on Coddy.tech.
 * Learned how to use **Tuples** for data that shouldn't change (immutability).
-* Mastered reversing lists using `.reverse()` and slicing techniques `[::-1]`.
+* Mastered reversing lists using `.reverse()`.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
