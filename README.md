@@ -74,6 +74,7 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 13, 2026] **Python Fundamentals:** Completed "Tuples" and "Recap: Reversed List" on Coddy.tech.
 * Learned how to use **Tuples** for data that shouldn't change (immutability).
 * Mastered reversing lists using `.reverse()`.
+* [April 14, 2026] **Python Fundamentals:** Completed "Iterating Over Elements" on Coddy.tech. Learned how to use `for` loops to access and process every item in a list efficiently.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
