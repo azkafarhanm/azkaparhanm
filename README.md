@@ -77,6 +77,7 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 14, 2026] **Python Fundamentals:** Completed "Iterating Over Elements" on Coddy.tech. Learned how to use `for` loops to access and process every item in a list efficiently.
 * [April 15, 2026] **Python Fundamentals:** Completed "The Enumerate Function" on Coddy.tech. Learned how to use `enumerate()` to track both the index and the value of elements during a loop.
 * [April 18, 2026] **Python Fundamentals:** Completed "Iterating Over Strings Part 2" on Coddy.tech.
+* [April 19, 2026] **Python Fundamentals:** Completed "List Slicing Part 1" on Coddy.tech.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
