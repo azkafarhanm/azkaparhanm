@@ -78,6 +78,8 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 15, 2026] **Python Fundamentals:** Completed "The Enumerate Function" on Coddy.tech. Learned how to use `enumerate()` to track both the index and the value of elements during a loop.
 * [April 18, 2026] **Python Fundamentals:** Completed "Iterating Over Strings Part 2" on Coddy.tech.
 * [April 19, 2026] **Python Fundamentals:** Completed "List Slicing Part 1" on Coddy.tech.
+* [April 20, 2026] **Python Fundamentals:** Completed "List Slicing Part 2" on Coddy.tech. 
+* Learned the full slicing syntax: `list[start:stop:step]`.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
