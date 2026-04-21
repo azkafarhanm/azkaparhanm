@@ -80,6 +80,8 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 19, 2026] **Python Fundamentals:** Completed "List Slicing Part 1" on Coddy.tech.
 * [April 20, 2026] **Python Fundamentals:** Completed "List Slicing Part 2" on Coddy.tech. 
 * Learned the full slicing syntax: `list[start:stop:step]`.
+* [April 21, 2026] **Python Fundamentals:** Completed "Sequence Operators" on Coddy.tech. 
+* Learned how to use `+` to concatenate and `*` to repeat sequences.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
