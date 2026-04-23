@@ -83,6 +83,8 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 21, 2026] **Python Fundamentals:** Completed "Sequence Operators" on Coddy.tech. 
 * Learned how to use `+` to concatenate and `*` to repeat sequences.
 * [April 22, 2026] **Python Fundamentals:** Completed "Membership Operators" on Coddy.tech.
+* [April 23, 2026] **Python Fundamentals:** Completed "Add Expense" project on Coddy.tech. 
+* Applied list manipulation skills to build a functional expense tracker.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
