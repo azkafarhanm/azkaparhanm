@@ -87,6 +87,7 @@ I document my learning journey here to stay motivated and keep growing:
 * Applied list manipulation skills to build a functional expense tracker.
 * [April 24, 2026] **Python Fundamentals:** Completed "View All Expenses" project on Coddy.tech.
 * [April 25, 2026] **Python Fundamentals:** Completed "Handling Errors" on Coddy.tech.
+* [April 26, 2026] **Python Fundamentals:** Completed "What to Buy" project on Coddy.tech.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
