@@ -7,6 +7,8 @@ I document my learning journey here to stay motivated and keep growing:
 
 ## 🎓 My Learning Journey: Certifications
 
+## 🎓 My Learning Journey: Certifications
+
 | HTML Fundamentals | JavaScript Fundamentals | Modern JS for Beginners |
 | :---: | :---: | :---: |
 | ![HTML](HTML%20Certificate_page-0001.jpg) | ![JS1](JS1.jpg) | ![JS2](JS2.jpg) |
