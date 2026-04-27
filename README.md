@@ -5,27 +5,15 @@ I am a self-taught learner who is deeply passionate about technology and program
 ## 🏆 Learning Certifications
 I document my learning journey here to stay motivated and keep growing:
 
-### 📑 Web Development Fundamentals
-* **HTML Fundamentals**
+## 🎓 My Learning Journey: Certifications
 
-![HTML Certificate](HTML%20Certificate_page-0001.jpg)
+| HTML Fundamentals | JavaScript Fundamentals | Modern JS for Beginners |
+| :---: | :---: | :---: |
+| ![HTML](HTML%20Certificate_page-0001.jpg) | ![JS1](JS1.jpg) | ![JS2](JS2.jpg) |
 
-### ⚙️ JavaScript Journey
-* **JavaScript Fundamentals**
-
-![JS Certificate 1](JS1.jpg)
-
-* **Modern JavaScript for Beginners**
-
-![JS Certificate 2](JS2.jpg)
-
-### 🎨 CSS & Design Journey
-* **CSS Fundamentals**
-![CSS Certificate](CSSCertificate_page-0001.jpg)
-
-### 🎓 Certifications python
-* **Python Fundamentals**
- ![Python Certificate](python_fundamentals_certificate.jpg)
+| Introduction to CSS | Python Fundamentals | Next Goal |
+| :---: | :---: | :---: |
+| ![CSS](CSSCertificate_page-0001.jpg) | ![Python](certificates/python_fundamentals_certificate.jpg) | ✨ *Keep Learning* |
 
 * [March 15, 2026] Reading YDKJS: Understanding the core philosophy of what JavaScript really is.
 * [March 16, 2026] Learning JS Fundamentals: Mastered the concept of Values (Strings, Numbers, and Booleans) and improved my technical English.
