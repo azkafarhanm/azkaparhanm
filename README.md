@@ -79,6 +79,8 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 24, 2026] **Python Fundamentals:** Completed "View All Expenses" project on Coddy.tech.
 * [April 25, 2026] **Python Fundamentals:** Completed "Handling Errors" on Coddy.tech.
 * [April 26, 2026] **Python Fundamentals:** Completed "What to Buy" project on Coddy.tech.
+* [April 27, 2026] **Python Logic & Flow:** Completed "Multiple Variable Assignments" on Coddy.tech. 
+* Learned how to assign multiple values to multiple variables in a single line.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
