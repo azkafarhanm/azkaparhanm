@@ -7,8 +7,6 @@ I document my learning journey here to stay motivated and keep growing:
 
 ## 🎓 My Learning Journey: Certifications
 
-## 🎓 My Learning Journey: Certifications
-
 | HTML Fundamentals | JavaScript Fundamentals | Modern JS for Beginners |
 | :---: | :---: | :---: |
 | ![HTML](HTML%20Certificate_page-0001.jpg) | ![JS1](JS1.jpg) | ![JS2](JS2.jpg) |
@@ -57,7 +55,6 @@ I document my learning journey here to stay motivated and keep growing:
   * Mastered: Variables, Data Types, Conditionals, Loops, and Function Return Mastery.
   * Next Goal: Advanced Python structures and real-world projects.
 * [April 06, 2026] **Coddy Tech:** Finished the entire "Python Fundamentals" journey. (Topics: Variables, Returns, and Default Values).
----
 * [April 08, 2026] **Day 10 (List Accessing):** Learned about zero-based indexing and accessing elements from a list using both positive and negative indices. 
   * Concept: `list[0]` for the first item, `list[-1]` for the last item.
   * Practice: Created `day_10_list_access.py`.
