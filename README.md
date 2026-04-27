@@ -25,7 +25,7 @@ I document my learning journey here to stay motivated and keep growing:
 
 ### 🎓 Certifications python
 * **Python Fundamentals**
- ![Python Certificate](certificates/python_fundamentals_certificate.jpg)
+ ![Python Certificate](python_fundamentals_certificate.jpg)
 
 * [March 15, 2026] Reading YDKJS: Understanding the core philosophy of what JavaScript really is.
 * [March 16, 2026] Learning JS Fundamentals: Mastered the concept of Values (Strings, Numbers, and Booleans) and improved my technical English.
