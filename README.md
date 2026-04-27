@@ -7,13 +7,13 @@ I document my learning journey here to stay motivated and keep growing:
 
 ## 🎓 My Learning Journey: Certifications
 
-| HTML Fundamentals | JavaScript Fundamentals | Modern JS for Beginners |
-| :---: | :---: | :---: |
-| ![HTML](HTML%20Certificate_page-0001.jpg) | ![JS1](JS1.jpg) | ![JS2](JS2.jpg) |
+| JavaScript Fundamentals | Modern JS for Beginners | HTML Fundamentals (Old) | |
+| :---: | :---: | :---: | :---: |
+| ![JS1](JS1.jpg) | ![JS2](JS2.jpg) | ![HTML Old](HTML%20Certificate_page-0001.jpg) | |
 
-| Introduction to CSS | Python Fundamentals | Next Goal |
-| :---: | :---: | :---: |
-| ![CSS](CSSCertificate_page-0001.jpg) | ![Python](python_fundamentals_certificate.jpg) | ✨ *Keep Learning* |
+| Introduction to CSS | Python Fundamentals | HTML Fundamental (New) | Next Goal |
+| :---: | :---: | :---: | :---: |
+| ![CSS](CSSCertificate_page-0001.jpg) | ![Python](python_fundamentals_certificate.jpg) | ![HTML New](HTML%20Fundamental.jpg) | ✨ *Keep Learning* |
 
 * [March 15, 2026] Reading YDKJS: Understanding the core philosophy of what JavaScript really is.
 * [March 16, 2026] Learning JS Fundamentals: Mastered the concept of Values (Strings, Numbers, and Booleans) and improved my technical English.
