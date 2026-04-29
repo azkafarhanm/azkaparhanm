@@ -85,6 +85,7 @@ I document my learning journey here to stay motivated and keep growing:
 * Learned how to use the built-in `round()` function to manage numerical precision.
 * [April 28, 2026] **Python Logic & Flow:** Completed "Rounding Numbers" on Coddy.tech. 
 * Learned to use the `round()` function to control decimal precision.
+* [April 29, 2026] **Git Mastery:** Successfully resolved a merge conflict and optimized the GitHub profile gallery layout.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
