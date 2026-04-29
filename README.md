@@ -81,6 +81,8 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 26, 2026] **Python Fundamentals:** Completed "What to Buy" project on Coddy.tech.
 * [April 27, 2026] **Python Logic & Flow:** Completed "Multiple Variable Assignments" on Coddy.tech. 
 * Learned how to assign multiple values to multiple variables in a single line.
+* [April 28, 2026] **Python Logic & Flow:** Completed "Round Numbers Mastery" on Coddy.tech. 
+* Learned how to use the built-in `round()` function to manage numerical precision.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
