@@ -45,6 +45,8 @@ I document my learning journey here to stay motivated and keep growing:
 * [March 30, 2026] Python Fundamentals: Completed the Recap on Dynamic Input. Mastered combining input(), type conversion, and f-strings.
 * [March 30, 2026] **Environment Setup:** Successfully installed **Python 3.14.3** and configured the `py` launcher on Windows 11. 🛠️
 * [March 31, 2026] **Data Structures:** Completed Day 5 Lists. Practiced append(), len(), and indexing in Python 3.14.
+
+### Learning Progression: April 2026
 * [April 01, 2026] **Coddy Tech:** Finished "Declare a Function". Learned about def, parameters, and how to create reusable code blocks.
 * [April 01, 2026] **JavaScript (YDKJS):** Started Chapter 2 "Surveying JS". Learned about Variables, Types, Conditionals, and Loops.
 * [April 02, 2026] **Coddy Tech (Arguments):** Learned how to pass information into functions. Practiced using positional and keyword arguments to make code more flexible.
@@ -88,6 +90,10 @@ I document my learning journey here to stay motivated and keep growing:
 * [April 29, 2026] **Git Mastery:** Successfully resolved a merge conflict and optimized the GitHub profile gallery layout.
 * [April 30, 2026] Introduction to Dictionaries
 * Learned to store data using **Key-Value pairs** for faster and more logical data retrieval
+
+### 🐍 Python Progression: May 2026
+* [May 2, 2026] Modifying Dictionaries
+* Learned to update existing values and add new key-value pairs to an existing dictionary.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
