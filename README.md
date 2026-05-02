@@ -94,6 +94,10 @@ I document my learning journey here to stay motivated and keep growing:
 ### 🐍 Python Progression: May 2026
 * [May 2, 2026] Modifying Dictionaries
 * Learned to update existing values and add new key-value pairs to an existing dictionary.
+* [May 3, 2026] Python Dictionary Methods
+* Learned essential methods like `.keys()`, `.values()`, and `.items()` to extract data.
+* Learned to use `.get()` for safe data retrieval without causing program crashes (errors).
+* Practiced `.clear()` and `.copy()` to manage dictionary data efficiently.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
