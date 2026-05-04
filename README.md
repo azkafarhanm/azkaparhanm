@@ -98,6 +98,9 @@ I document my learning journey here to stay motivated and keep growing:
 * Learned essential methods like `.keys()`, `.values()`, and `.items()` to extract data.
 * Learned to use `.get()` for safe data retrieval without causing program crashes (errors).
 * Practiced `.clear()` and `.copy()` to manage dictionary data efficiently.
+* [May 5, 2026] Python Logic: Frequency Counter Recap
+    * Learned the "Frequency Counter" pattern to count occurrences of items within a collection.
+    * Integrated loops with dictionary logic to dynamically build and update data sets.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
