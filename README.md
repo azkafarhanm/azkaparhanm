@@ -99,8 +99,11 @@ I document my learning journey here to stay motivated and keep growing:
 * Learned to use `.get()` for safe data retrieval without causing program crashes (errors).
 * Practiced `.clear()` and `.copy()` to manage dictionary data efficiently.
 * [May 5, 2026] Python Logic: Frequency Counter Recap
-    * Learned the "Frequency Counter" pattern to count occurrences of items within a collection.
-    * Integrated loops with dictionary logic to dynamically build and update data sets.
+* Learned the "Frequency Counter" pattern to count occurrences of items within a collection.
+* Integrated loops with dictionary logic to dynamically build and update data sets.
+* [May 6, 2026] Python Project: Add Contact System
+* Built a functional contact management script using Python dictionaries.
+* Implemented logic to check for existing entries to prevent duplicate data.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
