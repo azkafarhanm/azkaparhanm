@@ -107,6 +107,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 7, 2026] Python Logic: Iterating Through Dictionaries
 * Mastered the `for key, value in dict.items()` pattern to "List All" data entries efficiently.
 * Learned to separate data logic from display logic for cleaner, more readable output.
+* [May 8, 2026] Python Logic: Ternary Operators
+* Learned to use conditional expressions (Ternary Operators) to write concise one-line `if/else` statements.
+* Mastered the syntax: `value_if_true if condition else value_if_false`.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
