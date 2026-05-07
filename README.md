@@ -104,6 +104,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 6, 2026] Python Project: Add Contact System
 * Built a functional contact management script using Python dictionaries.
 * Implemented logic to check for existing entries to prevent duplicate data.
+* [May 7, 2026] Python Logic: Iterating Through Dictionaries
+* Mastered the `for key, value in dict.items()` pattern to "List All" data entries efficiently.
+* Learned to separate data logic from display logic for cleaner, more readable output.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
