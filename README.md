@@ -110,6 +110,11 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 8, 2026] Python Logic: Ternary Operators
 * Learned to use conditional expressions (Ternary Operators) to write concise one-line `if/else` statements.
 * Mastered the syntax: `value_if_true if condition else value_if_false`.
+* [May 9, 2026] Python Logic: Identity Checks (`is` vs `==`)
+* Learned the critical difference between value equality (`==`) and object identity (`is`).
+* Explored how Python stores objects in memory and how to verify if two variables point to the exact same memory address.
+* practiced the use of the `id()` function to inspect the unique identity of objects.
+* Understood "Integer Interning" and how Python optimizes small, frequently used objects in the background.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
