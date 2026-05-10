@@ -119,6 +119,11 @@ I document my learning journey here to stay motivated and keep growing:
 * Developed a filtering system to process complex datasets using dictionary iteration.
 * Implemented logic to extract specific entries based on multiple criteria (budget, location, and availability).
 * Refined skills in dynamic list building by appending filtered results from a master dictionary.
+* [May 11, 2026] Python Sets: Basic Operations
+* Explored **Sets** as a data structure for storing unique, unordered collections.
+* Learned set operations including `.add()` for new elements and `.remove()` / `.discard()` for deletion.
+* Learned to use the `set()` constructor to instantly remove duplicates from existing lists.
+* Understood the performance benefits of sets for membership testing (checking if an item exists).
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
