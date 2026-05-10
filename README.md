@@ -115,6 +115,10 @@ I document my learning journey here to stay motivated and keep growing:
 * Explored how Python stores objects in memory and how to verify if two variables point to the exact same memory address.
 * practiced the use of the `id()` function to inspect the unique identity of objects.
 * Understood "Integer Interning" and how Python optimizes small, frequently used objects in the background.
+* [May 10, 2026] Python Project: Vacation Filter Recap
+* Developed a filtering system to process complex datasets using dictionary iteration.
+* Implemented logic to extract specific entries based on multiple criteria (budget, location, and availability).
+* Refined skills in dynamic list building by appending filtered results from a master dictionary.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
