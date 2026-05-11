@@ -124,6 +124,11 @@ I document my learning journey here to stay motivated and keep growing:
 * Learned set operations including `.add()` for new elements and `.remove()` / `.discard()` for deletion.
 * Learned to use the `set()` constructor to instantly remove duplicates from existing lists.
 * Understood the performance benefits of sets for membership testing (checking if an item exists).
+* [May 12, 2026] Python Sets: Mathematical Operations (Part 1)
+* Mastered **Union (`|`)**: Combining two sets to get all unique elements from both.
+* Mastered **Intersection (`&`)**: Finding only the elements that exist in both sets.
+* Learned to use both operator syntax (`|`, `&`) and method syntax (`.union()`, `.intersection()`).
+* Applied set logic to solve data comparison problems efficiently.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
