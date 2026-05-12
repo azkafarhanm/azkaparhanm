@@ -129,6 +129,11 @@ I document my learning journey here to stay motivated and keep growing:
 * Mastered **Intersection (`&`)**: Finding only the elements that exist in both sets.
 * Learned to use both operator syntax (`|`, `&`) and method syntax (`.union()`, `.intersection()`).
 * Applied set logic to solve data comparison problems efficiently.
+* [May 13, 2026] Python Project: Treasure Hunt Recap
+* Applied advanced **Set Operations** to solve a logic-based search algorithm.
+* learned **Set Difference (`-`)** and **Symmetric Difference (`^`)** to isolate unique elements between data sets.
+* Combined multiple set methods to filter out "false leads" and identify the "treasure" (target data).
+* Demonstrated the ability to use mathematical set theory for efficient code execution.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
