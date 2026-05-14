@@ -134,6 +134,11 @@ I document my learning journey here to stay motivated and keep growing:
 * learned **Set Difference (`-`)** and **Symmetric Difference (`^`)** to isolate unique elements between data sets.
 * Combined multiple set methods to filter out "false leads" and identify the "treasure" (target data).
 * Demonstrated the ability to use mathematical set theory for efficient code execution.
+* [May 15, 2026] Python Logic: Iterating Over Sets Mastery
+* learned the ability to loop through **Sets** using the `for` in loop.
+* Deepened understanding of "Unordered Collections" and why index-based access is not possible in sets.
+* Practiced transforming set data during iteration to perform bulk updates and checks.
+* Applied set iteration logic to filter unique data points in real-world scenarios.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
