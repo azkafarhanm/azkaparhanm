@@ -139,6 +139,9 @@ I document my learning journey here to stay motivated and keep growing:
 * Deepened understanding of "Unordered Collections" and why index-based access is not possible in sets.
 * Practiced transforming set data during iteration to perform bulk updates and checks.
 * Applied set iteration logic to filter unique data points in real-world scenarios.
+* [May 16, 2026] Python: Logic & Flow Project Capstone Overview
+* Commenced the final project phase integrating all core Python data structures and flow control systems.
+* Designed the architecture for a comprehensive application combining Dictionaries, Sets, and multi-layered Loops.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
