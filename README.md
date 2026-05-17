@@ -145,6 +145,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 17, 2026] Python Project: Student Grade Management System
 * Mastered **Nested Data Structures** by mapping list collections as values within a dictionary.
 * Implemented logic to safely check for existing student keys before dynamically appending new numerical grades.
+* [May 18, 2026] Python Project: Grade Average Calculator
+* Implemented data analysis logic to calculate numerical averages from nested list data.
+* practiced combining built-in functions like `sum()` and `len()` to process collections dynamically.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
