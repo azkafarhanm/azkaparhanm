@@ -142,6 +142,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 16, 2026] Python: Logic & Flow Project Capstone Overview
 * Commenced the final project phase integrating all core Python data structures and flow control systems.
 * Designed the architecture for a comprehensive application combining Dictionaries, Sets, and multi-layered Loops.
+* [May 17, 2026] Python Project: Student Grade Management System
+* Mastered **Nested Data Structures** by mapping list collections as values within a dictionary.
+* Implemented logic to safely check for existing student keys before dynamically appending new numerical grades.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
