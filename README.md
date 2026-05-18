@@ -148,6 +148,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 18, 2026] Python Project: Grade Average Calculator
 * Implemented data analysis logic to calculate numerical averages from nested list data.
 * practiced combining built-in functions like `sum()` and `len()` to process collections dynamically.
+* [May 19, 2026] Python Project: Top Students Tracker
+* Developed an optimization and filtering script to identify high-performing records within a dataset.
+* Implemented threshold-based conditional checks to filter entries based on numerical score criteria.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
