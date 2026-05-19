@@ -151,6 +151,10 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 19, 2026] Python Project: Top Students Tracker
 * Developed an optimization and filtering script to identify high-performing records within a dataset.
 * Implemented threshold-based conditional checks to filter entries based on numerical score criteria.
+* [May 20, 2026] Python Logic: Built-in `sum()` Function
+* Learned to use the built-in `sum()` function to calculate totals of numeric collections efficiently.
+* Explored the `start` parameter within `sum(iterable, start)` to add a baseline value to the total.
+
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
