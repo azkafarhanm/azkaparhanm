@@ -154,7 +154,11 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 20, 2026] Python Logic: Built-in `sum()` Function
 * Learned to use the built-in `sum()` function to calculate totals of numeric collections efficiently.
 * Explored the `start` parameter within `sum(iterable, start)` to add a baseline value to the total.
-
+* [May 21, 2026] Python Logic: Sorting Data Efficiently
+* Mastered the use of `sorted()` and `.sort()` to organize collections in ascending and descending order.
+* Explored the critical difference between in-place sorting (`.sort()`) and return-copy sorting (`sorted()`).
+* Utilized the `reverse=True` parameter to easily flip the order of sorted datasets.
+* Applied sorting mechanisms to handle numerical data and prepare collections for clean presentation.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
