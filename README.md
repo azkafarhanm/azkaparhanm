@@ -159,6 +159,10 @@ I document my learning journey here to stay motivated and keep growing:
 * Explored the critical difference between in-place sorting (`.sort()`) and return-copy sorting (`sorted()`).
 * Utilized the `reverse=True` parameter to easily flip the order of sorted datasets.
 * Applied sorting mechanisms to handle numerical data and prepare collections for clean presentation.
+* [May 22, 2026] Python Project: Dictionary Sorter Recap
+* Applied advanced sorting mechanisms to order complex dictionary structures dynamically.
+* Leveraged custom sorting keys (`key=lambda item: ...`) to isolate specific dictionary properties for evaluation.
+
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
