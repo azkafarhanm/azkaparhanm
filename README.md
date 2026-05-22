@@ -162,6 +162,11 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 22, 2026] Python Project: Dictionary Sorter Recap
 * Applied advanced sorting mechanisms to order complex dictionary structures dynamically.
 * Leveraged custom sorting keys (`key=lambda item: ...`) to isolate specific dictionary properties for evaluation.
+* [May 23, 2026] Python Fundamentals: Creating Simple Lists
+* Learned to define and initialize **Lists** as ordered, mutable collections of items.
+* Practiced list syntax using square brackets `[]` and separating elements with commas.
+* Explored how lists can store multiple data types simultaneously (strings, integers, floats).
+* Understood the concept of collection-based storage for managing groups of related data efficiently.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
