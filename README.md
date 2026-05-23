@@ -167,7 +167,11 @@ I document my learning journey here to stay motivated and keep growing:
 * Practiced list syntax using square brackets `[]` and separating elements with commas.
 * Explored how lists can store multiple data types simultaneously (strings, integers, floats).
 * Understood the concept of collection-based storage for managing groups of related data efficiently.
-
+* [May 24, 2026] Python Logic: Data Aggregation Techniques
+* Learned the core concepts of data aggregation to transform granular datasets into meaningful high-level summaries.
+* Practiced combining iteration logic with multiple mathematical metrics (totals, counts, and conditions) simultaneously.
+* Developed structured statistical logic to evaluate collections without relying on multiple separate loops.
+* Strengthened the ability to generate clean dashboard-style metrics from nested data structures.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
