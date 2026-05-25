@@ -172,6 +172,10 @@ I document my learning journey here to stay motivated and keep growing:
 * Practiced combining iteration logic with multiple mathematical metrics (totals, counts, and conditions) simultaneously.
 * Developed structured statistical logic to evaluate collections without relying on multiple separate loops.
 * Strengthened the ability to generate clean dashboard-style metrics from nested data structures.
+* [May 25, 2026] Python Project: House of Lists Grid Traversal
+* practiced **Multi-Dimensional Data Structures** by working with nested lists (2D arrays/grids).
+* Implemented nested loops (`for row in matrix:` followed by `for item in row:`) to safely traverse data grids.
+
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
