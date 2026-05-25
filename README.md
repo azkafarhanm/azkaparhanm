@@ -175,6 +175,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 25, 2026] Python Project: House of Lists Grid Traversal
 * practiced **Multi-Dimensional Data Structures** by working with nested lists (2D arrays/grids).
 * Implemented nested loops (`for row in matrix:` followed by `for item in row:`) to safely traverse data grids.
+* [May 26, 2026] Python Capstone: Elements of Freedom System Recap
+* Successfully concluded the 'Logic and Flow' track by implementing a comprehensive capstone logic system.
+* Integrated multi-layered data components, managing collections across lists, dictionaries, and sets seamlessly.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
