@@ -183,6 +183,10 @@ I document my learning journey here to stay motivated and keep growing:
 * Explored how Python implicitly packs multiple return variables into a single **Tuple**.
 * Leveraged **Tuple Unpacking** syntax (`x, y = function()`) to cleanly capture multiple outputs into distinct variables in a single line.
 * Optimized function structures to prevent redundant calculations when seeking related data metrics.
+* [May 28, 2026] Python Logic: Lambda Functions Part 1 Mastery
+* Mastered the syntax of **Anonymous Functions** using the `lambda` keyword for concise logic.
+* Practiced transforming multi-line `def` blocks into single-line expressions.
+
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
