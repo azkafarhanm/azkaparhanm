@@ -186,6 +186,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 28, 2026] Python Logic: Lambda Functions Part 1 Mastery
 * Mastered the syntax of **Anonymous Functions** using the `lambda` keyword for concise logic.
 * Practiced transforming multi-line `def` blocks into single-line expressions.
+* [May 29, 2026] Python Logic: Lambda Functions Part 2 (Functional Architecture)
+* Integrated anonymous functions (`lambda`) with high-order built-in functions like `map()` and `filter()`.
+* Utilized `map()` + `lambda` for instant, bulk data transformation across numeric collections.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
