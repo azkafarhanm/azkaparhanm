@@ -189,6 +189,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 29, 2026] Python Logic: Lambda Functions Part 2 (Functional Architecture)
 * Integrated anonymous functions (`lambda`) with high-order built-in functions like `map()` and `filter()`.
 * Utilized `map()` + `lambda` for instant, bulk data transformation across numeric collections.
+* [May 30, 2026] Python Capstone: Recap Challenge – Lambda Sort Mastery
+* Successfully integrated anonymous lambda expressions into sorting pipelines to handle multi-layered dictionaries.
+* Implemented custom key evaluation logic to organize data records based on deep stru
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
