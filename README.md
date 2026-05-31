@@ -195,6 +195,11 @@ I document my learning journey here to stay motivated and keep growing:
 * [May 31, 2026] Python Logic: Deep Reinforcement – Lambda Sort Recap
 * Conducted a comprehensive code review and retrieval practice of advanced custom sorting architectures.
 * Reinforced structural memory regarding anonymous lambda mapping over nested collection datasets.
+* [June 1, 2026] Python Algorithms: Recursive Functions Part 1
+* Introduced the core concepts of **Recursion**—functions that solve problems by calling themselves.
+* practiced the critical role of the **Base Case** to prevent infinite loops and stack overflow errors.
+* Explored the **Recursive Case**, breaking down complex calculations into smaller, identical sub-problems.
+* Implemented fundamental recursive logic patterns, tracking call stacks cleanly in memory.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
