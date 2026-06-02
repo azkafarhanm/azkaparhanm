@@ -200,6 +200,11 @@ I document my learning journey here to stay motivated and keep growing:
 * practiced the critical role of the **Base Case** to prevent infinite loops and stack overflow errors.
 * Explored the **Recursive Case**, breaking down complex calculations into smaller, identical sub-problems.
 * Implemented fundamental recursive logic patterns, tracking call stacks cleanly in memory.
+* [June 3, 2026] Python Algorithms: Recursive Functions Part 2 (Mathematical Call Stacks)
+* Advanced understanding of recursion by engineering multi-layered mathematical accumulation systems.
+* practiced building return-based recursive structures using classic algorithmic problems like Factorials (`n!`).
+* Analyzed call stack execution flows, tracing how data resolves downward to a base case and calculates back upward.
+* Strengthened computational thinking by replacing iterative multiplication loops with clean recursive pipelines.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
