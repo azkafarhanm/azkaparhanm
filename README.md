@@ -210,6 +210,9 @@ I document my learning journey here to stay motivated and keep growing:
 * Engineered resilient base cases to guarantee stack safety across deep structural memory executions.
 * Analyzed state preservation and variable mutation behaviors within isolated call stack frames.
 * Refined logical execution paths to maximize efficiency and elegance in self-referencing operations.
+*[June 5, 2026] Python Capstone: Recap – Summing Nested Lists via Recursion
+* Engineered a dynamic recursive traversal algorithm to compute values across unpredictable multi-layered nested lists.
+* practiced type-checking strategies (`isinstance(element, list)`) to adapt execution paths programmatically at runtime.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
