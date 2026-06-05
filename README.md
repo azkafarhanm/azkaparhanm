@@ -213,6 +213,11 @@ I document my learning journey here to stay motivated and keep growing:
 *[June 5, 2026] Python Capstone: Recap – Summing Nested Lists via Recursion
 * Engineered a dynamic recursive traversal algorithm to compute values across unpredictable multi-layered nested lists.
 * practiced type-checking strategies (`isinstance(element, list)`) to adapt execution paths programmatically at runtime.
+* [June 6, 2026] Python Error Handling: The Try and Except Block
+* Introduced the foundations of **Defensive Programming** using `try` and `except` syntax blocks.
+* Practiced runtime exception interception, preventing application crashes when encountering execution errors.
+* Implemented graceful fallback protocols to handle unexpected or volatile user input data cleanly.
+* Separated core execution paths from error handling logic to maintain a clean, maintainable codebase.
 
 ---
 *"Keep learning, keep creating, and stay inspired!"*
