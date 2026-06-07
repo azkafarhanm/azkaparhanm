@@ -218,7 +218,11 @@ I document my learning journey here to stay motivated and keep growing:
 * Practiced runtime exception interception, preventing application crashes when encountering execution errors.
 * Implemented graceful fallback protocols to handle unexpected or volatile user input data cleanly.
 * Separated core execution paths from error handling logic to maintain a clean, maintainable codebase.
-
+* [June 7, 2026] Python Error Handling: Handling Multiple Exceptions
+* Advanced defensive programming patterns by implementing multi-tiered `except` blocks.
+* Practiced specific error targeting, isolating distinct runtime exceptions such as `ValueError` and `ZeroDivisionError`.
+* Implemented structural fallback logic tailored exactly to the root cause of different execution failures.
+* Prevented blanket exception trapping, ensuring hidden system bugs are not accidentally masked.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
