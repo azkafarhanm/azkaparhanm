@@ -210,7 +210,7 @@ I document my learning journey here to stay motivated and keep growing:
 * Engineered resilient base cases to guarantee stack safety across deep structural memory executions.
 * Analyzed state preservation and variable mutation behaviors within isolated call stack frames.
 * Refined logical execution paths to maximize efficiency and elegance in self-referencing operations.
-*[June 5, 2026] Python Capstone: Recap – Summing Nested Lists via Recursion
+* [June 5, 2026] Python Capstone: Recap – Summing Nested Lists via Recursion
 * Engineered a dynamic recursive traversal algorithm to compute values across unpredictable multi-layered nested lists.
 * practiced type-checking strategies (`isinstance(element, list)`) to adapt execution paths programmatically at runtime.
 * [June 6, 2026] Python Error Handling: The Try and Except Block
@@ -223,6 +223,9 @@ I document my learning journey here to stay motivated and keep growing:
 * Practiced specific error targeting, isolating distinct runtime exceptions such as `ValueError` and `ZeroDivisionError`.
 * Implemented structural fallback logic tailored exactly to the root cause of different execution failures.
 * Prevented blanket exception trapping, ensuring hidden system bugs are not accidentally masked.
+* [June 8, 2026] Python Capstone: Recap – Shopping Cart Exception Architecture
+* Engineered a comprehensive data-validation pipeline utilizing defensive `try-except` blocks.
+* Integrated multi-layered exception trapping to catch distinct runtime faults like `ValueError` and custom inventory boundary mismatches.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
