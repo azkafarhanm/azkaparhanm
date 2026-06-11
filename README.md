@@ -226,6 +226,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [June 8, 2026] Python Capstone: Recap – Shopping Cart Exception Architecture
 * Engineered a comprehensive data-validation pipeline utilizing defensive `try-except` blocks.
 * Integrated multi-layered exception trapping to catch distinct runtime faults like `ValueError` and custom inventory boundary mismatches.
+* [June 12, 2026] Python Data Structures: Adding Items Dynamically
+* Mastered methods for expanding data collections at runtime across multiple structural types.
+* Utilized `.append()` to insert sequential records to the end of mutable Lists while preserving order.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
