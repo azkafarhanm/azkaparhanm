@@ -229,6 +229,11 @@ I document my learning journey here to stay motivated and keep growing:
 * [June 12, 2026] Python Data Structures: Adding Items Dynamically
 * Mastered methods for expanding data collections at runtime across multiple structural types.
 * Utilized `.append()` to insert sequential records to the end of mutable Lists while preserving order.
+* [June 13, 2026] Python Data Structures: Updating Collection Items
+* Mastered in-place modification techniques to alter values within mutable collections without changing memory references.
+* Leveraged index-based assignment (`list[index] = new_value`) to precisely update specific elements in ordered Lists.
+* Utilized key-overwrite patterns (`dict[key] = new_value`) and the `.update()` method to modify structured object states.
+* Explored collection constraints, reinforcing how unindexed structures like Sets require removal and re-insertion for value updates.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
