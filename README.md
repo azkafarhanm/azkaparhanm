@@ -248,6 +248,11 @@ I document my learning journey here to stay motivated and keep growing:
 * Integrated `filter()` logic to isolate valid numeric strings and eliminate corrupted elements dynamically.
 * Applied `map()` operations to seamlessly convert and transform valid alphanumeric collections into compute-ready integers.
 * Concluded the advanced control flow track, proving complete autonomy in synthesizing functional arrays with clean state evaluation.
+* [June 25, 2026] Python Capstone: Recap – Smart Contact Manager System
+* Engineered a command-line interface (CLI) system to perform full CRUD operations on relational contact dictionaries.
+* Integrated nested error-handling blocks to intercept duplicate entries and gracefully parse malformed telephone numbers.
+* Implemented structural data validation rules to sanitize name fields and ensure structural integrity before database commits.
+* Concluded the advanced logic and data-structures journey, proving autonomy in orchestrating clean app architecture.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
