@@ -267,7 +267,10 @@ I document my learning journey here to stay motivated and keep growing:
 * Collaborated with an AI learning assistant to master Python's file I/O (Input/Output) architecture.
 * [July 16, 2026] Python OOP: Introduction to Object-Oriented Programming (AI-Assisted Learning)
 * Transitioned from procedural scripts to Object-Oriented Programming paradigms to build structured, modular codebases.
-* Mastered the blueprint concepts of **Classes** (user-defined types) and **Objects** (ru
+* Mastered the blueprint concepts of **Classes** (user-defined types) and **Objects** (runtime instances).
+* [July 17, 2026] Python OOP: Classes vs. Objects (AI-Assisted Learning)
+* Solidified the architectural distinction between abstract Class declarations and concrete Object instances.
+* Explored memory management mechanics, examining how multiple active instances maintain separate state spaces.
     
 ---
 *"Keep learning, keep creating, and stay inspired!"*
