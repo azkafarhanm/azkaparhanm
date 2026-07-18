@@ -271,6 +271,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [July 17, 2026] Python OOP: Classes vs. Objects (AI-Assisted Learning)
 * Solidified the architectural distinction between abstract Class declarations and concrete Object instances.
 * Explored memory management mechanics, examining how multiple active instances maintain separate state spaces.
+* [July 18, 2026] Python OOP: The Self Parameter Demystified (AI-Assisted Learning)
+* Mastered the role of the `self` parameter as an explicit reference to the current active object instance.
+* Explored how Python implicitly passes the object's memory address into methods behind the scenes.
     
 ---
 *"Keep learning, keep creating, and stay inspired!"*
