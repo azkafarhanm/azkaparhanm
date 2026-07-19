@@ -274,6 +274,9 @@ I document my learning journey here to stay motivated and keep growing:
 * [July 18, 2026] Python OOP: The Self Parameter Demystified (AI-Assisted Learning)
 * Mastered the role of the `self` parameter as an explicit reference to the current active object instance.
 * Explored how Python implicitly passes the object's memory address into methods behind the scenes.
+* [July 19, 2026] Python OOP: Instance Methods & Object Behavior (AI-Assisted Learning)
+* Engineered internal state mutation pipelines, passing arguments to methods to modify instance variables safely.
+* Mastered the design and implementation of **Methods** to govern active object behaviors and calculations.
     
 ---
 *"Keep learning, keep creating, and stay inspired!"*
