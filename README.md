@@ -277,6 +277,10 @@ I document my learning journey here to stay motivated and keep growing:
 * [July 19, 2026] Python OOP: Instance Methods & Object Behavior (AI-Assisted Learning)
 * Engineered internal state mutation pipelines, passing arguments to methods to modify instance variables safely.
 * Mastered the design and implementation of **Methods** to govern active object behaviors and calculations.
+* [July 20, 2026] Python OOP: Attributes & Variable Scoping (AI-Assisted Learning)
+* Differentiated between **Instance Attributes** (object-specific state) and **Class Attributes** (shared class-level state).
+* Optimized memory allocation by storing static configuration constants at the Class level.
+* Explored dynamic attribute assignment and runtime property lookups within active object instances.
     
 ---
 *"Keep learning, keep creating, and stay inspired!"*
