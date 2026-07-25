@@ -293,6 +293,8 @@ I document my learning journey here to stay motivated and keep growing:
 * Leveraged AI pairing loops to refine code modularity and ensure clean return-value pipelines.
 * [July 24, 2026] Python OOP: Introduction to Decorators (AI-Assisted Learning)
 * Mastered higher-order wrapper functions using @decorator syntax to attach pre- and post-execution logic dynamically.
+* [July 25, 2026] Python OOP: Property Decorators (@property) (AI-Assisted Learning)
+* Implemented @property decorators to turn class methods into readable attributes while maintaining getter and setter encapsulation rules.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
