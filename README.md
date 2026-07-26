@@ -295,6 +295,8 @@ I document my learning journey here to stay motivated and keep growing:
 * Mastered higher-order wrapper functions using @decorator syntax to attach pre- and post-execution logic dynamically.
 * [July 25, 2026] Python OOP: Property Decorators (@property) (AI-Assisted Learning)
 * Implemented @property decorators to turn class methods into readable attributes while maintaining getter and setter encapsulation rules.
+* [July 26, 2026] Python OOP: Static Method Decorator (@staticmethod) (AI-Assisted Learning)
+* Utilized @staticmethod decorators to build utility functions within classes that operate independently of class or instance state.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
