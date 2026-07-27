@@ -297,6 +297,8 @@ I document my learning journey here to stay motivated and keep growing:
 * Implemented @property decorators to turn class methods into readable attributes while maintaining getter and setter encapsulation rules.
 * [July 26, 2026] Python OOP: Static Method Decorator (@staticmethod) (AI-Assisted Learning)
 * Utilized @staticmethod decorators to build utility functions within classes that operate independently of class or instance state.
+* [July 27, 2026] Python OOP: Class Method Decorator (@classmethod) (AI-Assisted Learning)
+* Applied @classmethod decorators with the cls parameter to create factory constructors and manage class-level state.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
