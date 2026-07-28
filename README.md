@@ -299,6 +299,8 @@ I document my learning journey here to stay motivated and keep growing:
 * Utilized @staticmethod decorators to build utility functions within classes that operate independently of class or instance state.
 * [July 27, 2026] Python OOP: Class Method Decorator (@classmethod) (AI-Assisted Learning)
 * Applied @classmethod decorators with the cls parameter to create factory constructors and manage class-level state.
+* [July 28, 2026] Python OOP: Instance vs. Class Variables (AI-Assisted Learning)
+* Differentiated between instance-bound memory variables and shared class-level state to prevent accidental scope leaks.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
