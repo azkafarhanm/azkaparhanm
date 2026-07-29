@@ -301,6 +301,8 @@ I document my learning journey here to stay motivated and keep growing:
 * Applied @classmethod decorators with the cls parameter to create factory constructors and manage class-level state.
 * [July 28, 2026] Python OOP: Instance vs. Class Variables (AI-Assisted Learning)
 * Differentiated between instance-bound memory variables and shared class-level state to prevent accidental scope leaks.
+* [July 29, 2026] Python OOP: Property Decorators (@property) (AI-Assisted Learning)
+* Managed object encapsulation by using @property getters and setters to validate and protect internal attribute modifications.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
