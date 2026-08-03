@@ -304,8 +304,11 @@ I document my learning journey here to stay motivated and keep growing:
 * [July 29, 2026] Python OOP: Property Decorators (@property) (AI-Assisted Learning)
 * Managed object encapsulation by using @property getters and setters to validate and protect internal attribute modifications.
 * [July 30, 2026] Python OOP: Private Attributes & Encapsulation (AI-Assisted Learning)
-* Applied double underscore prefixes to enforce private attribute encapsulation and prevent external state tampering.
-
+* Applied double underscore prefixes to enforce private attribute encapsulation and prevent external state tampering
+* [July 31, 2026] Python OOP Capstone: Recap – Bank Account Manager (AI-Assisted Learning)
+* Built a comprehensive stateful banking system utilizing private attributes, method encapsulation, and transactional validation rules.
+* [August 03, 2026] Python OOP: Basic Inheritance (AI-Assisted Learning)
+* Implemented single class inheritance to share attributes and methods from base parent classes to derived child classes.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
