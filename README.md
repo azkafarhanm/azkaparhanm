@@ -309,6 +309,8 @@ I document my learning journey here to stay motivated and keep growing:
 * Built a comprehensive stateful banking system utilizing private attributes, method encapsulation, and transactional validation rules.
 * [August 03, 2026] Python OOP: Basic Inheritance (AI-Assisted Learning)
 * Implemented single class inheritance to share attributes and methods from base parent classes to derived child classes.
+* [August 04, 2026] Python OOP: Method Overriding & super() Quiz (AI-Assisted Learning)
+* Completed knowledge check on class inheritance, method overriding, and super() parent function execution.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
