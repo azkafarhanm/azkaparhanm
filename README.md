@@ -313,6 +313,8 @@ I document my learning journey here to stay motivated and keep growing:
 * Completed knowledge check on class inheritance, method overriding, and super() parent function execution.
 * [August 05, 2026] Python OOP Challenge: The super() Function (AI-Assisted Learning)
 * Implemented super() initialization inside child class constructors to inherit and extend parent state properties seamlessly.
+* [August 09, 2026] Python OOP: Method Overriding (AI-Assisted Learning)
+* Overrode parent class methods within child classes to customize and tailor specific behaviors for derived objects.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
