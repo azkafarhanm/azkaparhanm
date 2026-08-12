@@ -317,6 +317,8 @@ I document my learning journey here to stay motivated and keep growing:
 * Overrode parent class methods within child classes to customize and tailor specific behaviors for derived objects.
 * [August 10, 2026] Python OOP: Multiple Inheritance (AI-Assisted Learning)
 * Derived child classes from multiple parent classes to combine behaviors and manage Method Resolution Order (MRO).
+* [August 12, 2026] Python OOP: Method Resolution Order (MRO) Quiz (AI-Assisted Learning)
+* Completed knowledge check on Python's C3 linearization algorithm and method lookup order in multiple inheritance.
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
