@@ -319,6 +319,9 @@ I document my learning journey here to stay motivated and keep growing:
 * Derived child classes from multiple parent classes to combine behaviors and manage Method Resolution Order (MRO).
 * [August 12, 2026] Python OOP: Method Resolution Order (MRO) Quiz (AI-Assisted Learning)
 * Completed knowledge check on Python's C3 linearization algorithm and method lookup order in multiple inheritance.
+* [August 13, 2026] Python OOP: Journey Overview & Core Concepts Summary (AI-Assisted Learning)
+* Synthesized core object-oriented programming principles including encapsulation, inheritance, polymorphism, and class decorators.
+
 ---
 *"Keep learning, keep creating, and stay inspired!"*
 
