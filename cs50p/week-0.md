@@ -25,8 +25,6 @@ Coding: 40 menit | Inggris: 30 menit
 ### Istilah lain
 - Bugs itu istilah untuk kesalahan yang kita buat dalam membuat kode.
 
-### Yang masih bingung
-- Pada `input("masukkan nama anda: ")`, mana yang side effect dan mana yang return value?
 
 ## Hari 2 – 17 September 2026
 Coding: 100 menit | Inggris: 35 menit
@@ -62,3 +60,46 @@ Coding: 100 menit | Inggris: 35 menit
 
 ### Yang masih bingung
 - List belum paham, nanti dibahas di Week 2.
+
+## Hari 3 – 18 September 2026
+Coding: 120 menit | Inggris: 35 menit
+Lecture Week 0 selesai ditonton.
+
+### def dan pemanggilan function
+- Function ada pemanggilannya. Dipanggil tanpa def di depannya, dan ditulis di luar function, tidak mengikuti aturan indented.
+- Kalau tidak ada pemanggilan, resepnya tidak jalan. Waktu `hello()` dihapus, tulisan hello tidak muncul.
+- Ternyata kita bisa buat resep sendiri. Tinggal panggil function itu, nanti jadi apa yang sudah terbentuk dalam resep.
+- Function bawaan di dokumentasi Python itu memang sudah dibuat resepnya dari sananya.
+- `main()` ditaruh di paling bawah. Kalau `hello(name)` ada di dalam resep main dan main belum dipanggil, tidak ada yang jalan.
+- `square` error `NameError: name 'square' is not defined` karena resepnya belum dibuat. Kalau mau panggil function, harus di-define dulu.
+
+### Parameter dan argument
+- Parameter itu kotak kosong waktu mendefine function. Contoh: `def hello(to):`, `to` itu parameter.
+- Argument itu isian saat pemanggilan function. Contoh: `hello("azka")`.
+- Isiannya diberikan dari luar waktu dipanggil, bukan diisi di dalam resep.
+- Satu pemanggilan jalan satu kali. Kalau mau dua sapaan, panggil dua kali.
+- Default value seperti `to="world"` dipakai kalau pemanggilannya kosong. Kalau ada argument, isi argument yang dipakai.
+
+### Scope
+- Scope itu wilayah. Variabel yang dibuat di dalam satu resep tidak dikenal oleh resep lain.
+- Arah masuk: parameter dan argument. Arah keluar: return.
+- `NameError: name 'name' is not defined` muncul kalau `hello` memakai `name` yang lahir di dalam `main`.
+- `TypeError: hello() takes 0 positional arguments but 1 was given` muncul kalau argument dikirim tapi resepnya belum punya kotak kosong.
+- Bedanya: NameError muncul waktu isi resep dibaca, TypeError muncul lebih awal waktu pemanggilan.
+
+### return
+- print itu showing, return itu giving.
+- Resep tanpa return tidak menyerahkan apa-apa, jadi variabelnya berisi `None`.
+- `number = square(5)` dengan resep yang isinya print: angka 25 tetap muncul di layar, tapi `print(number)` keluar `None`.
+- `number * 2` error karena None tidak bisa dikalikan.
+- Kalau resepnya print saja, `print("x squared is", square(x))` tidak error, tapi hasilnya `x squared is None`. Program jalan tapi hasilnya salah.
+- Pada `nama = input("masukkan nama anda: ")`: yang muncul di screen itu side effect, dan yang disimpan ke variabel nama itu return value.
+
+### Materi lain hari ini
+- Square bracket di dokumentasi Python artinya optional, tambahan.
+- `round` membulatkan ke integer terdekat. Contoh: 4.6 jadi 5. Bisa juga dibatasi jumlah desimalnya.
+- Float bisa menampung input integer.
+- Pemisah ribuan pakai f-string, di dalam curly brace pakai colon lalu koma, hasilnya seperti 1,000.
+
+### Yang masih bingung
+- Membaca traceback (jejak error) belum paham, mau dibahas lagi.
