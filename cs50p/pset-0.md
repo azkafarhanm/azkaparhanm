@@ -49,6 +49,33 @@ Cara mengatasinya:
 - Terjemahkan kata kerja itu ke bahasa Inggris, misalnya "mengganti" jadi `replace`, "huruf kecil" jadi `lower`, "memisahkan" jadi `split`.
 - Cari kata itu dengan Ctrl + F di halaman string methods. Halamannya juga sudah dikelompokkan, misalnya Searching and Replacing dan Splitting and Joining.
 
-## 3. Making Faces — belum
+## 3. Making Faces — selesai (19 September 2026)
+
+Yang diminta soal:
+- Buat function `convert` yang menerima str, lalu `:)` diganti emoji senyum dan `:(` diganti emoji cemberut. Teks lain dikembalikan apa adanya.
+- Buat function `main` yang minta prompt dari user, memanggil `convert` pada input itu, lalu print hasilnya.
+- `main` dipanggil di bagian paling bawah file.
+
+Rencana saya:
+- Resep `convert`: menerima tulisan lewat parameter, ganti dua emotikon dengan `replace` dua kali, lalu `return`.
+- Resep `main`: minta input, panggil `convert`, print hasilnya.
+- Di luar semua resep: panggil `main()`.
+
+Error yang saya temui:
+- `TypeError: convert() missing 1 required positional argument: 'emoticon'` — karena `convert` dipanggil tanpa argument, padahal resepnya minta satu isian.
+- `NameError: name 'emoticon' is not defined` — karena hasil `convert` belum ditampung ke variabel, tapi sudah saya print.
+- Sebelum itu programnya juga sempat jalan tanpa error tapi hasilnya tidak berubah, karena `convert` dipanggil tanpa ditampung, lalu yang saya print malah input aslinya.
+
+Pelajaran:
+- Ketika `convert` dipanggil di dalam `main`, dia menjalankan isinya dan mengembalikan nilai baru. Tapi kalau tidak ada tampungan, nilai itu hilang.
+- Jadi setiap function yang `return`, hasilnya harus ditangkap, entah oleh variabel atau langsung dipakai di tempat lain.
+- Dua `replace` bisa disambung, karena hasil `replace` pertama juga berupa string, jadi bisa ditempeli method lagi.
+
+Kendala yang saya rasakan:
+- Soal tidak menjelaskan spesifik bahwa kita harus membuat variabel dulu. Jadi memang kita yang harus berpikir sendiri. Di situ saya masih lemah, karena terbiasa kalau sudah spesifik baru tahu harus bagaimana.
+- Membaca error di terminal juga masih kaku, belum terlalu paham.
+
+Catatan untuk diri sendiri:
+- Kalau soal berbunyi "calls X on Y and prints the result", artinya tiga langkah: kirim Y ke X, tangkap hasilnya, lalu tampilkan.
 ## 4. Einstein — belum
 ## 5. Tip Calculator — belum
