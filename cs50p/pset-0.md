@@ -25,7 +25,30 @@ Pelajaran:
 - Kalau mau menempelkan method, yang ditempeli itu hasil string dari inputannya, bukan function input-nya.
 - Jadi caranya: parentheses input dulu, baru titik, baru nama methodnya.
 
-## 2. Playback Speed — belum
+## 2. Playback Speed — selesai (19 September 2026)
+
+Yang diminta soal:
+- Minta inputan dari user.
+- Kalau inputan berisi white space, itu diganti dengan titik tiga.
+- Semua white space dari inputan user diganti dengan titik tiga.
+
+Rencana yang saya tulis sebelum coding:
+1. Minta input dari user.
+2. Semua white space dari inputan diganti dengan titik tiga.
+3. Lalu di-print.
+
+Salah tebak di awal:
+- Awalnya saya kira pakai `split` dengan argument titik tiga. Ternyata salah, karena `split` itu memisahkan dan hasilnya jadi list, sedangkan soal minta tulisannya tetap utuh, hanya spasinya yang ditukar.
+- Method yang benar `replace`, dan butuh dua argument: yang dicari, lalu penggantinya.
+
+Kendala yang saya rasakan:
+- Terkadang saya bingung method apa yang cocok untuk case ini.
+
+Cara mengatasinya:
+- Tulis dulu langkahnya dalam bahasa Indonesia, lalu ambil kata kerjanya.
+- Terjemahkan kata kerja itu ke bahasa Inggris, misalnya "mengganti" jadi `replace`, "huruf kecil" jadi `lower`, "memisahkan" jadi `split`.
+- Cari kata itu dengan Ctrl + F di halaman string methods. Halamannya juga sudah dikelompokkan, misalnya Searching and Replacing dan Splitting and Joining.
+
 ## 3. Making Faces — belum
 ## 4. Einstein — belum
 ## 5. Tip Calculator — belum
