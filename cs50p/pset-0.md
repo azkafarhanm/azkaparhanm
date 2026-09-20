@@ -77,5 +77,53 @@ Kendala yang saya rasakan:
 
 Catatan untuk diri sendiri:
 - Kalau soal berbunyi "calls X on Y and prints the result", artinya tiga langkah: kirim Y ke X, tangkap hasilnya, lalu tampilkan.
-## 4. Einstein — belum
-## 5. Tip Calculator — belum
+
+## 4. Einstein — selesai (20 September 2026)
+
+Yang diminta soal:
+- Minta massa dari user sebagai integer, lalu tampilkan energinya pakai rumus E = mc².
+- c itu kecepatan cahaya, 300000000.
+
+Rencana saya:
+1. Minta input user dengan prompt `m: `.
+2. Convert jadi integer.
+3. Hitung sesuai rumus: c dipangkatkan 2, lalu dikali m.
+4. Print dengan awalan `E: `.
+
+Salah yang saya buat:
+- Awalnya saya tulis `m ** 300000000`, terbalik. Yang dipangkatkan 2 itu kecepatan cahayanya, bukan massanya.
+- Nama file salah ketik `einsten.py`, padahal harus `einstein.py`. Diganti pakai `mv`.
+- Sempat bingung di terminal karena mengganti nama folder sambil berada di dalam folder itu. Keluar dulu pakai `cd ..`.
+
+Pelajaran:
+- `"3" * 2` hasilnya `"33"`, bukan 6, karena string dikali angka artinya diulang. Tidak error tapi hasilnya salah.
+- `int("3") * 2` baru hasilnya 6.
+- Yang ditampilkan `print` itu selalu sebagai string, tapi isi value variabelnya tidak berubah. Kalau integer ya tetap integer.
+- Makanya kalau mau menggabung integer dengan string, cara mudahnya pakai f-string. Kalau pakai plus operator, integernya harus di-convert dulu dengan `str()`.
+- Pangkat di Python pakai `**`.
+
+## 5. Tip Calculator — selesai (20 September 2026)
+
+Yang diminta soal:
+- Sebagian kode sudah diberikan CS50. Yang dikerjakan cuma dua function bertanda TODO.
+- `dollars_to_float`: dari `$50.00` jadi `50.0`.
+- `percent_to_float`: dari `15%` jadi `0.15`.
+
+Rencana saya:
+- Kedua function menerima lewat parameter dari main.
+- `dollars_to_float`: hilangkan `$` pakai replace, lalu jadikan float, lalu return.
+- `percent_to_float`: hilangkan `%` pakai replace, jadikan float, dibagi 100, lalu return.
+
+Salah yang saya buat:
+- Awalnya saya kira desimal di belakang koma harus dihilangkan pakai round. Ternyata tidak perlu, yang dibuang cuma tanda `$`.
+- `TypeError: unsupported operand type(s) for /: 'str' and 'int'` — karena pembagian 100 saya taruh di dalam kurung float, jadi yang dibagi masih string hasil replace.
+
+Pelajaran:
+- Python mengerjakan kurung yang paling dalam dulu, baru yang di luar.
+- Hasil `replace` masih berupa string, belum bisa dihitung. Jadi pembagian 100 harus di luar kurung float, setelah jadi angka.
+- `float` untuk angka berdesimal, `int` untuk bilangan bulat.
+- Persen artinya per seratus, jadi 15% sama dengan 15 dibagi 100.
+
+---
+
+**Problem Set 0 selesai 5/5.**
