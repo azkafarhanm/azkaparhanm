@@ -47,7 +47,7 @@ Coding: 90 menit | Inggris: 35 menit
 -
 
 ## Hari 2 – 26 September 2026
-Coding: ... menit | Inggris: ... menit
+Coding: 60 menit | Inggris: 35 menit
 
 ### Meow tanpa loop
 - Bisa juga print meow tiga kali tanpa loop: `print("meow\n" * 3, end="")`.
