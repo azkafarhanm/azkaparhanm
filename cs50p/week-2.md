@@ -92,3 +92,50 @@ Coding: 60 menit | Inggris: 35 menit
 
 ### Yang masih bingung
 -
+
+## Hari 3 – 27 September 2026
+Coding: 90 menit | Inggris: 35 menit
+
+### Kosakata
+- "cyclically" artinya secara berulang atau berputar, dari kata cycle (siklus). Maksud David: menulis kode yang berulang pakai loop, dan mendapatkan jawaban kembali pakai return.
+- "off by one" artinya meleset satu angka.
+- "shall we say" artinya katakanlah, bisa dibilang.
+- "get used to it" artinya terbiasa.
+- "initialize" artinya memberi nilai awal pada variabel sebelum dipakai.
+
+### List dan index
+- Angka di dalam square bracket namanya index, yaitu nomor urut posisi.
+- Index dihitung dari 0. `students[0]` itu anggota pertama, `students[2]` itu anggota ketiga.
+- Karena manusia menghitung dari 1, di kepala kita selalu meleset satu. Itulah "off by one mentally". Lama-lama terbiasa.
+- `students` artinya seluruh list sekaligus. `students[i]` artinya satu anggota di posisi i.
+- `len(students)` memberikan jumlah anggota list.
+
+### Tanya jawab: initialize variabel di for
+- Mahasiswa bertanya: apakah variabel student perlu disiapkan dulu sebelum for?
+- Jawaban David: tidak perlu. Python otomatis mengisi student dengan Hermione dulu, lalu Harry, lalu Ron.
+- Beda dengan while, di situ kita harus menulis `i = 0` sendiri sebelum loop.
+- Kebiasaan penamaan: list pakai jamak (students), variabel loop pakai tunggal (student). Supaya mudah dibaca: untuk setiap student di dalam students.
+
+### Hash table
+- Hash table itu tempat menyimpan data berpasangan: label dan isinya. Di Python namanya dict.
+- List diakses pakai nomor urut, dict diakses pakai label.
+- Seperti lemari loker santri berlabel nama: langsung menuju loker "Azka", tidak menghitung dari loker pertama.
+
+### Dua jenis for loop
+- Kalau cuma butuh isinya, pakai `for student in students`. Ini lebih simpel.
+- Kalau butuh isi dan nomor urutnya, pakai `for i in range(len(students))`, lalu isinya diambil dengan `students[i]`.
+- Di versi range, i bukan berisi nama, tapi nomor: 0, 1, 2. Seperti nomor kursi. Untuk tahu siapa yang duduk di kursi itu, harus lihat daftarnya dengan `students[i]`.
+- `print(i + 1, students[i])` hasilnya daftar bernomor mulai dari 1. Pakai `i + 1` karena index mulai dari 0.
+- Urutan tampilnya tetap sesuai urutan di list.
+
+### Kesalahan yang saya pikirkan
+- Tidak bisa mencampur dua jenis loop. `for student in students` tidak punya i, jadi `print(i + 1, student)` error NameError. `for i in range(...)` tidak punya student, jadi `print(i + 1, student)` juga NameError.
+- `print(i + 1, students)` tidak error, tapi yang tercetak seluruh list di setiap putaran, bukan satu nama. Karena loop tidak mengubah students, yang berubah hanya i.
+
+### range dan print
+- range hanya menerima bilangan bulat (int). Kalau diberi desimal, TypeError.
+- print bisa menerima argument sebanyak apa pun. Di dokumentasi tertulis `print(*objects, sep=' ', end='\n')`. Tanda bintang artinya boleh berapa pun jumlahnya.
+
+### Yang masih ingin dicoba
+- Menampilkan isi list tanpa kurung siku, jadi seperti "Hermione, Harry, Ron". Caranya pakai method `join`, kebalikan dari split. Belum dibahas di lecture.
+- Belum mencoba `print(students[3])`, penasaran error apa yang muncul.
