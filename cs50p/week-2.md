@@ -139,3 +139,67 @@ Coding: 90 menit | Inggris: 35 menit
 ### Yang masih ingin dicoba
 - Menampilkan isi list tanpa kurung siku, jadi seperti "Hermione, Harry, Ron". Caranya pakai method `join`, kebalikan dari split. Belum dibahas di lecture.
 - Belum mencoba `print(students[3])`, penasaran error apa yang muncul.
+
+## Hari 4 – 28 September 2026
+Coding: 90 menit | Inggris: 35 menit
+Video belum selesai, berhenti di bagian dictionaries.
+
+### IndexError
+- `print(students[3])` dengan list tiga nama hasilnya `IndexError: list index out of range`.
+- Index-nya hanya 0, 1, 2. Index 3 tidak ada, jadi di luar jangkauan.
+- Patokan: index terakhir selalu jumlah anggota dikurangi satu.
+
+### Salah terminal
+- Saya sempat mengetik kode Python langsung di PowerShell, jadinya error aneh seperti cmdlet dan ParserError.
+- Tandanya: `PS D:\...>` itu PowerShell. Kalau sedang di Python, awal barisnya `>>>`.
+- Kode Python harus ditulis di file lalu `python latihan.py`, atau ketik `python` dulu untuk interactive mode.
+
+### Pembuktian students, students[i], student
+- `for i in range(len(students)): print(i + 1, students[i])` → satu nama per baris. students[i] mengambil satu anggota.
+- `print(i + 1, students)` → seluruh list di setiap baris. students itu seluruh daftar, loop tidak mengubahnya.
+- `print(i + 1, student)` → NameError, karena di loop versi range tidak ada variabel student. Python bahkan menawarkan "Did you mean: 'students'?".
+
+### Kenapa butuh dict
+- Kalau data satu orang dipisah di beberapa list (students, houses, patronus), yang menghubungkannya cuma posisi index.
+- "Honor system" artinya sistem atas dasar kepercayaan. Tidak ada yang menjamin list-list itu tetap berpasangan, cuma ketelitian programmer.
+- Bisa berantakan: lupa menambah di salah satu list jadi IndexError, atau urutannya bergeser jadi pasangannya tertukar tanpa error sama sekali.
+- Seperti mencatat nama santri, kelas, dan nomor wali di tiga buku terpisah.
+
+### dict
+- dict ditulis dengan kurung kurawal `{}`, isinya pasangan label dan isi, dipisah titik dua.
+- "Run out of keys" artinya kehabisan tombol keyboard. Satu simbol dipakai untuk beberapa arti. `{}` di f-string artinya tempat menyisipkan nilai, di luar tulisan artinya membuat dict.
+- Sama seperti `*` dan `+` yang artinya berbeda untuk angka dan string. Lihat simbolnya ada di mana, baru tentukan artinya.
+
+### for di dict
+- Kalau iterate over dictionary pakai for, yang diambil key-nya saja (labelnya), bukan isinya.
+- "Could have gone both ways" maksudnya pembuat Python bisa saja memilih for memberikan isinya, tapi mereka memilih key.
+- `students[student]` artinya buka loker yang labelnya sesuai isi student.
+- for tidak membuat label. Labelnya sudah ada sejak dict ditulis. for cuma berjalan membaca label satu per satu.
+- Di setiap putaran, variabel loop memegang satu key saja, bukan semua key sekaligus.
+- Kalau sudah tahu labelnya, tidak perlu for. Langsung `santri["Ahmad"]`.
+- Mau buka satu loker → langsung pakai label. Mau buka semua loker → pakai for.
+
+### KeyError
+- `print(santri["Budi"])` dengan label yang tidak ada hasilnya `KeyError: 'Budi'`.
+- List, nomor urut tidak ada → IndexError. Dict, label tidak ada → KeyError.
+- Keduanya sama-sama mencari loker yang tidak ada, bedanya cara menunjuk lokernya.
+
+### List berisi dict
+- David menyusun students jadi list, dan setiap anggotanya dict berisi name, house, patronus. Jadi setiap santri punya satu kartu.
+- "That's my prerogative as a programmer" artinya itu hak saya sebagai programmer untuk memutuskan. Bentuk data itu pilihan desain, bukan aturan Python.
+- Draco diberi `"patronus": None`, artinya sengaja menyatakan tidak ada nilai.
+- Untuk mengambil asrama Hermione: `students[0]["house"]`. Ambil kartunya dulu dengan nomor, lalu buka kartunya dengan label.
+- Kurung siku kedua langsung menempel, tanpa titik. Titik hanya untuk method.
+- Polanya mirip `input().strip().lower()`: yang kedua bekerja pada hasil yang pertama.
+
+### Kosakata
+- patronus: istilah cerita Harry Potter, bukan istilah pemrograman.
+- conjure up: memunculkan dengan sihir.
+- prerogative: hak atau wewenang untuk memutuskan sendiri.
+
+### Jenis error yang sudah saya kenal
+- NameError, TypeError, ValueError, IndexError, KeyError.
+
+### Yang masih ingin dicoba
+- `students[3]["patronus"]` dengan data David, hasilnya apa?
+- Lanjutkan video Week 2 dari bagian dictionaries.
