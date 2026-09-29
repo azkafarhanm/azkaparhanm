@@ -203,3 +203,58 @@ Video belum selesai, berhenti di bagian dictionaries.
 ### Yang masih ingin dicoba
 - `students[3]["patronus"]` dengan data David, hasilnya apa?
 - Lanjutkan video Week 2 dari bagian dictionaries.
+
+## Hari 5 – 29 September 2026
+Coding: 90 menit | Inggris: 30 menit
+Lecture Week 2 selesai ditonton.
+
+### None bukan KeyError
+- `students[3]["patronus"]` hasilnya None, bukan error.
+- `santri["Budi"]` KeyError karena labelnya tidak ada.
+- `students[3]["patronus"]` None karena labelnya ada, isinya sengaja dibuat tidak ada.
+- Loker yang kosong berbeda dengan loker yang tidak pernah dibuat.
+
+### Menulis dari atas ke bawah
+- David menulis `print_column(3)` di main dulu, padahal function-nya belum dibuat. Tulis dulu apa yang mau dilakukan, baru bagaimana caranya di bawah.
+- Tidak error karena def main hanya dibaca, belum dijalankan. Selama print_column sudah ditulis sebelum `main()` dipanggil di akhir, aman.
+- "forethought" artinya memikirkan sebelumnya. "as good a name as any" artinya nama ini pantas saja dipakai.
+
+### Nama function dengan underscore
+- `print_column` bukan print yang ditempeli sesuatu. Itu satu nama baru buatan David.
+- Nama di Python tidak boleh ada spasi, jadi kata-katanya disambung garis bawah. Namanya snake_case.
+- Sudah sering saya pakai: get_number, is_even, dollars_to_float, meal_time.
+- Namanya diawali print karena tugas function itu memang mencetak.
+
+### Abstraksi
+- Abstraksi artinya memberi nama pada sekumpulan langkah, jadi pemakainya cukup tahu apa yang dilakukan, tanpa perlu tahu bagaimana caranya.
+- print_column bisa diisi `print("#\n" * height, end="")` atau `for _ in range(height): print("#")`. Isinya beda, tapi main tidak berubah dan hasilnya sama.
+- "underlying implementation" artinya cara kerja di baliknya, isi resepnya.
+- Seperti menyuruh ketua kamar "siapkan halaqah", tidak perlu tahu caranya.
+- print, input, len juga abstraksi. Saya pakai tanpa tahu isi resepnya.
+
+### Kenapa David mengulang materi lama
+- Di bagian Mario, David menggabungkan semua yang sudah dipelajari: def, parameter, for, range, _, print, end, string dikali angka.
+- Tujuannya melatih cara berpikir: melihat gambar batu bata di game, lalu menerjemahkannya jadi kode.
+- Ini juga murojaah yang sengaja dibangun di kurikulum.
+
+### Nested loops
+- "keep nesting inside of each other" artinya terus bersarang, satu di dalam yang lain.
+- Mau membuat kotak batu bata seperti di Mario, row-nya 3 dan column-nya juga 3.
+- Loop luar menjalankan setiap baris. Di setiap putaran, dia menjalankan loop dalam.
+- Loop dalam menjalankan setiap batu bata dalam satu baris, isinya juga 3, jadi print "#" tiga kali.
+- `end=""` gunanya mencegah baris baru. Karena setiap print bawaannya membuat baris baru, maka dibuat end kosong supaya batu batanya merapat menyamping: ###.
+- Setelah loop dalam selesai, baru `print()` yang sendirian itu dijalankan. Gunanya menutup baris dan memindahkan kursor ke bawah.
+- print() itu sejajar dengan `for j`, jadi dijalankan setiap kali satu baris selesai.
+- Kalau print() dihapus, semua batu bata bertumpuk jadi satu baris: sembilan # merapat.
+- Seperti absen santri per kamar: loop luar pindah kamar, loop dalam memanggil santri satu per satu di kamar itu.
+
+### Kode bisa diringkas
+- "tighten up this code" artinya merapikan dan meringkas kode.
+- `print("#" * size)` bisa menggantikan loop dalam. String dikali angka mengulang # menyamping, dan print bawaannya sudah ganti baris, jadi print() kosong tidak perlu lagi. Cukup satu loop.
+- Bisa juga dipecah jadi tiga function: main, print_square, print_row. Setiap function mengurus satu tugas kecil.
+- "decompose" artinya memecah masalah besar jadi bagian kecil.
+- "wrap your mind around" artinya memahami sesuatu yang agak rumit.
+- Versi ringkas bisa karena semua batu batanya sama. Kalau isinya berbeda-beda, nested loop tetap dibutuhkan.
+
+### Yang masih bingung
+-
