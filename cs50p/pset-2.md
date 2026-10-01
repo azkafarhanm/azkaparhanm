@@ -38,7 +38,7 @@ Kendala yang saya rasakan:
 - Kalau stuck, saya malah bengong, bingung mau coba apa.
 - Cara mengatasinya: tulis pseudocode sebagai komentar dulu, lalu kerjakan satu baris saja. Tanyakan kata kerjanya: minta = input, untuk setiap = for, kalau = if, tulis = print.
 
-## 2. Just setting up my twttr — belum
-## 3. Vanity Plates — belum
+## 2. Just setting up my twttr — selesai 
+## 3. Vanity Plates — selesai
 ## 4. Nutrition Facts — belum
 ## 5. Coke Machine — belum
