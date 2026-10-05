@@ -120,3 +120,4 @@ Tentang dua baris `if __name__ == "__main__":`
 - Tapi semua kode saya yang tulis, dan beberapa error saya temukan sendiri.
 - Aturan mulai Pset 2: buntu dulu 30 menit sebelum bertanya.
 - Tes kemandirian: minggu depan tulis ulang satu soal lama dari layar kosong, tanpa membuka catatan dan chat. Catat waktunya, lalu ulangi sebulan lagi.
+- Murojaah: lihat [murojaah.md](murojaah.md)
