@@ -7,7 +7,7 @@ Jadwal: setiap Minggu jam 05.20.
 | No | Soal | Tanggal | Waktu | Hasil |
 |---|---|---|---|---|
 | 1 | Math Interpreter (Pset 1) | 4 Okt | 60 menit | check50 6/6 |
-| 2 | Vanity Plates (Pset 2) | 5 Okt | (isi sendiri) | check50 10/10 |
+| 2 | Vanity Plates (Pset 2) | 5 Okt | 60 menit | check50 10/10 |
 
 ---
 
