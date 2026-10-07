@@ -333,18 +333,19 @@ Rencana saya:
 - sorted diberi satu string.
 - dictionary[items] padahal harusnya dictionary[i].
 
-### Refleksi: banyak bertanya ke Duck, itu progres atau ilusi?
-- Saya banyak sekali bertanya ke Duck di soal ini. Kalau tidak ada Duck, mungkin saya buntu. Tapi dari petunjuknya saya dapat banyak ilmu yang sebelumnya tidak saya tahu.
-- Bisa jadi progres, bisa jadi ilusi. Bedanya bukan seberapa sering bertanya, tapi apa yang tersisa di kepala setelah petunjuknya hilang.
-- Tanda progres hari ini: saya menemukan sendiri bug items vs i dan menghubungkannya dengan bug c vs s, membaca dokumentasi get sendiri, dan bereksperimen padahal check50 sudah hijau.
-- Ada petunjuk Duck yang cukup dekat ke jawaban, seperti sorted(dict.items()). Bagian itu yang paling mungkin belum benar-benar milik saya.
-- Cara menguji jujur: sekitar seminggu lagi, murojaah Grocery List dari layar kosong, tanpa Duck dan tanpa catatan.
-- Supaya petunjuk Duck makin sedikit: tulis rencana dulu sebelum bertanya, dan coba sendiri dulu sesuai aturan 30 menit.
-- Seperti santri yang masih dituntun waktu setoran. Wajar di awal, tapi hafalan baru jadi miliknya kalau bisa dibaca sendiri tanpa dituntun.
+### Setelah lulus dan submit: murojaah kode
+- Nama dict untuk variabel
+  - Variabel saya awalnya namanya dict, padahal dict itu nama bawaan Python untuk tipe dictionary. Kalau ditimpa, jadi bingung ini nama tipe data atau nama variabel.
+  - Akibatnya lebih dari bingung: setelah `dict = {}`, nama dict di file itu tidak lagi merujuk ke tipe dictionary bawaan. Kalau di baris lain butuh dict() yang asli, Python error.
+  - Saya buktikan di interactive mode dengan `print = 5` lalu `print("halo")`. Hasilnya `TypeError: 'int' object is not callable`.
+  - Callable artinya bisa dipanggil, yaitu yang ditulis sebelum kurung, seperti print atau input. Yang di dalam kurung itu argumen, bukan yang dipanggil. Setelah `print = 5`, isi print jadi angka 5, jadi `print("halo")` sama saja dengan `5("halo")`. Angka tidak bisa dipanggil, akhirnya crash.
+  - Seperti papan nama "Kantor Tahfidz" yang dipindah ke pintu gudang. Kantornya masih ada, tapi tidak bisa ditemukan lewat nama itu.
+  - Kalau muncul error "X object is not callable", hampir selalu ada nama function yang tertimpa variabel.
+  - Aturannya: jangan pakai nama bawaan Python untuk nama variabel, seperti dict, list, str, input, print, sum.
+  - Setelah percobaan itu, ketik exit() lalu buka python lagi supaya print normal kembali.
+- pass di dalam except EOFError tidak perlu, karena di situ sudah ada print() dan break yang menjorok. pass cuma dipakai kalau bloknya benar-benar kosong.
+- Nama variabel saya ganti: item untuk satu barang dari input, items untuk dictionary yang menyimpan banyak barang. Catatan kecil: dictionary bernama items nanti ditulis items.items(), agak membingungkan dibaca. Nama seperti grocery atau belanjaan mungkin lebih jelas.
+- Sisa kode lama yang dibungkus tanda kutip tiga sebaiknya dihapus supaya file bersih.
 
-### Yang ingin dicoba (murojaah kode setelah lulus)
-- Variabel saya namanya dict, padahal dict itu nama bawaan Python untuk tipe dictionary. Apa akibatnya kalau nama itu ditimpa? Ganti dengan nama lain.
-- Di dalam except EOFError ada pass, lalu print() dan break. Apakah pass di situ masih dibutuhkan?
-- Hapus sisa kode lama yang dibungkus tanda kutip tiga.
-- Nama variabel items (jamak) dipakai untuk satu barang. Cari nama yang lebih pas.
-- Murojaah Grocery List dari layar kosong sekitar seminggu lagi.
+### Yang ingin dicoba
+- Murojaah Grocery List dari layar kosong sekitar seminggu lagi, tanpa Duck dan tanpa catatan.
