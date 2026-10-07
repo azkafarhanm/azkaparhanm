@@ -229,3 +229,122 @@ Rencana saya:
 
 ### Jenis error yang sudah saya kenal (update)
 - SyntaxError, NameError, AttributeError, TypeError, ValueError, IndexError, KeyError, ZeroDivisionError, IndentationError, KeyboardInterrupt, EOFError.
+
+## 3. Grocery List — selesai, check50 hijau semua 5/5 (7 Oktober 2026)
+
+Yang diminta soal:
+- User mengetik barang belanjaan satu per satu, satu baris satu barang, sampai menekan Ctrl+D.
+- Setelah itu tampilkan daftar belanjaannya: semua huruf besar, urut sesuai abjad, dan di depan setiap barang ada angka berapa kali barang itu diketik.
+- Tidak perlu dibuat jamak (3 tomato tetap tomato).
+- Huruf besar kecil dari user tidak berpengaruh.
+
+Pelajaran dari Taqueria saya terapkan: sebelum bertanya ke Duck, saya tempel dulu soalnya, supaya Duck tahu "targetnya".
+
+Rencana saya:
+- Loop while True, minta input barang, disimpan di variabel.
+- Berhenti kalau user menekan Ctrl+D, ditangkap pakai try/except EOFError seperti di Taqueria.
+- Barangnya disimpan di dictionary, karena datanya berpasangan: nama barang dan berapa kali diketik.
+- Menghitungnya pakai method get di dictionary.
+- Terakhir, tampilkan urut sesuai abjad.
+
+### Perjalanan dan yang membuat saya tersendat
+
+1. Kapan membuat huruf besar
+   - Awalnya saya pikir gampang, nanti saja waktu print tinggal ditambah upper. Input dibiarkan apa adanya.
+   - Duck bertanya: kalau user mengetik Apple, apple, APPLE, berapa key yang tersimpan di dictionary?
+   - Ternyata tiga key berbeda, karena beda huruf besar kecil saja sudah dianggap beda. Hitungannya jadi terpecah.
+   - Jadi upper harus dilakukan sejak input, sebelum dimasukkan ke dictionary, supaya semua jadi satu key.
+
+2. Lupa cara memasukkan item ke dictionary
+   - Caranya: nama_dictionary[key] = value. Kiri itu tempat menyimpan, kanan itu nilai yang disimpan.
+   - Awalnya saya kira value-nya selalu 1. Padahal kalau barang yang sama diketik dua kali, harus jadi 2. Jadi value-nya itu nilai lama ditambah 1.
+
+3. get tanpa nilai cadangan
+   - Saya baca dokumentasi Python: `get(key, default=None, /)`. Kalau key tidak ada, get mengembalikan default. Kalau default tidak diisi, hasilnya None, dan get tidak pernah memunculkan KeyError.
+   - Awalnya saya tulis get tanpa argumen kedua, lalu ditambah 1. Hasilnya `TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'`. None tidak bisa ditambah angka.
+   - Solusinya: argumen kedua diisi 0. Kalau barangnya belum ada, 0 + 1 = 1. Kalau sudah ada, nilai lamanya + 1.
+   - Tanda +1 harus di luar kurung get, bukan sebagai argumen di dalamnya.
+
+4. Salah tempat upper
+   - Saya sempat menaruh upper di ujung hasil get. Hasilnya `AttributeError: 'int' object has no attribute 'upper'`. Hasil get itu angka (hitungan), sedangkan upper cuma punya string.
+   - Sempat juga menulis `1.upper()`, hasilnya `SyntaxError: invalid decimal literal`.
+   - Jadi upper ditaruh di tempat pertama kali saya mendapat string dari user, yaitu langsung di input.
+
+5. Nama dictionary tertimpa angka
+   - Saya sempat menulis nama dictionary = hasil get + 1, tanpa kurung siku. Akibatnya dictionary-nya berubah jadi angka.
+   - Muncul `TypeError: 'int' object is not iterable` (angka tidak bisa di-loop) dan `TypeError: 'int' object does not support item assignment` (angka tidak bisa diisi pakai kurung siku).
+   - Waktu saya print dictionary-nya, isinya cuma satu angka, bukan pasangan. Ternyata hasil hitungan harus disimpan ke dictionary[barang], bukan ke dictionary-nya langsung.
+
+6. keys, values, items
+   - Saya coba di interactive mode:
+     - keys() hasilnya `dict_keys(['Ahmad', 'Ake'])`, key-nya saja, bentuknya seperti list.
+     - items() hasilnya `dict_items([('Ahmad', 7), ('Ake', 9)])`, seperti list yang isinya tuple. Satu tuple itu satu pasang key dan value.
+   - Tulisan dict_keys dan dict_items di depannya cuma label dari Python.
+   - keys, values, items tidak menerima argumen apa pun. Kurungnya selalu kosong. Tugasnya cuma mengupas dictionary.
+
+7. Loop key dan value sekaligus
+   - Saya ingat ada cara loop yang menyimpan key dan value sekaligus, tapi saya tulis `for key, value in dict:`. Kurang satu: harus pakai items(), karena items yang menghasilkan pasangannya.
+
+8. sorted malah mengurutkan per huruf
+   - Hasilnya sempat `['A', 'A', 'A', 'B', 'N', 'N']`. Ternyata yang saya kasih ke sorted itu satu string, misalnya "BANANA". Kalau sorted diberi string, dia memecahnya per huruf lalu mengurutkan hurufnya.
+   - Yang saya mau itu mengurutkan kumpulan key-nya, bukan isi satu key.
+   - sorted(dictionary.items()) bisa urut sesuai nama barang, karena tuple dibandingkan mulai dari anggota pertamanya, dan anggota pertama itu key-nya.
+
+9. Misteri banana tiga kali tapi angkanya 1
+   - Waktu itu saya ketik banana tiga kali, hasilnya malah 1 BANANA.
+   - Kemungkinan besar karena yang dicari dan yang disimpan beda huruf. Kalau input belum di-upper, tapi get mencari versi huruf besarnya, maka get selalu tidak ketemu, selalu 0 + 1, dan disimpan di key huruf kecil. Angkanya tidak pernah naik.
+   - Cara mengeceknya: print dictionary-nya tepat setelah loop, untuk melihat isi yang sebenarnya.
+
+10. Hal kecil lainnya
+    - Salah ketik nama file: grocery,py (koma) bukan grocery.py.
+    - `IndentationError: expected an indented block after 'else' statement`, sesudah else tidak ada baris yang menjorok.
+    - Kursor di VS Code malah menghapus huruf di sebelah kanannya. Ternyata mode Overtype aktif, matikan dengan tombol Insert di keyboard.
+    - Komentar banyak baris di Python: pakai # di setiap baris. Tanda `"""..."""` itu sebenarnya string, bukan komentar sejati.
+
+### Eksperimen setelah check50 hijau: kenapa APPLE jadi 2?
+- Saya ketik banana, apple, banana. Hasilnya 2 APPLE dan 2 BANANA, padahal apple cuma sekali.
+- Penyebabnya: di loop for, saya menulis dictionary[items], bukan dictionary[i]. Padahal variabel loop-nya i.
+- items itu variabel dari loop while sebelumnya. Waktu Ctrl+D, input langsung error sebelum sempat menyimpan, jadi items masih berisi input terakhir yang berhasil, yaitu BANANA.
+- Jadi setiap putaran mengambil hitungan BANANA, yaitu 2. Yang berganti cuma i, nama barangnya benar tapi angkanya salah.
+
+| Putaran | i | items | Tercetak |
+|---|---|---|---|
+| 1 | APPLE | BANANA | 2 APPLE |
+| 2 | BANANA | BANANA | 2 BANANA |
+
+- Ini sama persis dengan bug saya di murojaah Vanity Plates: c.isalnum() padahal harusnya s.isalnum(), karena c menyimpan huruf terakhir.
+- Pelajarannya: variabel dari loop sebelumnya tidak hilang, isinya nilai terakhir. Kalau hasilnya aneh dan selalu sama, cek apakah memakai variabel yang tepat.
+- Bug seperti ini tidak ada error-nya. Programnya jalan, cuma angkanya salah. Ketahuan karena saya mengetes dengan barang yang jumlahnya berbeda.
+
+### Yang saya pelajari
+- Seragamkan huruf sejak input, supaya yang disimpan dan yang dicari selalu sama.
+- dictionary[key] = dictionary.get(key, 0) + 1 adalah pola menghitung: ambil nilai lama (atau 0 kalau belum ada), tambah 1, simpan lagi.
+- upper cuma untuk string, bukan angka.
+- items() untuk mengupas pasangan key dan value. sorted pada string mengurutkan hurufnya.
+- Variabel loop sebelumnya tetap menyimpan nilai terakhir.
+- Beri tahu Duck soalnya dulu sebelum bertanya.
+
+### Salah yang saya buat
+- Rencana awal upper di output, bukan di input.
+- get tanpa nilai default, kena NoneType.
+- upper di hasil get (angka).
+- Menimpa dictionary dengan angka.
+- for key, value tanpa items().
+- sorted diberi satu string.
+- dictionary[items] padahal harusnya dictionary[i].
+
+### Refleksi: banyak bertanya ke Duck, itu progres atau ilusi?
+- Saya banyak sekali bertanya ke Duck di soal ini. Kalau tidak ada Duck, mungkin saya buntu. Tapi dari petunjuknya saya dapat banyak ilmu yang sebelumnya tidak saya tahu.
+- Bisa jadi progres, bisa jadi ilusi. Bedanya bukan seberapa sering bertanya, tapi apa yang tersisa di kepala setelah petunjuknya hilang.
+- Tanda progres hari ini: saya menemukan sendiri bug items vs i dan menghubungkannya dengan bug c vs s, membaca dokumentasi get sendiri, dan bereksperimen padahal check50 sudah hijau.
+- Ada petunjuk Duck yang cukup dekat ke jawaban, seperti sorted(dict.items()). Bagian itu yang paling mungkin belum benar-benar milik saya.
+- Cara menguji jujur: sekitar seminggu lagi, murojaah Grocery List dari layar kosong, tanpa Duck dan tanpa catatan.
+- Supaya petunjuk Duck makin sedikit: tulis rencana dulu sebelum bertanya, dan coba sendiri dulu sesuai aturan 30 menit.
+- Seperti santri yang masih dituntun waktu setoran. Wajar di awal, tapi hafalan baru jadi miliknya kalau bisa dibaca sendiri tanpa dituntun.
+
+### Yang ingin dicoba (murojaah kode setelah lulus)
+- Variabel saya namanya dict, padahal dict itu nama bawaan Python untuk tipe dictionary. Apa akibatnya kalau nama itu ditimpa? Ganti dengan nama lain.
+- Di dalam except EOFError ada pass, lalu print() dan break. Apakah pass di situ masih dibutuhkan?
+- Hapus sisa kode lama yang dibungkus tanda kutip tiga.
+- Nama variabel items (jamak) dipakai untuk satu barang. Cari nama yang lebih pas.
+- Murojaah Grocery List dari layar kosong sekitar seminggu lagi.
