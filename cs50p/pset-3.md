@@ -149,3 +149,84 @@ Cara pakai interactive mode yang benar (saya sempat salah):
 ### Jenis error yang sudah saya kenal
 - SyntaxError, NameError, AttributeError, TypeError, ValueError, IndexError, KeyError, ZeroDivisionError.
 - TypeError ternyata juga muncul kalau membandingkan string dengan int pakai < atau >.
+
+## 2. Felipe's Taqueria — selesai, check50 hijau semua 7/7 (7 Oktober 2026)
+
+Yang diminta soal:
+- Ada menu makanan dalam bentuk dictionary: nama makanan sebagai key, harganya sebagai value.
+- User mengetik nama makanan satu per satu.
+- Setiap kali user mengetik makanan yang ada di menu, program menampilkan total harga semua makanan yang sudah dipesan sejauh ini, dengan format dolar dan dua angka di belakang koma.
+- Huruf besar kecil tidak berpengaruh (burrito, Burrito, bUrrito dianggap sama).
+- Kalau makanannya tidak ada di menu, abaikan saja dan tanya lagi.
+- Program berhenti kalau user menekan Ctrl+D.
+
+Rencana saya:
+- Buat variabel penanda namanya celengan, isinya 0, untuk menyimpan total.
+- Loop terus: minta input makanan, rapikan hurufnya supaya cocok dengan key di dictionary.
+- Kalau ada di menu, harganya ditambahkan ke celengan, lalu tampilkan totalnya.
+- Kalau user menekan Ctrl+D, keluar dari loop.
+
+### Perjalanan dan yang membuat saya tersendat
+
+1. Error kecil di awal
+   - `While True:` pakai W besar, jadinya SyntaxError. Keyword Python huruf kecil semua: while.
+   - `IndentationError: unexpected indent`, ada baris yang menjorok padahal tidak seharusnya.
+   - `print("Total:", menu[item"])`, tanda kutip nyasar di dalam kurung siku. Hasilnya `SyntaxError: unterminated string literal`, artinya ada string yang dibuka tapi tidak ditutup.
+   - Waktu menekan Ctrl+C, muncul `KeyboardInterrupt`. Itu bukan bug, memang program saya hentikan paksa.
+
+2. Bingung memakai method get di dictionary
+   - Di soal ada pembahasan soal get. Saya sempat baca dokumentasi Python, tapi jujur kurang paham. Akhirnya saya dibantu Duck.
+
+3. Salah yang di-print: harga atau total
+   - Awalnya saya menampilkan harga makanannya, bahkan sempat menampilkan harga dan celengan dua-duanya.
+   - Ternyata yang diminta itu total, yaitu isi celengan, bukan harga satu makanan. Celengan itu variabel penanda yang menyimpan jumlah semua yang sudah dipesan.
+   - Format juga harus pakai tanda dolar dan dua angka desimal. Awalnya keluar `Total: 4.25` tanpa tanda dolar.
+
+4. Kalimat soal yang membuat saya bingung
+   - "After each inputted item, display the total cost of all items inputted thus far." Artinya setiap selesai satu makanan dimasukkan, langsung tampilkan total sementara. Thus far = sejauh ini, sampai sekarang.
+   - Saya bingung meletakkan print totalnya di mana.
+
+5. Salah letak print total: di luar loop
+   - Awalnya print total saya taruh di luar loop. Hasilnya total cuma muncul sekali, setelah saya menekan Ctrl+D. Urutannya terbalik.
+   - check50 merah di semua tes harga, pesannya `Did not find "$14.00" in "Item: "`. Artinya check50 mencari total sesudah input, tapi yang ketemu cuma tulisan "Item: ".
+   - Penjelasan saya sendiri: kalau print ada di luar loop, Ctrl+D cuma menghentikan loop-nya. Python tetap lanjut membaca kode di bawah loop. Jadi print yang di luar loop itulah yang terakhir tampil di terminal.
+   - Setelah print total saya pindahkan ke dalam loop, tepat sesudah harga ditambahkan ke celengan, totalnya muncul setiap kali satu makanan masuk. check50 langsung hijau semua.
+
+6. Bingung membaca demo di halaman soal
+   - Di demo, user mengetik makanan yang tidak ada di menu (large quesadilla), lalu program tidak menampilkan total. Saya kira programnya salah, atau seolah-olah menambahkan makanan yang tidak ada di menu.
+   - Duck bilang logika saya sudah benar.
+   - Kalau dihitung: burrito 7.50, large quesadilla tidak ada di menu jadi diabaikan, super quesadilla 9.50. Totalnya 7.50 + 9.50 = 17.00. Jadi demo itu memang benar: makanan yang tidak ada di menu tidak ditambahkan dan tidak menampilkan total, langsung tanya lagi.
+
+7. Bingung soal \n
+   - Saya sempat menulis `\n` di ujung baris kode, di luar tanda kutip. Hasilnya `SyntaxError: unexpected character after line continuation character`.
+   - Ternyata \n cuma berarti "baris baru" kalau ada di dalam string (di dalam tanda kutip). Di luar tanda kutip, tanda \ punya arti lain bagi Python, yaitu "baris ini bersambung ke baris berikutnya". Karena sesudahnya masih ada huruf n, Python bingung.
+   - Akhirnya saya pakai print() kosong untuk pindah baris, karena konsepnya sudah saya pahami.
+   - Bedanya: print() kosong mencetak satu baris baru. print("\n") mencetak dua, karena \n-nya sendiri satu, ditambah Enter bawaan print satu lagi.
+
+8. Ctrl+D (EOF)
+   - Ctrl+D artinya user bilang "input sudah habis". Python memunculkan EOFError, dan error itu yang saya tangkap untuk keluar dari loop.
+   - Sesudah Ctrl+D, saya cetak baris baru supaya tanda `$` di terminal tidak menempel di belakang tulisan "Item: ".
+
+### Yang saya pelajari
+- Variabel penanda untuk menjumlahkan (celengan) dibuat sebelum loop, isinya 0. Di dalam loop tinggal ditambah.
+- Letak print menentukan kapan dia muncul. Di dalam loop: muncul setiap putaran. Di luar loop: muncul sekali setelah loop selesai.
+- Huruf besar kecil dirapikan dulu supaya cocok dengan key di dictionary, sama seperti di Nutrition Facts.
+- \n hanya berfungsi di dalam string.
+- Membaca demo di halaman soal juga perlu dihitung manual, jangan langsung menyimpulkan.
+- Error baru: IndentationError, KeyboardInterrupt, EOFError.
+
+### Salah yang saya buat
+- While pakai huruf besar.
+- Indentasi berlebih.
+- Tanda kutip nyasar di dalam kurung siku dictionary.
+- Menampilkan harga, bukan total.
+- Format total tanpa tanda dolar.
+- Print total di luar loop.
+- \n ditulis di luar tanda kutip.
+
+### Yang ingin dicoba
+- Pelajari lagi method get di dictionary sampai paham, lalu coba di interactive mode.
+- Coba debugging pakai print (masih belum sempat dicoba).
+
+### Jenis error yang sudah saya kenal (update)
+- SyntaxError, NameError, AttributeError, TypeError, ValueError, IndexError, KeyError, ZeroDivisionError, IndentationError, KeyboardInterrupt, EOFError.
