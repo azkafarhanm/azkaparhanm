@@ -226,7 +226,6 @@ Rencana saya:
 
 ### Yang ingin dicoba
 - Pelajari lagi method get di dictionary sampai paham, lalu coba di interactive mode.
-- Coba debugging pakai print (masih belum sempat dicoba).
 
 ### Jenis error yang sudah saya kenal (update)
 - SyntaxError, NameError, AttributeError, TypeError, ValueError, IndexError, KeyError, ZeroDivisionError, IndentationError, KeyboardInterrupt, EOFError.
