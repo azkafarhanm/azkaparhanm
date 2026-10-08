@@ -349,3 +349,85 @@ Rencana saya:
 
 ### Yang ingin dicoba
 - Murojaah Grocery List dari layar kosong sekitar seminggu lagi, tanpa Duck dan tanpa catatan.
+
+## 4. Outdated — selesai, check50 hijau semua (8 Oktober 2026)
+
+Yang diminta soal:
+- User mengetik tanggal dengan format bulan-tanggal-tahun ala Amerika, dalam salah satu dari dua bentuk: angka dengan garis miring (9/8/1636) atau nama bulan dengan koma (September 8, 1636).
+- Program menampilkan tanggal itu dalam format tahun-bulan-tanggal (ISO 8601): 1636-09-08. Bulan dan tanggal harus dua digit.
+- Kalau inputnya bukan tanggal yang valid di salah satu format itu, program bertanya lagi.
+- Daftar nama bulan sudah disediakan dalam bentuk list.
+
+Rencana saya:
+- Loop while True, minta input tanggal.
+- Cek dulu formatnya: ada garis miring atau tidak.
+- Format garis miring: split di garis miring, ubah semuanya jadi integer.
+- Format nama bulan: buang komanya, split di spasi, ubah nama bulan jadi nomor pakai list bulan.
+- Cek bulan tidak lebih dari 12 dan tanggal tidak lebih dari 31, baru print.
+- Kalau gagal, except ValueError lalu tanya lagi.
+
+### Perjalanan dan yang membuat saya tersendat
+
+1. Mendapatkan nomor bulan dari list
+   - Saya bingung cara mendapatkan nomor indeks sebuah bulan di dalam list. Ternyata pakai `.index()`.
+   - Sempat saya kira sama dengan get di dictionary. Ternyata arahnya berbeda:
+
+| Cara | Diberi | Menghasilkan | Kalau tidak ada |
+|---|---|---|---|
+| list.index(nilai) | nilai | posisi (nomor indeks) | ValueError |
+| list[posisi] | posisi | nilai | IndexError |
+| dict.get(key) | key | value | None, tidak error |
+| dict[key] | key | value | KeyError |
+
+   - Indeks January itu 0, padahal nomor bulannya 1. Jadi hasil index harus ditambah 1. Tanda +1 harus di luar kurung index, bukan ditambahkan ke nama bulannya, karena "September" + 1 tidak masuk akal.
+   - Saya coba di interactive mode: `months.index("januari")` hasilnya `ValueError: 'januari' is not in list`. Jadi nama bulan yang tidak ada di list otomatis ditangkap oleh except ValueError.
+
+2. Salah split
+   - Awalnya saya langsung split di input. Ternyata harus dicek dulu karakter pembedanya (garis miring atau bukan), baru di-split sesuai formatnya.
+   - Muncul `ValueError: not enough values to unpack (expected 3, got 1)`. Wadahnya 3 (a, b, c), tapi hasil split cuma 1 bagian, karena saya split pakai spasi padahal isinya garis miring semua. Ternyata ValueError tidak cuma dari int("cat"), tapi juga dari jumlah wadah yang tidak cocok dengan jumlah isinya.
+   - Sempat juga `SyntaxError: invalid syntax` di baris except.
+
+3. Terlalu fokus ke "bulan harus di depan"
+   - Saya bingung cara membandingkan supaya bulannya ada di depan. Duck menegur: di kedua format, bulan memang selalu di depan. Yang perlu divalidasi bukan posisinya, tapi apakah setiap bagian benar-benar bisa diproses jadi tanggal yang valid.
+   - Saya baca pelan-pelan lagi penjelasan Duck, akhirnya terbuka juga pemikiran saya. Daripada membandingkan manual, lebih mudah langsung coba proses inputnya (split, int, index). Kalau gagal, ditangkap pakai except.
+
+4. Pengecekan rentang bulan dan tanggal
+   - Pengecekan bulan maksimal 12 dan tanggal maksimal 31 saya taruh sebagai if bersarang di dalam masing-masing cabang format. Kalau lolos, baru print.
+
+5. Break boleh lebih dari satu
+   - Saya kira break itu cuma boleh satu. Ternyata boleh banyak. break bekerja di titik mana pun dia dijalankan. Jadi tiap cabang yang berhasil punya break sendiri.
+   - Satu try juga boleh punya lebih dari satu except, dan satu while True boleh punya lebih dari satu blok try-except.
+
+6. check50 merah
+   - Hasil saya pakai garis miring (1636/09/08), padahal yang diminta pakai tanda minus (1636-09-08). Pelajarannya: bandingkan expected dan actual huruf per huruf.
+   - `September 8 1636` tanpa koma harus ditolak. Awalnya lolos karena koma langsung saya buang tanpa dicek dulu. Setelah saya tambahkan pengecekan ada koma atau tidak, hijau semua.
+   - `" 9/8/1636 "` dengan spasi di depan dan belakang ternyata lolos, karena int() otomatis membuang spasi, sama seperti percobaan saya `int(" 5 ")` dulu.
+
+7. Eksperimen sendiri: bulan 0
+   - Saya iseng ketik `0/20/2002`, ternyata lolos jadi `2002/00/20`, karena 0 memang kurang dari 12.
+   - check50 tidak mengujinya, tapi bulan ke-0 bukan tanggal yang valid. Bisa ditolak pakai perbandingan berantai seperti di Fuel Gauge, dengan batas bawah 1, bukan 0.
+   - Di interactive mode saya sempat ketik `0/2/2002` tanpa tanda kutip, hasilnya 0.0. Ternyata tanpa tanda kutip itu dianggap pembagian, bukan tanggal. Input dari user selalu string.
+   - Saya juga ketik `months.index(a)` di interactive mode dan kena NameError, karena interactive mode itu sesi baru yang tidak tahu variabel di file saya.
+
+### Yang saya pelajari
+- list.index untuk mencari posisi, dict.get untuk mencari value. Arahnya beda.
+- break boleh lebih dari satu.
+- ValueError juga muncul kalau jumlah wadah tidak cocok saat unpack.
+- Bandingkan expected dan actual di check50 dengan teliti.
+- Lulus check50 tidak berarti kebal semua kasus. Biasakan bertanya "kalau input ini, apa yang terjadi?"
+
+### Salah yang saya buat
+- Split langsung di input.
+- +1 di dalam kurung index.
+- Format output pakai garis miring, bukan tanda minus.
+- Koma dibuang tanpa dicek dulu.
+
+### Setelah lulus: murojaah kode
+- Pengecekan rentang dan print saya tulis berulang di dua cabang. Apakah bisa ditulis sekali di bawah if/else?
+  - Bisa, tapi ada jebakan. Kalau input tanpa koma, cabangnya tidak mengisi bulan, tanggal, tahun. Lalu pengecekan di bawah memakai variabel yang belum pernah dibuat (NameError, crash) atau sisa dari input sebelumnya.
+  - Variabel tidak otomatis terganti waktu user mengetik input baru. Yang berubah cuma variabel yang barisnya dengan tanda = benar-benar dijalankan. Sama seperti bug items vs i di Grocery dan c vs s di Vanity Plates.
+  - Menangkap NameError pakai except itu salah arah. ValueError itu kesalahan user, wajar minta ulang. NameError itu kesalahan kode kita sendiri, yang harus diperbaiki kodenya. Seperti alarm asap berbunyi lalu baterainya dicabut, padahal apinya masih ada.
+  - Pengecekan rentang itu bergantung pada data yang disiapkan cabangnya, jadi wajar kalau ada di dalam cabang. Kode saya yang sekarang aman karena print dan break ada di dalam tiap cabang.
+  - Ada cara lain yang menulis pengecekan sekali saja dengan try/except/else, tapi keamanannya tersirat. Buat saya kode saya sendiri lebih mudah dibaca, walaupun agak berulang. Explicit is better than implicit.
+  - Trade-off: pertukaran. Dapat satu keuntungan, harus merelakan keuntungan lain. Tidak ada pilihan yang sempurna.
+- Nama a, b, c lebih jelas kalau diganti month, day, year.
