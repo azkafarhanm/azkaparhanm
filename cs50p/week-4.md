@@ -106,3 +106,92 @@ choice(["heads", "tails"])   # TypeError: 'str' object is not callable
 - Jalankan `random.choice(["heads", "tails"])` beberapa kali, lihat hasilnya berubah-ubah.
 - Buat file kecil dengan for loop 10 kali yang mencetak `random.choice(["heads", "tails"])`, jalankan beberapa kali, cek apakah selalu 5 dan 5.
 - Lanjut lecture dari sekitar menit 10.
+
+---
+
+## Hari 2 – 10 Oktober 2026
+
+Belajar sekitar satu jam, tapi video yang tertonton cuma sekitar 5 menit (sampai bagian shuffle). Soalnya saya banyak pause dan banyak bertanya, terutama tentang bagaimana sistemnya bekerja.
+
+### Pemanasan: murojaah materi kemarin
+1. `import random` lalu `choice(["heads", "tails"])`, mana yang error?
+   - Jawaban saya: yang error baris `choice(...)`, karena filemu cuma kenal nama `random`, belum kenal `choice`.
+   - Yang saya lupa sebut: nama error-nya **NameError**. Perbaikannya ada dua: tulis `random.choice(...)`, atau ganti import-nya jadi `from random import choice`.
+2. Kenapa `random.choice("heads", "tails")` error, tapi `random.choice("abc")` jalan, padahal dua-duanya tanpa kurung siku?
+   - Jawaban saya: `"heads", "tails"` itu dianggap dua barang, bukan satu. `"abc"` itu masih satu barang (satu string) yang isinya a, b, c.
+   - Tambahan: `"abc"` bisa diundi karena string itu sendiri sudah sequence. Kotaknya sudah ada, jadi tidak perlu kurung siku lagi.
+3. `random.randint(1, 6)` dan hasilnya 6, 6, 6. Apakah peluang 6 di panggilan ke-4 jadi lebih kecil?
+   - Jawaban saya: tidak, peluangnya masih tetap ada. Angka yang mungkin keluar 1 sampai 6, inklusif angka 6 juga.
+   - Lebih tepatnya: peluangnya bukan cuma masih ada, tapi tetap sama persis, 1 dari 6. Toples tidak punya ingatan.
+
+### Kode di layar: generate.py
+```python
+import random
+
+number = random.randint(1, 10)
+print(number)
+```
+- Dijalankan beberapa kali, hasilnya beda-beda: 10, 2, 5.
+
+### Kosakata: deferring
+- DeepL menerjemahkan "menunda", tapi itu bukan arti yang dipakai di sini.
+- "defer sesuatu" = menunda (*defer the meeting* = menunda rapat).
+- "defer **to** seseorang" = menyerahkan atau mempercayakan kepada (*defer to the ustadz* = menyerahkan keputusan ke ustadz).
+- David bilang *"you're deferring to Python to actually do..."*. Artinya urusan mengacak angka diserahkan ke Python. Saya tidak menulis cara mengacaknya, cukup panggil `random.randint(1, 10)`, caranya urusan Python.
+- Mirip kalau ada santri bertanya hukum tajwid yang rumit, lalu saya bilang "tanya ke ustadz senior saja". Itu bukan menunda, tapi menyerahkan ke yang lebih ahli.
+
+### random.shuffle
+```python
+import random
+
+cards = ["jack", "queen", "king"]
+random.shuffle(cards)
+for card in cards:
+    print(card)
+```
+- shuffle mengacak urutan isi list. Hasilnya misalnya queen, jack, king.
+
+### Kosakata: permutations
+- Permutation = susunan urutan yang mungkin dari sekumpulan barang. Barangnya sama, yang beda hanya urutannya.
+- Kartu 3 buah (jack, queen, king) cuma bisa disusun dengan 6 cara.
+- Waktu dijelaskan pakai "cabang pohon", saya tidak tergambar. Yang membuat saya paham adalah cara mengelompokkan. Contohnya 3 santri mau setoran (Ali, Umar, Zaid):
+  - Kalau Ali maju pertama, sisanya Umar dan Zaid, cuma bisa 2 urutan: Ali, Umar, Zaid atau Ali, Zaid, Umar.
+  - Kalau Umar maju pertama, juga 2 urutan.
+  - Kalau Zaid maju pertama, juga 2 urutan.
+  - Jadi ada 3 kelompok × 2 urutan = 6 urutan.
+- Makanya David bilang *"there's not that many permutations we might see"*. Karena cuma 6 kemungkinan, kalau programnya dijalankan berkali-kali, urutan yang sama cepat muncul lagi. Itu bukan berarti shuffle-nya rusak.
+- Kalau santrinya 10 orang, cara menyusunnya langsung melonjak jadi 3.628.800.
+- Untuk koding, yang penting cukup paham bahwa jumlah susunannya terbatas. Cara menghitungnya cuma bonus.
+
+### Bedanya shuffle dengan function yang lain
+- Kata David, shuffle ini agak beda dari function pada umumnya. Ternyata bedanya bukan soal apa yang dikerjakan, tapi soal bagaimana hasilnya diberikan.
+- Function yang selama ini saya pakai, hasilnya dikembalikan (return), lalu ditampung pakai `=`:
+```python
+number = random.randint(1, 10)
+coin = random.choice(["heads", "tails"])
+```
+- shuffle tidak mengembalikan apa-apa. Dia langsung mengacak list aslinya. Makanya `random.shuffle(cards)` ditulis sendirian, tanpa `=`.
+- Analogi:
+  - choice = minta ustadz memilihkan satu nama dari toples, lalu ustadz menyerahkan kertas nama itu ke tangan saya.
+  - shuffle = saya serahkan papan absen ke ustadz, lalu ustadz mengacak urutan nama di papan itu langsung. Tidak ada papan baru, papan yang lama yang berubah.
+- Kebalikan dari `c.lower()`. Dulu saya belajar `c.lower()` tidak mengubah `c`, hasilnya harus ditampung (`c = c.lower()`). shuffle justru langsung mengubah list-nya.
+
+### Jebakan shuffle
+```python
+cards = random.shuffle(cards)   # salah
+print(cards)                    # None
+```
+- Karena shuffle tidak mengembalikan apa-apa, yang masuk ke `cards` adalah `None`, dan list kartunya malah hilang.
+- Ini salah satu cara munculnya `None` seperti di error `NoneType` waktu Week 3.
+
+### Kosakata
+| Kata | Arti |
+|---|---|
+| defer to | menyerahkan atau mempercayakan kepada |
+| permutation | susunan urutan yang mungkin |
+| shuffle | mengocok, mengacak urutan |
+
+### Yang mau dicoba
+- Di interactive mode: buat list `cards`, jalankan `random.shuffle(cards)`, lalu `print(cards)`. Ulangi beberapa kali.
+- Buktikan jebakannya: `x = random.shuffle(cards)`, lalu `print(x)`. Harusnya `None`.
+- Lanjut lecture dari bagian sesudah shuffle.
