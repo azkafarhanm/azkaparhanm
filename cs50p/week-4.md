@@ -195,3 +195,138 @@ print(cards)                    # None
 - Di interactive mode: buat list `cards`, jalankan `random.shuffle(cards)`, lalu `print(cards)`. Ulangi beberapa kali.
 - Buktikan jebakannya: `x = random.shuffle(cards)`, lalu `print(x)`. Harusnya `None`.
 - Lanjut lecture dari bagian sesudah shuffle.
+
+---
+
+## Hari 3 – 11 Oktober 2026
+
+Pagi murojaah dulu (catatannya nanti di murojaah.md). Siangnya lanjut lecture sampai bagian `sys.exit`, sekitar menit 40 dari total 1 jam 17 menit. Banyak istilah Inggris yang saya tanyakan.
+
+### Pemanasan: murojaah shuffle
+1. Kenapa `random.shuffle(cards)` ditulis tanpa `=`?
+   - Jawaban saya: shuffle punya aturan beda dari function biasa. Tanpa `=` sudah bisa mengubah value-nya, sedangkan function lain harus disimpan dulu di variabel.
+   - Yang diluruskan: shuffle tidak **menampilkan** apa-apa, dia cuma **mengubah urutan** list aslinya. Yang menampilkan tetap `print`.
+2. Output dari `cards = random.shuffle(cards)` lalu `print(cards)`?
+   - Jawaban saya: NameError, karena shuffle tidak bisa disimpan ke variabel. **Salah.**
+   - Yang benar: tidak ada error, outputnya `None`. Python boleh-boleh saja menyimpan hasil shuffle ke variabel, cuma hasilnya `None`, jadi list kartunya tertimpa.
+   - Kenapa bukan NameError: NameError muncul kalau Python tidak kenal namanya. Di sini nama `cards` dikenal (ada di absen sejak baris pertama), isinya saja yang berubah jadi `None`.
+   - Padahal jebakan ini sudah ada di catatan Hari 2. Berarti baca catatan belum tentu nempel, harus diuji.
+3. 2 santri (Ali dan Umar) bisa disusun berapa cara?
+   - Saya kira pertanyaannya pakai kode, jadi saya jawab pakai choice, shuffle, dan "range". Ternyata maksudnya hitung manual: 2 cara (Ali, Umar dan Umar, Ali).
+   - Yang saya sebut "range" itu maksudnya `randint`. randint dan choice tidak menyusun urutan, cuma shuffle yang menyusun urutan.
+
+### Permutation 10 santri: kenapa melonjak?
+- Caranya sama seperti 3 santri: 10 × 9 × 8 × ... × 1 = 3.628.800.
+- Setiap tambah satu orang, jumlah sebelumnya **dikalikan**, bukan ditambah. Makanya naiknya tajam.
+- 2 → 2, 3 → 6, 4 → 24, 5 → 120, ... 10 → 3.628.800.
+- 3 kartu cuma 6 kemungkinan, jadi urutan yang sama cepat terulang. 10 kartu ada 3,6 juta kemungkinan, jadi jarang terulang.
+
+### Bisakah peluang kartu diatur?
+- Ada mahasiswa yang bertanya: bisa tidak king dibuat lebih sering keluar daripada jack dan queen?
+- Jawaban David: dengan choice, randint, dan shuffle tidak bisa, karena function itu sengaja dibuat sederhana dan semua isinya peluangnya sama. Tapi bisa kalau buat function sendiri, atau pakai function yang lebih canggih di library.
+- Sebenarnya saya sudah ketemu satu akal-akalan: `random.choice(["heads", "heads", "tails"])`. Function-nya tetap choice, tapi isi toplesnya diatur, jadi peluang heads 2 dari 3.
+
+### Module statistics dan mean
+```python
+import statistics
+
+print(statistics.mean([100, 90]))
+```
+- Hasilnya 95.
+- Nama function-nya `mean`, bukan "main". (Di catatan kecil saya sempat kebalik.)
+- Mean artinya **rata-rata**: semua angka dijumlahkan, lalu dibagi banyaknya angka. (100 + 90) ÷ 2 = 95.
+- Awalnya saya kira mean itu "angka tengah", atau "nilai awal tambah nilai akhir dibagi dua". Ternyata bukan. Di contoh ini memang kebetulan pas, karena angkanya cuma dua. Kalau angkanya `[100, 90, 80]`, yang dijumlahkan semuanya lalu dibagi 3. "Angka tengah" itu istilah lain, namanya median.
+- Saya juga sempat mengira mean harus ada dua argumen. Ternyata mean cuma mau **satu** argumen, yaitu satu toples (list) yang isinya boleh berapa angka saja. Mirip choice: `statistics.mean(100, 90)` tanpa kurung siku akan error, karena itu dua barang.
+- Yang menarik: di kode ini tidak ada variabel sama sekali. List langsung masuk ke mean, hasil mean langsung masuk ke print. Bacanya dari dalam ke luar, sama seperti `int(input(...))`.
+- Kalau pakai variabel juga boleh (`scores = [100, 90]`, `average = statistics.mean(scores)`, `print(average)`). Dua-duanya benar, trade-off antara ringkas dan mudah dibaca.
+
+### Module sys dan sys.argv
+- `sys` itu module, sama seperti random dan statistics. `sys.argv` dibaca: dari kitab sys, ambil argv.
+- argv = **arg**ument **v**ector. Vector di sini anggap saja list. Kata David itu cuma "fancy way", istilah keren untuk sesuatu yang sederhana.
+- Isinya: daftar kata yang diketik user di terminal, sekalian waktu menjalankan program. Jadi tidak perlu prompt input.
+```
+$ python name.py David
+```
+```python
+sys.argv  →  ["name.py", "David"]
+#              indeks 0    indeks 1
+```
+- Indeks 0 selalu nama file-nya sendiri. Kata dari user baru mulai indeks 1. Makanya kodenya pakai `sys.argv[1]`.
+- Bedanya dengan input():
+  - `input()` = santri dipanggil maju dulu, baru ditanya "mau setoran surat apa?"
+  - `sys.argv` = "Ali, maju, setoran Al-Mulk." Datanya disebut sekalian waktu dipanggil.
+
+### Kalau nama lengkap (ada spasi)
+- `python name.py David Malan` → sys.argv jadi `["name.py", "David", "Malan"]`. Spasi memisahkan kata, jadi David dan Malan dianggap dua argumen.
+- Supaya nama lengkap dianggap satu argumen, pakai tanda kutip: `python name.py "David Malan"` → `["name.py", "David Malan"]`.
+
+### IndexError
+- Kalau dijalankan tanpa nama (`python name.py`), sys.argv cuma `["name.py"]`. Lalu `sys.argv[1]` minta barang kedua yang tidak ada.
+- Hasilnya: `IndexError: list index out of range`. Error baru: nomor urut yang diminta di luar jangkauan list.
+- Ibarat absen cuma berisi 1 nama, lalu saya panggil santri nomor 2. Orangnya tidak ada.
+- Kalau diganti `[0]`, memang tidak error, tapi hasilnya `hello, my name is name.py`. Program jalan, tapi salah. Sama seperti catatan saya di Pset 1: program yang jalan belum tentu benar.
+
+### Cara memperbaikinya: beberapa metode
+1. Pakai `try` dan `except IndexError` → print "Too few arguments". Mirip Week 3, tapi error yang ditangkap IndexError, bukan ValueError.
+2. Pakai `len(sys.argv)` untuk menghitung ada berapa kata:
+   - `< 2` → terlalu sedikit (too few)
+   - `> 2` → terlalu banyak (too many)
+   - `else` → pas 2, aman pakai `sys.argv[1]`
+   - Masalahnya: print utama (tugas inti program) jadi terselip di `else`, paling bawah. David bilang tugas utamanya "relegated" ke else clause.
+3. Pakai `sys.exit(...)` di dalam if dan elif.
+
+### sys.exit
+```python
+if len(sys.argv) < 2:
+    sys.exit("Too few arguments")
+elif len(sys.argv) > 2:
+    sys.exit("Too many arguments")
+
+print("hello, my name is", sys.argv[1])
+```
+- `sys.exit` = langsung keluar dari program saat itu juga, sambil menampilkan pesannya.
+- Jadi kalau argumennya salah, program berhenti, dan print di bawah (di luar if, bukan di luar loop) tidak pernah dijalankan.
+- Karena itu `else` tidak dibutuhkan lagi, dan print utamanya tidak terselip di dalam else.
+- Mirip catatan Vanity Plates: kalau if diakhiri return, else-nya bisa dibuang. Bedanya, di sini yang menghentikan adalah sys.exit, dan yang dihentikan seluruh program, bukan cuma function.
+
+### SyntaxError lagi: mea culpa
+- David sempat kena `SyntaxError: unterminated string literal` karena lupa tanda kutip penutup di `"Too few arguments`.
+- Kata David: SyntaxError itu "mea culpa", salah programmer sendiri, bukan salah user.
+
+### Kosakata
+| Kata | Arti |
+|---|---|
+| skew | membuat condong, berat sebelah |
+| mean | rata-rata |
+| leverage | memanfaatkan |
+| argument vector (argv) | daftar kata yang diketik di terminal |
+| infer | menyimpulkan dari petunjuk |
+| at first glance | sekilas |
+| rather + sifat | cukup, agak (*rather complicated* = cukup rumit) |
+| rather than | daripada |
+| and yet | namun, tetapi |
+| as though | seolah-olah |
+| indeed | memang, betul |
+| frankly | jujur saja, terus terang |
+| isn't all that + sifat | tidak terlalu |
+| amount (kata benda) | jumlah |
+| amount to | sama dengan, berarti |
+| from the get-go | sejak awal (get-go di sini kata benda, bukan dua kata kerja) |
+| too few / too many | terlalu sedikit / terlalu banyak |
+| quite | cukup; not quite = belum sepenuhnya |
+| quiet / quit | hening / berhenti, keluar (beda dengan quite) |
+| mea culpa | salahku (bahasa Latin) |
+| messed up | mengacaukan, berbuat salah |
+| red herring | pengalih perhatian |
+| relegated | tersingkir ke posisi kurang penting |
+| name tag | label nama |
+| clause | bagian, klausa |
+| absolutely | benar-benar, tentu saja |
+| ultimately | pada akhirnya, intinya |
+| incarnation | versi, bentuk |
+| prematurely | sebelum waktunya, lebih awal |
+
+### Yang mau dicoba
+- Buat `name.py` sendiri, coba tiga cara: `python name.py`, `python name.py David`, `python name.py David Malan`, dan `python name.py "David Malan"`. Bandingkan hasilnya.
+- Coba `statistics.mean` dengan list berisi 3 angka atau lebih, hitung manual dulu, lalu cocokkan.
+- Lanjut lecture dari bagian sesudah sys.exit (sekitar menit 40).
