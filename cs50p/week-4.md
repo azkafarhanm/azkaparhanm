@@ -160,7 +160,7 @@ for card in cards:
   - Kalau Zaid maju pertama, juga 2 urutan.
   - Jadi ada 3 kelompok × 2 urutan = 6 urutan.
 - Makanya David bilang *"there's not that many permutations we might see"*. Karena cuma 6 kemungkinan, kalau programnya dijalankan berkali-kali, urutan yang sama cepat muncul lagi. Itu bukan berarti shuffle-nya rusak.
-- Kalau santrinya 10 orang, cara menyusunnya langsung melonjak jadi 3.628.800.
+- Kalau santrinya 10 orang, cara menyusunnya langsung melonjak jadi 3.628.800 kali kemungkinan muncul nya 
 - Untuk koding, yang penting cukup paham bahwa jumlah susunannya terbatas. Cara menghitungnya cuma bonus.
 
 ### Bedanya shuffle dengan function yang lain
