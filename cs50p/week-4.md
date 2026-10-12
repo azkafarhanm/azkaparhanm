@@ -330,3 +330,183 @@ print("hello, my name is", sys.argv[1])
 - Buat `name.py` sendiri, coba tiga cara: `python name.py`, `python name.py David`, `python name.py David Malan`, dan `python name.py "David Malan"`. Bandingkan hasilnya.
 - Coba `statistics.mean` dengan list berisi 3 angka atau lebih, hitung manual dulu, lalu cocokkan.
 - Lanjut lecture dari bagian sesudah sys.exit (sekitar menit 40).
+
+---
+
+## Hari 4 – 12 Oktober 2026
+
+Lanjut lecture dari bagian sesudah sys.exit sampai **selesai**. Week 4 lecture tamat hari ini. Kira-kira 3 jam coding. Paling banyak bahas API, karena bagi saya API ini penting.
+
+### Pemanasan: murojaah mean dan sys.argv
+1. Rata-rata dari `[100, 90, 80]`?
+   - Jawaban saya: 198, lalu 216. **Salah dua kali.**
+   - Yang benar: 100 + 90 + 80 = 270, lalu 270 ÷ 3 = **90**.
+   - Tips untuk cek sendiri: rata-rata **tidak mungkin lebih besar** dari angka paling besar di list. Jadi kalau hasilnya 198 padahal angka terbesarnya 100, pasti ada yang salah.
+2. `python name.py David Malan`: sys.argv isinya berapa?
+   - Isinya 3 barang: `["name.py", "David", "Malan"]`. Yang dari user cuma 2 (David dan Malan), karena indeks 0 itu nama file-nya.
+
+### Slice: mengambil sebagian list
+```python
+for arg in sys.argv[1:]:
+    print("hello, my name is", arg)
+```
+- Slice = mengambil potongan dari list. Hasilnya tetap list, cuma lebih pendek (subset of the list).
+- `[1:]` artinya mulai dari indeks 1, terus **sampai akhir**. Sesudah titik dua (colon) di sebelah kanan boleh dikosongkan, artinya "sampai habis".
+- Dengan `[1:]`, nama file (indeks 0) dibuang, jadi yang tersisa cuma kata-kata dari user. Mau ketik 1 nama atau 10 nama, semua disapa.
+- `[1:-1]` artinya mulai dari indeks 1, **berhenti sebelum** item terakhir. Jadi item terakhirnya hilang.
+- Kenapa? Karena `-1` itu menghitung dari belakang: -1 = item paling terakhir, -2 = sebelum terakhir, dan seterusnya. Dan slice selalu berhenti **sebelum** angka yang di kanan, mirip `range`.
+
+### Third-party library, pip, dan PyPI
+- Third-party = pihak ketiga. Library yang bukan bawaan Python, dibuat orang lain.
+- Bedanya dengan random, statistics, sys: yang bawaan bisa langsung `import`. Kalau third-party, **harus dipasang dulu**, baru bisa di-import.
+- Cara pasangnya pakai **pip** (untuk Python), diketik di terminal, bukan di dalam file .py:
+```
+pip install cowsay
+```
+- **PyPI** (pypi.org) = tempat yang menyimpan banyak sekali package Python. Ibarat perpustakaan besar, pip itu petugas yang mengambilkan bukunya.
+- Ada juga package dari CS50 sendiri di PyPI, misalnya check50 dan submit50.
+- Package = folder yang isinya beberapa module (file .py).
+
+### Package manager: satu rumpun, beda bahasa
+- pip itu salah satu **package manager**. Bahasa lain punya sendiri: npm (JavaScript), Maven (Java), cargo (Rust). Tugasnya sama, memasang package, cuma beda bahasa.
+- Yang saya luruskan: `import` **bukan** anggota rumpun itu. pip tugasnya **memasang** (sekali saja, di terminal). `import` itu bagian dari bahasa Python, tugasnya **memakai** yang sudah terpasang (di setiap file yang butuh).
+
+### Command line
+- Command line = tempat mengetik perintah. Di Windows namanya CMD atau PowerShell, di Mac/Linux namanya Terminal. Di VS Code ada di bagian terminal bawah.
+
+### Module cowsay
+```python
+import cowsay
+import sys
+
+if len(sys.argv) == 2:
+    cowsay.cow("hello, " + sys.argv[1])
+```
+- cowsay itu package lucu: tulisan kita diucapkan oleh sapi bergambar ASCII art (gambar yang dibuat dari huruf dan simbol keyboard).
+- Ada dokumentasinya juga, sama seperti library lain. Function-nya ada `cowsay.cow`, ada juga `cowsay.trex` (dinosaurus T-rex).
+- Tetap ada `sys.argv` di situ untuk mengambil nama dari command line argument.
+
+### API
+- **API** = loket. Kita datang membawa permintaan sesuai aturan loket, lalu dikasih jawaban. Kita tidak perlu tahu apa yang terjadi di dapurnya.
+- **API key** = kartu anggota untuk loket tertentu. API dan API key itu beda: API itu loketnya, key itu kartunya.
+- API key harus disimpan di **backend**, jangan di frontend, karena frontend bisa dilihat orang lain.
+- **Endpoint** = alamat loketnya. Contoh di lecture (iTunes):
+```
+https://itunes.apple.com/search?entity=song&limit=1&term=weezer
+```
+  - Sesudah `?` itu parameter: `entity=song` (cari lagu), `limit=1` (ambil 1), `term=weezer` (kata kuncinya). Dipisah pakai `&`.
+- **Request** = permintaan yang kita kirim. **Response** = jawaban yang kita terima.
+- HTTP / HTTPS = aturan bicara antara kita dan server. HTTPS = versi yang aman (dienkripsi).
+- Yang saya luruskan:
+  - Request itu **bukan link-nya**. Link (URL) itu alamatnya, request itu kegiatan mengirim permintaan ke alamat itu.
+  - Response **tidak selalu** JSON. Bisa HTML, gambar, dan lain-lain. Tapi API biasanya pakai JSON.
+  - Request **tidak harus** dari backend. Yang wajib dari backend cuma request yang membawa API key.
+  - Di lecture ini kita **memakai** (consume) API orang lain. Membuat API sendiri (provide) nanti, pakai Flask atau FastAPI.
+
+### requests dan JSON
+```python
+import json
+import requests
+import sys
+
+if len(sys.argv) != 2:
+    sys.exit()
+
+response = requests.get("https://itunes.apple.com/search?entity=song&limit=50&term=" + sys.argv[1])
+print(json.dumps(response.json(), indent=2))
+```
+- `requests` itu third-party, jadi dipasang dulu pakai pip.
+- `requests.get(...)`: link-nya masuk sebagai **argumen** di dalam get.
+- Bagian `term=weezer` diubah: kata "weezer"-nya dihilangkan, diganti `+ sys.argv[1]`. Jadi kata kuncinya dari user, lewat command line.
+- `response.json()` = mengubah jawaban dari server menjadi dictionary/list Python.
+- **JSON** = format data yang bisa dibaca semua bahasa pemrograman (language-agnostic). Sintaksnya mirip sekali dengan dictionary Python: ada `{}`, key, value.
+- JSON itu datang sebagai **data**, bukan file.
+- Python punya library bawaan namanya `json`. Di dalamnya ada function `json.dumps`. Dump = menumpahkan. `json.dumps(..., indent=2)` menumpahkan datanya dengan rapi (pretty print), pakai jarak 2 spasi, supaya mudah dibaca manusia.
+
+### Dictionary di dalam list, list di dalam dictionary
+```python
+o = response.json()
+for result in o["results"]:
+    print(result["trackName"])
+```
+- Ternyata dictionary bisa ada **di dalam list**, value dictionary bisa berupa **list**, dan di dalam dictionary bisa ada **dictionary** lagi. Bersarang (nested).
+- Contoh: `o["results"]` itu list, isinya banyak dictionary (satu per lagu). Tiap dictionary punya key `"trackName"`.
+- Kalau mau langsung ambil lagu pertama: `o["results"][0]["trackName"]`. Bacanya dari kiri: ambil results → ambil barang ke-0 → ambil trackName-nya.
+- Nama-nama key seperti `"results"` dan `"trackName"` itu yang menentukan **pemilik API** (Apple/iTunes), bukan kita. Kita tinggal ikut, harus lihat dulu bentuk JSON-nya.
+  - Catatan: sesudah jadi dictionary di program kita, isinya tetap boleh kita ubah. Tapi itu cuma mengubah salinan di program kita, data di server Apple tidak ikut berubah.
+
+### Membuat library sendiri dan `__name__`
+```python
+def main():
+    hello("world")
+    goodbye("world")
+
+def hello(name):
+    print(f"hello, {name}")
+
+def goodbye(name):
+    print(f"goodbye, {name}")
+
+if __name__ == "__main__":
+    main()
+```
+- File `sayings.py` ini bisa dipakai di file lain: `from sayings import goodbye`.
+- Masalahnya: kalau di bawah cuma `main()` biasa, waktu di-import, `main()`-nya ikut jalan. Jadi muncul "hello, world" dan "goodbye, world" padahal tidak diminta.
+- `__name__` = special variable. Dunder = double underscore, garis bawah dua di kiri dan kanan.
+- Setiap file punya `__name__`, diisi otomatis oleh Python, mirip sys.argv yang otomatis menyimpan command line argument walaupun tidak dipakai.
+  - Kalau file itu **dijalankan langsung** → isinya `"__main__"`.
+  - Kalau file itu **di-import** lewat file lain → isinya nama file-nya sendiri (tanpa .py).
+- Jadi `if __name__ == "__main__":` artinya: jalankan `main()` hanya kalau file ini yang dijalankan langsung, bukan kalau cuma dipinjam lewat import.
+- `==` itu membandingkan (apakah sama?), bukan `=` yang menyimpan.
+
+### Percobaan saya sendiri
+- `latihan.py` isinya `print(__name__)`. Dijalankan langsung → keluar `__main__`.
+- `train.py` isinya `import latihan.py`. Dijalankan → keluar `latihan`, lalu `ModuleNotFoundError: No module named 'latihan.py'`.
+- Kenapa? Titik di import artinya "di dalam". Jadi Python mencari module `py` di dalam package `latihan`. Yang benar: `import latihan`, tanpa `.py`.
+- Tapi tulisan `latihan` sempat keluar dulu, jadi terbukti: waktu di-import, isi `__name__`-nya nama file-nya.
+
+### Kenapa namanya "main"?
+- Awalnya saya kira isinya `"__main__"` karena ada pemanggilan function `main()`. Ternyata **bukan**.
+- "Main" artinya **utama** (dibaca "men"). File yang dijalankan langsung = file utama, pintu masuk program. Ibarat ustadz yang memimpin halaqah. File yang di-import = santri yang dipanggil maju, dipanggil pakai namanya sendiri.
+- Pakai dunder supaya tidak bentrok dengan file yang memang bernama `main.py` (kalau di-import, isinya `"main"`, tanpa dunder).
+- Function `main()` itu cuma **kebiasaan programmer** (asalnya dari bahasa C yang wajib punya main). Di Python tidak wajib. Kebetulan sama-sama pakai kata "utama", tapi tidak saling bergantung.
+
+### Kosakata
+| Kata | Arti |
+|---|---|
+| bother (to) | repot-repot |
+| hand out | membagikan |
+| go around | berkeliling, beredar |
+| allude to | menyinggung (tidak langsung) |
+| third-party | pihak ketiga |
+| arcane | rumit, cuma dipahami sedikit orang |
+| hands down | tanpa diragukan, jelas sekali |
+| rabbit hole | terlarut mendalami sesuatu sampai lupa waktu |
+| just because | hanya karena |
+| once | begitu, setelah (*once you install it* = begitu kamu pasang) |
+| more on those down the road | nanti dibahas lebih lanjut |
+| namely | yaitu |
+| tedium | kebosanan karena hal yang berulang (di subtitle tertulis "TDM") |
+| invariably | selalu, pasti |
+| (language-)agnostic | tidak bergantung pada bahasa tertentu |
+| pretend | berpura-pura |
+| somehow | entah bagaimana |
+| in turn | pada gilirannya |
+| happens to | kebetulan |
+| wonderfully coincidentally | kebetulan sekali (bukan "luar biasa") |
+| pretty print | mencetak dengan rapi |
+| dump / dummy | menumpahkan / tiruan, boneka (beda kata) |
+| skimming | membaca sekilas |
+| suspect (kata kerja) | menduga |
+| emphasize | menekankan |
+| transition back | kembali beralih |
+| immortalized | diabadikan |
+| albeit | meskipun |
+| pretty + sifat | cukup (*pretty easy* = cukup mudah) |
+
+### Yang mau dicoba
+- Ubah `train.py` jadi `import latihan` (tanpa .py), jalankan lagi, lihat hasilnya bersih.
+- Ganti `def main():` jadi `def mulai():` di sayings.py, buktikan `__name__` tetap `"__main__"`.
+- Coba `pip install cowsay` di laptop sendiri, lalu `cowsay.trex`.
+- Coba link iTunes langsung di browser, lihat bentuk JSON-nya.
+- Mulai Pset 4.
