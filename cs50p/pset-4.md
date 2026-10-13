@@ -48,7 +48,7 @@ Yang diminta soal:
 - Membaca dokumentasi library sendiri itu bisa, dan jawabannya memang ada di sana.
 - Pesan check50 `expected` vs `actual` itu petunjuk: `actual` masih berupa `:thumbsup:` berarti kodenya tidak dikenali, bukan programnya error.
 
-## 2. Frank, Ian and Glen's Letters (figlet) — sudah submit (13 Oktober 2026)
+## 2. Frank, Ian and Glen's Letters (figlet) — selesai, check50 hijau semua 8/8 (13 Oktober 2026)
 
 Soal ini lumayan struggle. Banyak bertanya ke Duck, tapi Duck tidak kasih jawaban, cuma petunjuk dan pertanyaan pancingan. Akhirnya selesai, dan saya paham alur kodenya.
 
@@ -146,9 +146,8 @@ print(figlet.renderText(s))
     - Saya coba `python figlet.py ;`, kok keluar font acak? Saya kira harusnya salah.
     - Ternyata `;` di terminal itu pemisah perintah, bukan argumen. Jadi sama saja dengan `python figlet.py` biasa.
 
-### Catatan: check50 terakhir sebelum submit
-- check50 sempat **hijau semua 8/8**. Tapi check50 yang terakhir, tepat sebelum submit, merah satu: `exits given one command-line argument → Expected non-zero exit code`.
-- Berarti ada yang berubah di antara dua check50 itu. Perlu dicek lagi besok, lalu lihat hasilnya di submit.cs50.io. Kalau masih merah, boleh submit ulang.
+### Catatan: check50 yang terakhir merah
+- Di riwayat terminal ada check50 merah satu sesudah yang hijau 8/8. Itu cuma saya tes-tes saja. Yang saya submit tetap kode yang hijau semua.
 
 ### Yang saya pelajari
 - Zero/two argumen itu dihitung dari user, jadi `len(sys.argv)` 1 dan 3.
@@ -175,11 +174,46 @@ print(figlet.renderText(s))
 - TypeError ternyata bisa juga karena **jumlah argumen** salah (`takes 1 positional argument but 2 were given`) atau karena memberi objek yang tidak punya panjang ke choice (`has no len()`).
 - Pesan check50 baru: `timed out while waiting for program to exit` dan `Expected non-zero exit code`.
 
-### Yang mau ditanyakan dan didiskusikan besok
-- Kalau pakai `import pyfiglet` saja (bukan `from pyfiglet import Figlet`), berarti tinggal ditambahkan `pyfiglet.` di depan Figlet?
-- Lebih detail soal getFonts yang "mengembalikan" list.
-- Kenapa check50 terakhir merah satu, padahal sebelumnya hijau semua.
+### Diskusi pagi dengan Claude (14 Oktober 2026)
+
+1. setFont dipanggil tanpa diisi
+   - `figlet.setFont(font=)` (keyword ada, nilainya kosong) → langsung SyntaxError. Python tidak mengizinkan `nama=` tanpa nilai.
+   - `figlet.setFont()` (kosong sama sekali) → tidak error. Kembaliannya tetap None, dan font-nya tetap font yang terakhir dipasang. Kalau belum pernah dipasang, pakai font default namanya `standard`.
+   - Ibarat ustadz bilang "pakai mushaf yang tadi saja".
+   - Kalau nama font-nya tidak ada, misalnya `setFont(font="tidakada")`, pyfiglet langsung error `FontNotFound`.
+
+2. Crash vs sys.exit
+   - Saya kira pengecekan pakai `in` juga error kalau font-nya tidak ada. **Ternyata tidak.** `"tidakada" in figlet.getFonts()` hasilnya cuma `False`. Error baru muncul kalau nama font yang salah langsung dimasukkan ke setFont.
+   - Jadi dengan pengecekan, error-nya tidak pernah terjadi. Saya sendiri yang memutuskan berhenti, sebelum masalahnya muncul.
+   - Crash = Python yang menghentikan karena kaget, user melihat traceback panjang. Ibarat santri tiba-tiba pingsan di tengah setoran.
+   - sys.exit = saya yang menghentikan dengan sengaja, user melihat pesan singkat. Ibarat ustadz bilang dengan tenang "cukup dulu, ulang besok".
+   - Sama-sama berhenti, tapi yang kedua terkendali. Soalnya juga minta keluar lewat sys.exit dengan pesan.
+
+3. `-f` vs `--font`
+   - Tulisannya `-f` (huruf F, singkatan font), bukan `-v`.
+   - Di program command line memang biasa ada versi ringkas (1 strip, 1 huruf) dan versi lengkap (2 strip, 1 kata). Artinya sama.
+   - Contoh lain: `python -V` = `python --version`, `pip install -U` = `pip install --upgrade`.
+   - Ringkas = cepat diketik. Lengkap = mudah dibaca.
+
+4. Kalau cuma `import pyfiglet`
+   - Awalan `pyfiglet.` cuma ditambahkan di depan `Figlet`, di baris pembuatan objeknya: `figlet = pyfiglet.Figlet()`.
+   - Sesudah objeknya jadi, method-nya tetap dipanggil lewat objek: `figlet.setFont(...)`, `figlet.renderText(...)`.
+   - Saya sempat mengira kalau `import pyfiglet` saja, method-nya bisa langsung dipakai tanpa objek. **Ternyata tidak.**
+
+5. Kenapa harus bikin objek?
+   - Tergantung library-nya, bukan aturan khusus pyfiglet. Ada dua gaya:
+     - Function langsung di module, tidak perlu objek: `random.choice`, `statistics.mean`, `cowsay.cow`, `emoji.emojize`. Function-nya tidak perlu mengingat apa-apa.
+     - Harus bikin objek dulu: `Figlet`. renderText itu milik objek Figlet, bukan milik module pyfiglet. Karena Figlet perlu **mengingat** font yang sedang dipakai.
+   - Analogi mesin stempel: `Figlet()` = membuat mesin stempel. `setFont` = memasang cetakan huruf, mesinnya ingat cetakannya. `renderText` = menstempel pakai cetakan yang terpasang.
+   - Mesinnya harus disimpan di variabel, supaya yang dipakai renderText itu mesin yang sama dengan yang tadi dipasangi font.
+   - Prinsip: kalau method-nya perlu mengingat sesuatu, biasanya harus lewat objek. Nanti dibahas lengkap di Week 8 (Object-Oriented Programming).
+
+6. Tiga argumen dengan syarat `> 2`
+   - `python figlet.py -f slant ekstra` → `len(sys.argv)` = 4. Karena 4 > 2, program tetap jalan pakai slant, kata `ekstra` diabaikan.
+   - Saya sempat bilang "kalau lebih ya diabaikan, karena sesuai permintaan". **Justru tidak sesuai.** Soalnya bilang nol **atau dua** argumen, jadi tiga argumen itu salah dan harus keluar pakai sys.exit.
+   - check50 tetap hijau karena kasus itu kebetulan tidak dites. Pelajaran: **check50 hijau belum tentu semua aturan soal terpenuhi.**
+   - Saya perbaiki pakai `==` (tepat sekian), dites ulang dengan `ekstra`, dan betul program keluar dengan pesan error.
 
 ### Yang ingin dicoba
-- Jalankan `python figlet.py -f slant ekstra` (tiga argumen). Apa yang terjadi? Sesuai soal tidak?
-- Coba `dir(figlet)` di interactive mode setelah membuat objeknya, lihat ada method apa saja.
+- ~~`dir(figlet)` di interactive mode~~ → sudah dicoba, keluar daftar method dan informasinya.
+- ~~Tiga argumen (`ekstra`)~~ → sudah dicoba dan diperbaiki.
