@@ -217,3 +217,201 @@ print(figlet.renderText(s))
 ### Yang ingin dicoba
 - ~~`dir(figlet)` di interactive mode~~ → sudah dicoba, keluar daftar method dan informasinya.
 - ~~Tiga argumen (`ekstra`)~~ → sudah dicoba dan diperbaiki.
+
+## 3. Adieu, Adieu — selesai, check50 hijau semua 9/9 (14 Oktober 2026)
+
+Yang diminta soal:
+- User mengetik nama satu per satu, baris per baris, sampai menekan Ctrl+D.
+- Anggap user minimal mengetik satu nama.
+- Program mengucapkan perpisahan ke semua nama itu: `Adieu, adieu, to ...`
+  - 1 nama: `Adieu, adieu, to Liesl`
+  - 2 nama: `Adieu, adieu, to Liesl and Friedrich`
+  - 3 nama atau lebih: dipisah koma, dan sebelum nama terakhir pakai `and`.
+- Library-nya `inflect`.
+
+### Perjalanan dan yang membuat saya tersendat
+
+1. Baca dokumentasi inflect dulu
+   - Yang saya tangkap dari bagian atas dokumentasi: inflect itu module untuk mengubah kata, misalnya singular jadi plural atau sebaliknya (noun, verb, adjective), ordinal, angka.
+   - Saya paham isinya, tapi bingung mencocokkan dengan soal: function mana yang dibutuhkan?
+   - Duck kasih petunjuk: cari yang berhubungan dengan "join". Ketemu `p.join(...)`. Sama seperti Figlet, harus bikin objeknya dulu: `p = inflect.engine()`.
+
+2. `names = name` → list berubah jadi string
+   - Saya buat `names = []` sebelum loop, lalu di dalam loop `names = name`. Saya kira list-nya jadi terisi.
+   - Ternyata `if len(names) == 1` tidak pernah jalan. Saya coba `print(len(names))`, hasilnya 4 untuk "azka". Yang dihitung huruf-hurufnya, bukan jumlah nama.
+   - Penyebabnya: tanda `=` itu **menimpa/mengganti**, bukan menambahkan. Jadi list kosongnya tertimpa string.
+   - Saya sempat tebak pakai `index`. Salah, index itu untuk mencari posisi. Yang benar **`append`**, untuk menambahkan satu item ke akhir list.
+
+3. Ctrl+D → EOFError, ditangkap pakai try/except
+   - Waktu Ctrl+D ditekan di `input()`, muncul `EOFError`. Ini sudah pernah saya temui di Grocery List (Pset 3).
+
+4. `TypeError: print() got an unexpected keyword argument 'conj'`
+   - Saya taruh `conj='and'` di dalam kurung print. Padahal `conj` itu parameter milik `p.join`, bukan milik print. print tidak kenal conj, jadi protes.
+
+5. Pengecekan jumlah nama: if dan elif sama persis
+   - Saya tulis `if len(names) > 2` lalu `elif len(names) > 2`. Dua-duanya sama, jadi kalau cuma 2 nama, tidak ada yang jalan, tidak tampil apa-apa.
+
+6. `Name: Name: Name: Name:` terus-terusan
+   - Waktu Ctrl+D tapi belum ada `break`: EOFError tertangkap, loop lanjut, input langsung kena EOF lagi, tertangkap lagi, terus tanpa henti.
+   - Bukti: **except saja tidak menghentikan loop. Yang menghentikan loop itu `break`.**
+
+7. Sempat salah tempat di terminal
+   - Saya ketik `cd ~` supaya prompt-nya kembali jadi `$` saja. Ternyata malah jadi `~/ $`, dan folder `adieu` yang saya buat di situ tidak muncul di sidebar.
+   - `~` (tilde) itu home folder, beda dengan folder workspace yang tampil di sidebar. Ibarat kamar pribadi vs ruang kelas.
+   - Kembali ke workspace: `cd /workspaces/237807624`. Sempat salah ketik `cd cd /workspaces/...` → `too many arguments`, karena cd-nya dua kali.
+   - Menghapus folder: `rm adieu/` gagal (`Is a directory`), karena rm tanpa `-r` cuma untuk file. Folder kosong pakai `rmdir`. Folder beserta isinya pakai `rm -r` (hati-hati, permanen, tidak ada Recycle Bin).
+
+### Setelah submit: diskusi dengan Claude
+
+1. `sep='and'` di kode saya ternyata tidak dipakai sama sekali
+   - `sep` itu milik print, bukan milik p.join. Kelihatan dari tanda kurungnya: sep ada di dalam kurung print, di luar kurung p.join.
+   - sep di print cuma berpengaruh kalau print diberi beberapa argumen yang dipisah koma. Di kode saya, print cuma dapat satu argumen, karena teksnya sudah disambung pakai `+`. Jadi sep diabaikan.
+   - "and"-nya datang dari p.join sendiri: parameter `conj` (conjunction, kata sambung) default-nya sudah `'and'`.
+
+2. Koma otomatis: aturan p.join
+
+| Isi list | Hasil `p.join(...)` |
+|---|---|
+| `["Ali"]` | `Ali` |
+| `["Ali", "Umar"]` | `Ali and Umar` |
+| `["Ali", "Umar", "Hasan"]` | `Ali, Umar, and Hasan` |
+
+   - Jadi if/else saya (2 nama atau lebih vs else) sebenarnya hasilnya sama persis. Tidak perlu dibedakan, join sudah menangani semua jumlah.
+
+3. Kenapa pakai inflect, bukan print sep saja?
+   - `print("Ali", "Umar", "Hasan", sep=" and ")` → `Ali and Umar and Hasan`. sep memasang pemisah yang **sama** di setiap celah.
+   - `", ".join(["Ali", "Umar", "Hasan"])` → `Ali, Umar, Hasan`, tanpa "and".
+   - Yang diminta soal: pemisahnya beda tergantung posisi dan jumlah. Bisa dibuat sendiri pakai if/elif dan slice (`names[:-1]`), tapi ribet. Gunanya library: tidak perlu menulis ulang yang sudah dibuat orang lain.
+
+4. `", ".join(...)`: objeknya kok koma?
+   - Di Python, **string juga objek**. `", "` itu objek string, dan join itu method milik string.
+   - Sebenarnya sudah sering saya pakai: `name.strip()`, `"hello".upper()`, bahkan `names.append()` (method milik list).
+   - Di join bawaan string, string itulah yang jadi perekat di antara setiap item. Ibarat merangkai tasbih: names itu biji-bijinya, `", "` itu talinya. Yang diperintah merangkai itu talinya.
+   - Ada dua join yang berbeda: `", ".join()` milik objek string (bawaan Python, satu perekat sama), `p.join()` milik objek inflect (ikut aturan bahasa Inggris). Namanya sama, pemiliknya beda. Sama seperti pelajaran namespace: yang menentukan join mana itu objek sebelum titiknya.
+
+5. Pengecekan ditaruh di mana: di dalam try, di dalam except, atau di luar loop?
+
+| Posisi | Yang terjadi |
+|---|---|
+| Di dalam try | Jalan setiap kali satu nama masuk. Ini terjadi di terminal saya: sesudah ketik `azki` langsung muncul `azka and azki`, lalu ditanya lagi. |
+| Di dalam except (kode saya) | Jalan sekali, waktu Ctrl+D. Benar. |
+| Di luar loop, sesudah while | Juga benar, asal except-nya berisi break. |
+
+   - Saya sempat mengira "kalau Ctrl+D menghentikan program, pengecekan di luar loop tidak kebaca". Itu cuma benar kalau EOFError **tidak ditangkap**. Kalau ditangkap lalu break, yang berhenti cuma loop-nya, Python lanjut ke baris di bawah loop.
+   - Pembagian tugas yang rapi: loop mengumpulkan nama, except menghentikan loop, baris sesudah loop menampilkan hasil. Ibarat halaqah: setoran dikumpulkan dulu sampai selesai, baru ustadz mengumumkan hasilnya.
+
+### Kosakata dari soal
+- **sung** = dinyanyikan (bentuk ketiga dari sing). *sung largely in English* = sebagian besar dinyanyikan dalam bahasa Inggris.
+- **rhymes with** = berima / bersajak dengan. "yieu" bukan kata sungguhan, cuma dibuat supaya berima dengan "you".
+
+### Yang saya pelajari
+- `=` itu menimpa, `append` itu menambahkan ke list.
+- `print(len(...))` untuk mengecek apa yang sebenarnya dihitung.
+- Parameter itu milik function yang kurungnya membungkus dia.
+- except tidak menghentikan loop, break yang menghentikan.
+- String dan list juga objek, punya method sendiri.
+- `~` di terminal = home folder, beda dengan workspace.
+
+### Yang ingin dicoba
+- Bikin versi tanpa inflect di file terpisah, pakai if/elif dan slice. Murojaah slice yang bagus.
+- Coba `" - ".join(...)` dan `"".join(...)` di interactive mode.
+
+## 4. Guessing Game — check50 hijau semua 10/10 (14 Oktober 2026)
+
+Yang diminta soal:
+- Minta user mengetik level, bilangan bulat positif. Kalau bukan, tanya lagi.
+- Program memilih angka acak dari 1 sampai level itu (inklusif).
+- Minta user menebak, bilangan bulat positif. Kalau bukan, tanya lagi.
+  - Tebakan lebih kecil → `Too small!`, tanya lagi.
+  - Tebakan lebih besar → `Too large!`, tanya lagi.
+  - Tebakan pas → `Just right!`, program selesai.
+
+### Cara saya mulai: kumpulkan kerangka dulu
+- Sekarang saya tidak menulis komentar dulu. Saya baca soalnya: minta apa dulu? Oh, input, berarti disimpan di variabel karena nanti dipakai lagi. Inputnya harus positif? Berarti perlu if/else.
+- Kerangka-kerangka itu saya kumpulkan dulu, baru saya sambung-sambungkan: kerangka ini cocok tidak kalau ditaruh di sini?
+- Kata Claude, cara ini namanya **memecah masalah** (decomposition). Ini cara kerja programmer sungguhan.
+
+### Perjalanan dan yang membuat saya tersendat
+
+1. Dua input dalam satu loop?
+   - Awalnya saya buat dua try. Tapi bingung: kalau level-nya negatif, harusnya tanya level lagi, kok malah lanjut tanya guess? Karena Python membaca ke bawah.
+   - Duck bertanya: struktur apa untuk "ulangi terus sampai valid"? Apakah bagian level harus selesai dulu sebelum masuk guess?
+   - Akhirnya saya tebak sendiri: **dua while True**. Yang pertama menangani input level, yang kedua menangani input guess. Sejajar, satu sesudah yang lain, bukan di dalam.
+   - Loop pertama harus bisa berhenti (pakai break) kalau level-nya sudah valid, baru program bisa pindah ke loop kedua.
+
+2. while True kedua berwarna abu-abu
+   - Kata Duck, editor memberi warna redup pada kode yang **tidak akan pernah dijalankan** (unreachable). Waktu itu loop pertama saya belum ada break, jadi berputar selamanya, dan loop kedua tidak pernah tercapai.
+
+3. Function random yang mana, dan ditaruh di mana?
+   - Bingung antara range, randint, randrange.
+   - Angka acaknya cukup dibuat **sekali**, jadi ditaruh di luar loop guess, sebelum loop itu. Kalau di dalam loop, angkanya berganti setiap kali menebak.
+   - Rentangnya 1 sampai level dari user. Batas atasnya harus ikut, jadi pakai randint yang inklusif. Beda dengan range yang tidak inklusif.
+
+4. `NameError: name 'level' is not defined` waktu input `cat`
+   - Pengecekan level jalan padahal int()-nya gagal, jadi level tidak pernah dibuat. Pelajaran yang sama dengan Fuel Gauge: baris yang memakai hasil try ditaruh di else, setelah try-nya berhasil.
+
+5. `TypeError: '<' not supported between instances of 'str' and 'int'`
+   - Guess belum diubah jadi int sebelum dibandingkan. Ini juga pernah terjadi di Fuel Gauge.
+
+6. `SyntaxError: expected 'except' or 'finally' block`
+   - Error baru. try wajib punya pasangan, yaitu except (atau finally). Kalau sesudah try langsung if, Python protes.
+
+7. check50 merah karena huruf
+   - `Too large` (kurang tanda seru) dan `Too Small!` (S besar). check50 membandingkan huruf per huruf, case-sensitive.
+   - Pesan check50-nya sempat membingungkan: `Did not find "Guess:" in "Too Small!\r\nGuess: "`. Padahal "Guess:"-nya ada. Ternyata yang salah di bagian lain.
+
+8. `rejects nonpositive guess` masih merah
+   - Saya kira non-positive itu "kurang dari nol". Jadi syarat saya `< 0`, dan nol lolos. Padahal program harusnya menolak nol juga.
+   - Akhirnya saya balik logikanya: `not guess > 0` (bukan lebih dari nol). Langsung hijau semua.
+
+### Positive, negative, dan nol
+
+| Istilah | Artinya | Nol termasuk? |
+|---|---|---|
+| positive | lebih dari 0 | tidak |
+| negative | kurang dari 0 | tidak |
+| non-positive | bukan positif = negatif atau nol | ya |
+| non-negative | bukan negatif = positif atau nol | ya |
+
+- Nol itu bukan positif dan bukan negatif.
+- `not guess > 0` sama artinya dengan `guess <= 0`.
+
+### Setelah check50 hijau: Level 0 ternyata crash
+- Claude minta saya coba `Level: 0`. Ternyata langsung crash.
+- Penyebabnya: pengecekan level saya masih `< 0`, jadi nol lolos. Padahal soalnya minta level bilangan bulat **positif**. Kesalahan yang sama dengan guess, cuma belum saya perbaiki di level.
+- `random.randint(1, 0)` diminta memilih angka dari 1 sampai 0. Tidak ada angka di situ, toplesnya kosong.
+- Saya kira error-nya SyntaxError. **Ternyata bukan**, yang muncul `ValueError: empty range in randrange(1, 1)`.
+  - SyntaxError muncul **sebelum** program jalan, karena cara menulis kodenya salah.
+  - ValueError (dan TypeError, NameError) muncul **saat** program jalan, kodenya benar tapi nilainya bermasalah. Buktinya program sempat minta `Level:` dulu.
+- Tidak tertangkap except ValueError saya, karena baris randint ada **di luar** try. except cuma menangkap error dari baris di dalam try-nya sendiri.
+- Lagi-lagi: **check50 hijau belum tentu semua aturan soal terpenuhi.** Sama seperti figlet kemarin.
+
+### Kenapa pesannya randrange, padahal yang saya panggil randint?
+- Di dalamnya, randint memanggil randrange dengan batas atas **ditambah 1**. Yang menambah satu itu randint, bukan randrange.
+- randrange sendiri sama seperti range: berhenti **sebelum** batas atasnya.
+
+| Yang saya tulis | Yang sebenarnya dijalankan | Angka yang mungkin keluar |
+|---|---|---|
+| `randint(1, 8)` | `randrange(1, 9)` | 1 sampai 8 |
+| `randrange(1, 8)` | `randrange(1, 8)` | 1 sampai 7 |
+| `randint(1, 0)` | `randrange(1, 1)` | kosong → ValueError |
+
+- Ibarat randrange itu absen yang ditulis "sampai sebelum nomor 9". randint itu petugas yang baik hati: saya bilang "sampai nomor 8", dia otomatis tulis "sampai sebelum nomor 9" supaya nomor 8 tidak ketinggalan.
+- Jadi randint inklusif karena dia cuma randrange yang sudah ditambah satu.
+
+### Yang saya pelajari
+- Dua input yang masing-masing harus diulang sampai valid → dua while True sejajar.
+- Kode berwarna abu-abu di editor = tidak akan pernah dijalankan.
+- Angka acak cukup dibuat sekali, di luar loop tebakan.
+- Non-positive termasuk nol.
+- SyntaxError (sebelum jalan) beda dengan ValueError/TypeError/NameError (saat jalan).
+- except cuma menangkap error dari baris di dalam try-nya.
+- check50 itu huruf per huruf, termasuk tanda seru dan huruf besar-kecil.
+
+### Jenis error yang sudah saya kenal (update)
+- SyntaxError, NameError, AttributeError, TypeError, ValueError, IndexError, KeyError, ZeroDivisionError, IndentationError, KeyboardInterrupt, EOFError, FontNotFound (dari pyfiglet).
+- SyntaxError baru: `expected 'except' or 'finally' block`.
+- ValueError baru: `empty range in randrange(...)`.
+
+### Yang ingin dicoba
+- Perbaiki pengecekan level supaya nol ditolak, tes `Level: 0`, jalankan check50, lalu submit50.
