@@ -415,3 +415,308 @@ Yang diminta soal:
 
 ### Yang ingin dicoba
 - Perbaiki pengecekan level supaya nol ditolak, tes `Level: 0`, jalankan check50, lalu submit50.
+
+## Pemanasan pagi (15 Oktober 2026)
+
+Murojaah materi kemarin, lima pertanyaan dari Claude, dijawab tanpa buka catatan.
+
+1. `names = []` lalu `names = "Ali"` vs `names = []` lalu `names.append("Ali")`
+   - Jawaban saya: len-nya 3 dan 1. **Benar.**
+   - Yang diluruskan: `=` itu bukan meng-update, tapi **mengganti seluruhnya**. List kosongnya dibuang, names sekarang menunjuk string "Ali", makanya len menghitung huruf.
+   - names sudah jadi objek list sejak `names = []`, bukan baru jadi objek karena append.
+2. `"-".join(["Ali", "Umar", "Hasan"])`
+   - Objeknya `"-"`, method-nya join, hasilnya `Ali-Umar-Hasan`. **Benar.**
+   - Tapi saya bilang join itu "memecah". **Salah, kebalikannya.** join itu menyambung/merangkai. Yang memecah itu split.
+   - `"-".join([...])` → dari list jadi satu string. `"Ali-Umar-Hasan".split("-")` → dari string jadi list. Pasangan yang berlawanan.
+3. Non-positive dari -3, 0, 5 → yang ditolak -3 dan 0. **Benar.**
+4. `randint(1, 5)` di dalamnya jadi `randrange(1, 6)`. `randrange(1, 5)` keluarnya 1 sampai 4. **Benar.**
+5. Kenapa `Name: Name: Name:` terus-terusan di Adieu?
+   - Jawaban saya: karena tidak ada break. **Setengah benar.**
+   - Kenapa tidak menunggu ketikan: sesudah Ctrl+D, aliran input dianggap sudah ditutup. Setiap kali loop balik ke input(), dia langsung kena EOFError lagi tanpa menunggu. Ibarat pintu kelas sudah dikunci, tapi ustadz terus memanggil "santri berikutnya!".
+
+## raise: sengaja melempar error (diskusi pagi, 15 Oktober 2026)
+
+Di soal Little Professor ada kata kunci `raise`. Saya lupa, jadi saya tanya ke Claude.
+
+- **raise = sengaja memunculkan error sendiri.** Kalau except itu menangkap, raise itu melempar. Raise artinya "mengangkat", seperti santri yang mengangkat tangan karena ada masalah.
+- Error yang selama ini saya temui dibuat oleh Python. Dengan raise, saya sendiri yang membuat, karena saya tahu ada aturan yang dilanggar.
+
+Contoh di luar soal:
+```python
+def ambil_juz(nomor):
+    if nomor < 1 or nomor > 30:
+        raise ValueError("Juz hanya 1 sampai 30")
+    return f"Juz {nomor}"
+```
+
+Mekanismenya:
+1. Kalau baris raise jalan, function **langsung berhenti** di situ. return di bawahnya tidak dijalankan.
+2. Error-nya dilempar ke **siapa pun yang memanggil** function itu.
+3. Kalau pemanggil punya try/except untuk error itu → tertangkap, pemanggil yang memutuskan mau apa.
+4. Kalau tidak ada yang menangkap → program crash, traceback-nya menampilkan pesan saya.
+
+| Kata kunci | Tugas | Analogi bola |
+|---|---|---|
+| try | mencoba menjalankan | bermain |
+| raise | melempar error | melempar bola |
+| except | menangkap error | menangkap bola |
+
+Kenapa raise, bukan print atau sys.exit?
+- print: cuma menampilkan tulisan, function-nya tetap lanjut seolah tidak ada masalah, ujungnya mengembalikan None.
+- sys.exit: menghentikan seluruh program. Terlalu keras.
+- raise: cuma melaporkan masalah, keputusannya diserahkan ke pemanggil.
+- Ibarat ustadz penguji yang menerima santri minta setoran juz 31: dia tidak menyetop seluruh halaqah (sys.exit), tidak pura-pura lanjut (print), cukup bilang "ini tidak bisa", lalu musyrif yang mengantar santri itu yang memutuskan langkah berikutnya.
+
+Saya coba sendiri di interactive mode: `raise ValueError("coba-coba")` → keluar traceback, baris terakhirnya `ValueError: coba-coba`.
+
+Pertanyaan saya: program-nya masih lanjut ke bawah atau berhenti?
+- **Berhenti**, kecuali ditangkap. Di interactive mode (`>>>`) memang saya masih bisa mengetik lagi, karena interactive mode sengaja tidak keluar setiap ada error. Tapi di file .py, program benar-benar berhenti.
+
+```python
+try:
+    print("satu")
+    raise ValueError("coba")
+    print("dua")
+except ValueError:
+    print("tertangkap")
+
+print("tiga")
+```
+- Hasilnya: `satu`, `tertangkap`, `tiga`. `dua` tidak pernah dicetak, karena begitu raise jalan, Python langsung loncat ke except.
+
+| | Baris sesudah raise (di blok yang sama) | Sisa program |
+|---|---|---|
+| Tidak ditangkap | dilewati | berhenti (crash) |
+| Ditangkap except | dilewati | lanjut sesudah except |
+
+Pertanyaan saya lagi: kok except-nya jalan? Saya kira try-nya berhasil, karena baris raise sudah dijalankan.
+- **Ternyata raise di dalam try artinya try-nya gagal.** Try dianggap berhasil hanya kalau semua barisnya selesai tanpa error. raise itu tugasnya membuat error.
+- Bagi except, tidak ada bedanya error itu dari Python (`int("cat")`) atau dari raise saya. Seperti penjaga gawang: tidak peduli bola dari kaki siapa, yang dia lihat cuma ada bola ValueError yang masuk atau tidak.
+- Baris raise memang dijalankan, tapi hasil dari menjalankannya adalah error. Ibarat santri yang lancar membaca, tapi yang dibaca itu pengumuman bahwa ada kesalahan.
+- Kalau ada else, else juga tidak jalan, karena else cuma jalan kalau try benar-benar berhasil.
+
+## 5. Little Professor — selesai, check50 hijau semua 13/13 (15 Oktober 2026)
+
+Soal ini lumayan menantang, harus berpikir sangat keras. Cocok untuk dimurojaah nanti supaya ilmunya terserap.
+
+Yang diminta soal:
+- Minta user mengetik level (n). Kalau bukan 1, 2, atau 3, tanya lagi.
+- Buat 10 soal penjumlahan `X + Y = `. X dan Y bilangan bulat non-negatif dengan n digit.
+- Kalau jawaban salah (atau bukan angka) → tampilkan `EEE`, tanya lagi. Maksimal 3 kali per soal. Kalau tetap salah, tampilkan jawaban yang benar.
+- Terakhir tampilkan skor: berapa yang benar dari 10.
+- Wajib pakai tiga function: `main`, `get_level` (minta level, return 1/2/3), `generate_integer(level)` (return satu angka acak dengan n digit, atau raise ValueError kalau level bukan 1, 2, 3). Dan wajib ada `if __name__ == "__main__":`.
+
+### Perjalanan dan yang membuat saya tersendat
+
+1. Bingung main() isinya apa
+   - Petunjuk soal cuma ada untuk get_level dan generate_integer. Main tidak ada petunjuknya. Saya simpulkan, yang lain-lain dikerjakan di main.
+   - Kata Duck: main itu "sutradara" yang mengatur alur dan memanggil function-function lain.
+
+2. Salah fokus: tugas tiap function tercampur
+   - Saya sempat mau bikin loop 3 kali di get_level. Padahal batas 3 kali itu untuk menjawab soal matematika, bukan untuk memilih level.
+   - Saya juga sempat bilang "level itu bebas, berapapun diterima". Salah, level cuma 1, 2, 3, dan diulang terus sampai valid (while True, bukan for).
+   - Pelajaran: harusnya fokus dulu, setiap function gunanya untuk apa. Jangan tugas main dicampur ke function lain.
+
+3. `get_level(level)`: parameter yang tidak perlu
+   - Saya bikin `def get_level(level)` lalu di main `level = get_level(level)`.
+   - Muncul **error baru**: `UnboundLocalError: cannot access local variable 'level' where it is not associated with a value`. Python mengerjakan sisi kanan dulu, padahal `level` di dalam kurung belum pernah diberi nilai. Variabelnya baru dibuat setelah sisi kanan selesai.
+   - Lalu saya hapus argumennya di main, muncul `TypeError: get_level() missing 1 required positional argument: 'level'`, karena di def-nya masih ada parameter.
+   - Ternyata get_level tidak butuh parameter, karena dia sendiri yang membuat level dari input user.
+
+| | Butuh bahan dari luar? | Parameter | Memberi hasil lewat |
+|---|---|---|---|
+| `get_level()` | Tidak, dia membuat level sendiri dari input | tidak ada | return level |
+| `generate_integer(level)` | Ya, dia perlu tahu level-nya | level | return integer |
+
+   - Aturannya: **parameter = bahan yang dibutuhkan function dari luar. return = hasil yang dia serahkan kembali.**
+   - Ibarat santri: get_level itu santri yang ditugasi "tanyakan ke wali santri mau ikut kelas berapa", tidak perlu dibekali apa-apa. generate_integer itu santri yang ditugasi "ambilkan soal untuk kelas sekian", jadi harus diberi tahu kelasnya.
+   - Untuk mengambil hasil get_level di main tidak perlu print. Cukup return di function-nya, lalu ditangkap pakai `=`.
+
+4. Input di main, loop di get_level → tidak bisa reprompt
+   - input() harus ada di dalam loop yang sama, supaya bisa diulang.
+
+5. `level` berwarna abu-abu
+   - Saya kira bakal error. Ternyata tidak. Abu-abu karena variabelnya disimpan tapi belum pernah dipakai. Begitu dipakai di `generate_integer(level)`, warnanya normal lagi.
+   - Beda dengan abu-abu di Guessing Game kemarin (kode yang tidak akan pernah dijalankan / unreachable). Dua-duanya cuma pengingat editor, bukan error.
+
+6. Rentang angka tiap level
+   - Saya sempat mau pakai `randint(level, 10)`. Salah. Level 2 harusnya 10–99, bukan 2–10.
+   - Saya tanya ke Duck: 0 itu positif? Bukan, 0 itu netral. Tapi soalnya bilang **non-negative**, jadi 0 termasuk. Level 1 = 0–9, level 2 = 10–99, level 3 = 100–999.
+   - generate_integer mengembalikan **satu** angka (dari namanya, integer tunggal). Main yang memanggilnya dua kali untuk X dan Y.
+   - Sempat typo `ranndint`.
+
+7. raise atau except untuk jawaban bukan angka?
+   - Saya sempat mau pakai raise. Duck bertanya: siapa yang sudah melempar error waktu `int("abc")`? Python sendiri. Jadi tugas saya cuma **menangkap**, pakai try/except.
+   - raise dipakai kalau saya yang mau membuat error. except dipakai kalau mau menangkap error supaya program tetap jalan.
+
+8. input boleh pakai f-string
+   - `input(f"{x} + {y} = ")` boleh, karena input menerima string apa saja sebagai prompt.
+
+9. Soal tidak berganti
+   - X dan Y saya buat sekali di luar loop, jadi soalnya sama terus. Pembuatan soal harus di dalam loop 10 soal.
+
+10. `total =+ 1`
+    - Dibaca Python sebagai `total = +1` (positif satu). Jadi total selalu 1. Yang benar `+=`.
+
+11. Loop di dalam loop
+    - for 10 kali untuk soal, di dalamnya for 3 kali untuk kesempatan. Kalau benar, break keluar dari loop kesempatan, lanjut ke soal berikutnya.
+    - print skor ditaruh paling akhir, sejajar dengan for 10 soal, tetap di dalam main. Kalau di atas, skornya tampil duluan sebelum soal dikerjakan.
+
+12. while True + for 10 → tidak berhenti
+    - Di terminal saya hitung, sudah lebih dari 10 soal kok belum berhenti. Ternyata gara-gara while True di luar for. for range(10) sudah otomatis berhenti setelah 10 kali, jadi while True tidak perlu. Saya hapus.
+
+13. Variabel `salah` harus di-reset di dalam loop 10 soal
+    - Kalau `salah = 0` ditaruh di luar loop, nilainya menumpuk antar soal. Misalnya soal pertama salah 3 kali → salah = 3, `if salah == 3` jalan. Soal kedua salah lagi → 4, 5, 6. `salah == 3` tidak akan pernah benar lagi, jadi jawaban benar tidak pernah ditampilkan.
+    - Kalau `salah = 0` di dalam loop 10 soal (sebelum loop 3 kesempatan), setiap soal baru mulai dari nol lagi.
+    - Variabel yang dibuat `= 0` di dalam loop akan kembali ke nilai semula setiap kali loop berulang.
+
+14. Pemanggilan dari file lain?
+    - Saya tanya Duck: function mana yang dipanggil file lain? Di soal ini tidak disebutkan. Tapi karena wajib ada `if __name__ == "__main__":`, file ini memang disiapkan untuk bisa di-import.
+
+### Setelah check50 hijau: dua hal yang ternyata belum sesuai soal
+
+1. generate_integer tidak me-raise ValueError
+   - Saya sempat menyimpulkan: "yang diminta soal belum tentu harus dijalankan", karena saya tidak pakai raise sama sekali tapi tetap hijau. **Kesimpulan ini salah.** Soalnya bilang raise ValueError kalau level bukan 1, 2, 3. Itu syarat. check50 hijau karena kasus itu tidak dites.
+   - Saya buktikan sendiri: bikin `percobaan.py` yang meng-import generate_integer, lalu `print(generate_integer(4))`. Hasilnya `None`. Karena perbandingan saya cuma sampai 3, kalau bukan 1/2/3 tidak ada yang di-return.
+   - Saya tambahkan else yang me-raise ValueError. Dijalankan lagi, traceback-nya:
+     ```
+     File ".../percobaan.py", line 2       ← pemanggil
+     File ".../professor.py", line 62      ← tempat raise
+     ValueError: Error
+     ```
+   - Ini bukti mekanisme raise: error **dibuat** di professor.py, lalu **dilempar ke pemanggilnya** (percobaan.py). Karena tidak ada yang menangkap, crash. Traceback itu dibaca seperti jejak perjalanan bola.
+   - Bonus: waktu di-import, main() tidak ikut jalan dan saya tidak ditanya Level. Bukti `if __name__ == "__main__":` saya bekerja. percobaan.py yang meng-import professor.py itu persis pelajaran custom library (sayings.py) di lecture.
+   - Ini sudah ketiga kalinya minggu ini: **check50 hijau belum tentu semua aturan soal terpenuhi** (figlet tiga argumen, Guessing Game level 0, Little Professor raise).
+
+2. Jawaban bukan angka tidak dihitung salah
+   - Claude minta saya coba jawab `cat`, `cat`, `cat` di satu soal. Saya awalnya bingung, ini di level atau di soal matematika? Maksudnya di soal matematika.
+   - Masalahnya: di `except ValueError`, variabel `salah` tidak ditambah. Jadi tiga kali jawab bukan angka, jawaban benar tidak ditampilkan. Padahal soalnya bilang "not correct (or not even a number)".
+   - Saya perbaiki dengan menambah salah juga di except. Sekarang angka yang keliru maupun bukan angka sama-sama dihitung.
+
+### Yang saya pelajari
+- Fokus dulu: setiap function tugasnya apa.
+- Parameter = bahan dari luar, return = hasil yang diserahkan kembali.
+- `UnboundLocalError`: memakai variabel di sisi kanan `=` sebelum variabel itu pernah dibuat.
+- `=+` itu bukan `+=`.
+- for untuk jumlah pasti (10 soal, 3 kesempatan), while True untuk "sampai valid".
+- Variabel penghitung per soal di-reset di dalam loop soal.
+- raise untuk melempar error sendiri, try/except untuk menangkap.
+- Yang diminta soal itu syarat, walaupun check50 tidak mengetesnya.
+
+## 6. Bitcoin Price Index — selesai, check50 hijau semua 6/6 (15 Oktober 2026)
+
+Yang diminta soal:
+- User mengetik jumlah bitcoin di command line, misalnya `python bitcoin.py 2.5`.
+- Kalau tidak ada argumen → exit `Missing command-line argument`. Kalau bukan angka → exit `Command-line argument is not a number`.
+- Ambil harga bitcoin dari API CoinCap, lalu tampilkan harga n bitcoin dalam USD, 4 angka desimal, koma sebagai pemisah ribuan. Contoh `$38,761.0833`.
+- Tangkap `requests.RequestException`.
+
+### Daftar API key dulu
+- API lama yang dulu dipakai soal ini sudah tidak bisa (CoinCap v2 dihentikan). Soalnya sudah diganti ke CoinCap v3, yang **wajib pakai API key**.
+- Jadi harus bikin akun CoinCap dulu, lalu klik "Add New Key" di dashboard. Ini praktik langsung pelajaran "kartu anggota" dari lecture.
+- Sempat bingung email konfirmasinya tidak masuk ke Gmail. Tips dari Claude: cek folder Spam/Promosi/Pembaruan, cari "coincap", cek apakah daftarnya pakai email lain (Outlook), tunggu beberapa menit.
+
+### Perjalanan dan yang membuat saya tersendat
+- Banyak yang lupa: cara mengambil API, requests.get, sys.argv. Saya buka lagi catatan Week 4 saya di GitHub dan video David Malan.
+
+1. URL belum dibungkus tanda kutip
+   - `SyntaxError: invalid decimal literal`, lalu `expression cannot contain assignment, perhaps you meant "=="?`. Python mengira URL itu kode, dan `=` di `apiKey=` dikira assignment.
+   - Saya juga sempat salah tulis `/apiKey=` padahal yang benar `?apiKey=`. Sesudah `?` itu parameter.
+
+2. `requests.exceptions.MissingSchema: Invalid URL ... No scheme supplied`
+   - URL kurang `https://` di depannya. Error ini milik library requests. Baris terakhirnya bahkan kasih saran: "Perhaps you meant https://...".
+   - Tips dari Duck: selalu baca baris paling terakhir traceback, di situ inti masalahnya.
+
+3. Lihat dulu bentuk JSON-nya
+   - Sesudah URL benar, saya print `response.json()`. Kelihatan ada key `data`, isinya dictionary lagi, di dalamnya ada `priceUsd`.
+   - Lalu saya pakai `json.dumps(..., indent=2)` supaya tampilannya rapi, persis seperti di lecture.
+
+4. `TypeError: 'Response' object is not subscriptable`
+   - Saya tulis `response["data"]`. Padahal response itu objek dari requests, belum dictionary. Harus diubah dulu pakai `.json()`.
+
+5. `TypeError: string indices must be integers, not 'str'`
+   - Saya simpan hasil `json.dumps(...)` ke variabel data, lalu `data["data"]`. Ternyata json.dumps hasilnya **string**, bukan dictionary. String tidak bisa dibuka pakai `["data"]`.
+
+6. `KeyError: 'priceUsed'`
+   - Nama key-nya `priceUsd` (singkatan USD), bukan priceUsed. Salah satu huruf saja langsung KeyError.
+
+7. Mengetik `cat` sendirian di terminal, layarnya kosong
+   - Saya kira program saya yang salah. Ternyata `cat` itu **perintah Linux** (untuk menampilkan isi file). Kalau diketik tanpa nama file, dia diam menunggu ketikan, harus Ctrl+C. Yang benar `python bitcoin.py cat`.
+
+8. Cek argumen pakai `if not float(sys.argv)`?
+   - Salah, karena sys.argv itu list, bukan satu nilai. Yang dicek jumlahnya pakai `len(sys.argv)`: 1 berarti cuma nama file, user lupa mengetik angka.
+   - Kalau user mengetik `cat`, `float("cat")` langsung ValueError, ditangkap except.
+
+9. Cara menghitung
+   - priceUsd itu harga untuk 1 bitcoin. Jadi jumlah dari user **dikali** priceUsd. 2.5 bitcoin = 2.5 × priceUsd.
+
+10. `TypeError: can't multiply sequence by non-int of type 'float'`
+    - Sempat `sys.argv[1] * price` (string dikali), lalu sesudah jadi float masih error. Ternyata `priceUsd` dari API itu **string**, lihat tanda kutipnya di JSON, padahal soalnya bilang "as a float". Harus diubah jadi float juga.
+    - "sequence" di pesan error itu maksudnya string (string itu urutan karakter).
+
+11. Format output
+    - Pakai trik f-string dari Week 0: `:,` untuk koma ribuan dan `.4f` untuk 4 angka desimal, digabung jadi satu.
+
+12. check50: `expected exit code 1, not 0`
+    - Di except ValueError saya pakai print. Tulisannya sama persis, tapi program selesai dengan normal (exit code 0 = berhasil). Harus pakai `sys.exit("pesan")` supaya exit code-nya 1 (gagal). Sama dengan pelajaran figlet. Sesudah diganti, hijau semua.
+
+### Kenapa `import json` abu-abu?
+- Karena module json tidak dipakai lagi. Tadinya saya pakai json.dumps untuk melihat bentuk data, tapi baris itu sudah dihapus. Jadi `import json` boleh dihapus.
+- `response.json()` itu **bukan** module json. Itu method milik objek response dari requests. Namanya sama, pemiliknya beda, pelajaran namespace lagi.
+
+| | Pemiliknya | Tugasnya | Hasilnya |
+|---|---|---|---|
+| `response.json()` | objek response (requests) | mengubah jawaban server jadi dictionary | dictionary |
+| `json.dumps(...)` | module json | mengubah dictionary jadi teks rapi | string |
+
+- json itu module bawaan Python, tidak perlu pip. Yang perlu pip itu requests.
+- `requests.RequestException` itu nama error juga, tapi milik library requests, bukan bawaan Python. Muncul kalau ada masalah waktu mengirim request (internet putus, server mati, timeout).
+
+### API key jangan disebar
+- API key saya sempat terlihat di screenshot dan di percakapan dengan Duck (percakapan Duck dicatat). Sesuai pelajaran "kartu anggota": sebaiknya buat key baru di dashboard CoinCap, pasang di kode, baru hapus key yang lama.
+- Hati-hati urutannya: kalau key lama dihapus tapi kode masih pakai key lama, error-nya bukan RequestException. Server tetap menjawab, cuma isinya penolakan dan tidak ada `"data"`, jadi errornya muncul di baris `data["data"]`.
+- API key tidak boleh ditulis di catatan GitHub ini, karena repo-nya publik.
+
+### Setelah lulus: diskusi kerapian kode dengan Claude
+Kode saya sudah lulus, ini soal kerapian. Menurut saya kode saya sendiri lebih mudah dibaca, tapi ada beberapa kemungkinan masalah:
+
+1. **Urutan pengecekan.** Sekarang program menghubungi API dulu, baru cek argumen. Kalau user lupa mengetik angka atau mengetik `cat`, request-nya terbuang percuma (dan memakai kuota API key).
+   - Pengecekan argumen tidak butuh data dari API sama sekali, cuma melihat yang diketik user. Jadi bisa dikerjakan duluan.
+   - Data tetap dibuat sebelum dipakai, jadi aturan "Python membaca dari atas ke bawah" tetap aman.
+   - Ibarat mau belanja ke pasar: pastikan dulu daftar belanjanya ada, baru berangkat. Kalau daftarnya kosong, tidak usah ke pasar.
+   - Urutan yang lebih rapi: (1) cek argumen ada atau tidak, (2) ubah ke float, kalau gagal exit, (3) baru request ke API, (4) ambil priceUsd, kalikan, print.
+
+2. **Satu try besar dipecah jadi dua try kecil.** Sesuai saran David (sudah ada di catatan Pset 3): try sebaiknya cuma berisi baris yang memang bisa error. Ada dua sumber error yang berbeda: float() → ValueError, requests.get() → RequestException. Masing-masing dapat try sendiri. Ibarat halaqah: setiap musyrif mengawasi kelompoknya sendiri.
+   - Bahaya satu try besar: misalnya `float(price)` gagal karena data dari API aneh, yang tertangkap juga except ValueError, dan pesannya jadi "Command-line argument is not a number". Pesannya menyesatkan, padahal yang salah bukan argumen user.
+
+3. **`except requests.RequestException: pass`.** Kalau internet putus, user cuma lihat layar kosong, dan program keluar seolah berhasil. Lebih baik sys.exit dengan pesan.
+   - Pesannya jangan terlalu spesifik seperti "internet putus", karena RequestException menangkap banyak kemungkinan penyebab. Pesan umum lebih jujur, misalnya `Could not get Bitcoin price`.
+
+### Yang saya pelajari
+- Lihat dulu bentuk JSON-nya sebelum menulis program.
+- URL di requests.get harus string lengkap dengan `https://`.
+- `.json()` dulu, baru bisa dibuka pakai `[...]`.
+- json.dumps hasilnya string, cuma untuk dilihat, bukan untuk diambil isinya.
+- Data dari API bisa berupa string walaupun isinya angka. Cek tanda kutipnya.
+- print vs sys.exit: tulisannya sama, exit code-nya beda.
+- `cat` itu perintah Linux.
+- API key jangan disebar.
+
+### Jenis error yang sudah saya kenal (update)
+- Baru di Pset 4 hari ini: `UnboundLocalError`, `requests.exceptions.MissingSchema`, `TypeError: 'Response' object is not subscriptable`, `TypeError: string indices must be integers`, `TypeError: can't multiply sequence by non-int of type 'float'`.
+- Pesan check50 baru: `expected exit code 1, not 0`.
+
+### Yang ingin dicoba
+- Susun ulang bitcoin.py sesuai urutan yang lebih rapi (cek argumen dulu, dua try terpisah, RequestException pakai sys.exit). Tes kosong, `cat`, `1`, `2.5`, lalu check50 lagi.
+- Ganti API key dengan yang baru, hapus yang lama.
+
+## Penutup Problem Set 4 — selesai semua (15 Oktober 2026)
+
+Enam soal selesai dalam tiga hari: Emojize, Frank Ian and Glen's Letters, Adieu Adieu, Guessing Game, Little Professor, Bitcoin Price Index.
+
+Pelajaran paling besar minggu ini:
+- **Baca dokumentasi sendiri.** Emojize selesai tanpa Duck karena ketemu `language="alias"` di dokumentasi. Figlet dokumentasinya kurang jelas, akhirnya pakai `help()` dan `dir()`.
+- **check50 hijau belum tentu semua aturan soal terpenuhi.** Tiga kali kejadian: figlet (tiga argumen), Guessing Game (level 0), Little Professor (raise). Harus tes sendiri kasus-kasus yang aneh.
+- **print vs sys.exit vs raise.** Tulisan di layar bisa sama, tapi cara keluarnya beda.
+- **Objek dan method.** Figlet, inflect engine, string, list, response: semua objek, punya method sendiri. Nama method boleh sama (join, json), yang menentukan itu objek sebelum titiknya.
+- **API.** Akhirnya praktik langsung: daftar API key, request, baca JSON, ambil nilai bersarang.
