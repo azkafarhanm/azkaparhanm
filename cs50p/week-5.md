@@ -98,9 +98,6 @@ if __name__ == "__main__":
 | hardcoded | nilainya ditulis mati di dalam kode |
 | boilerplate | kode kerangka baku, selalu sama di banyak program |
 
-### Catatan pakai DeepL
-- Bahasa asal sempat masih French, jadi "sonner" diterjemahkan "bunyi lonceng". Pastikan bahasa kiri English atau Detect language.
-
 ### Yang mau dicoba
 - Buat calculator.py dan test_calculator.py sendiri, jalankan test_calculator.py. Harusnya tidak keluar apa-apa (diam = lulus).
 - Sengaja rusak square (misalnya `n + n`), jalankan tesnya lagi. Pesan mana yang muncul? (Petunjuk: 2 + 2 juga 4.)
