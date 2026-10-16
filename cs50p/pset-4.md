@@ -706,9 +706,33 @@ Kode saya sudah lulus, ini soal kerapian. Menurut saya kode saya sendiri lebih m
 - Baru di Pset 4 hari ini: `UnboundLocalError`, `requests.exceptions.MissingSchema`, `TypeError: 'Response' object is not subscriptable`, `TypeError: string indices must be integers`, `TypeError: can't multiply sequence by non-int of type 'float'`.
 - Pesan check50 baru: `expected exit code 1, not 0`.
 
+### Perbaikan pagi (16 Oktober 2026)
+- Saya tanya ke Claude: kode yang kemarin memang salah di mana? Ternyata **tidak salah**. Kodenya lulus check50 dan memenuhi aturan yang tertulis. Yang diperbaiki itu soal kekuatan kode, yaitu bagaimana program bersikap di situasi yang tidak dites check50.
+- Saya susun ulang: cek argumen paling atas, try pertama khusus float, try kedua khusus request ke API, except RequestException pakai sys.exit dengan pesan `Could not get Bitcoin price`. `import json` saya hapus. API key saya ganti yang baru.
+- Saya coba-coba sendiri:
+  - `python bitcoin.py 1 2` → tidak keluar apa-apa. Karena masih ada `if len(sys.argv) == 2` di dalam try kedua, dan dengan dua angka len-nya 3. Petunjuk dari Claude: kumpulkan semua pengecekan jumlah argumen di paling atas, tambahkan juga pengecekan "kebanyakan" dengan pesannya sendiri (seperti Too few / Too many di lecture).
+  - Satu huruf API key saya hapus → `KeyError: 'data'`. Ternyata ada dua jenis gagal yang berbeda:
+
+| Percobaan | Yang terjadi | Error-nya |
+|---|---|---|
+| API key salah | Server tetap menjawab, tapi isinya penolakan, tidak ada `"data"` | KeyError |
+| Alamat server salah (`coincap` jadi `coincapx`) | Server tidak bisa dihubungi sama sekali | RequestException |
+
+  - Untuk menangkap KeyError juga: satu except bisa menangkap beberapa error sekaligus, ditulis di dalam kurung dipisah koma (sudah ada di catatan Fuel Gauge Pset 3).
+- Sebelum menempel kode ke mana pun, API key-nya diganti dulu dengan tulisan `APIKEY`. Saya sempat lupa dan ikut tertempel lagi.
+- Submit ulang, check50 tetap 6/6.
+
+### Melihat hasil submit
+- **submit.cs50.io**: semua submit, lengkap dengan waktu dan hasil check50. Bitcoin sekarang ada #1 (15 Oktober 22.24) dan #2 (16 Oktober 10.51), dua-duanya 6/6.
+- Dua submit itu normal, tidak bisa dan tidak perlu dihapus. Seperti riwayat commit. **Yang dinilai submit yang terakhir.**
+- **cs50.me/cs50p**: rapor progres per Week, yang menentukan sertifikat.
+- **GitHub me50/azkafarhanm**: isi kode yang di-submit, setiap soal ada di branch sendiri.
+
 ### Yang ingin dicoba
-- Susun ulang bitcoin.py sesuai urutan yang lebih rapi (cek argumen dulu, dua try terpisah, RequestException pakai sys.exit). Tes kosong, `cat`, `1`, `2.5`, lalu check50 lagi.
-- Ganti API key dengan yang baru, hapus yang lama.
+- ~~Susun ulang bitcoin.py~~ → sudah, dan sudah submit ulang (#2).
+- ~~Ganti API key~~ → sudah.
+- Tambahkan pengecekan argumen kebanyakan (`1 2`) dan tangkap KeyError juga.
+- Cek di My Submissions apakah Guessing Game (level 0) dan Little Professor (raise, salah += 1) versi perbaikannya sudah ter-submit.
 
 ## Penutup Problem Set 4 — selesai semua (15 Oktober 2026)
 
