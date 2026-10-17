@@ -8,6 +8,7 @@ Jadwal: setiap Minggu jam 05.20.
 |---|---|---|---|---|
 | 1 | Math Interpreter (Pset 1) | 4 Okt | 60 menit | check50 6/6 |
 | 2 | Vanity Plates (Pset 2) | 5 Okt | 60 menit | check50 10/10 |
+| 3 | Making Faces (Pset 0) | 11 Okt | (isi sendiri) | check50 4/4 |
 
 ---
 
@@ -67,3 +68,44 @@ Setelah lulus, bahas versi yang lebih ringkas:
 
 Yang masih mau dicoba:
 - Tulis versi ringkasnya di file `plates2.py`, telusuri CS50 dan CS05 dengan tangan, lalu jalankan check50 lagi.
+
+---
+
+## Murojaah 3: Making Faces, ditulis ulang dari layar kosong (11 Oktober 2026)
+
+Waktu mengerjakan: (isi sendiri)
+Hasil: check50 hijau semua (4/4)
+Aturan: tidak membuka kode lama, tidak bertanya ke AI, Copilot dimatikan. Kali ini saya juga tidak membuka dokumentasi dan catatan GitHub. Murni dari ingatan.
+
+Error dan kendala yang saya temui:
+- check50 sempat merah 2 dari 4. Programnya jalan tanpa error, tapi emoji cemberut yang saya pakai salah wajah. Ketahuannya dengan membandingkan expected dan actual karakter demi karakter.
+- `\n` di ujung actual itu normal, cuma tanda baris baru dari print. Bukan itu penyebab merahnya.
+- check50 berkali-kali "Could not connect to GitHub". Ternyata bukan internet saya: `curl -I https://github.com` hasilnya HTTP/2 200. Gangguannya di jalur check50, dan setelah dicoba ulang akhirnya tersambung.
+- `git` di folder CS50 memang sengaja dimatikan, jadi "Git is disabled" itu bukan error.
+
+Perbandingan dengan kode lama:
+- Kode baru saya pakai if sebelum replace, jadi barisnya lebih banyak. Kode lama langsung return hasil replace yang disambung dua kali, tanpa if.
+- Ternyata if itu tidak perlu. Kalau tidak ada yang diganti, replace mengembalikan tulisan apa adanya.
+
+Jebakan yang saya temukan setelah check50 hijau:
+- Syarat saya: `":)" or ":(" in emoji`. Kelihatannya benar, tapi salah.
+- `in` hanya menempel ke yang paling dekat, yaitu `":("`. Di kiri or tinggal `":)"` sendirian, tanpa pertanyaan.
+- String yang ada isinya selalu dianggap True. Saya buktikan dengan `bool(":)")` hasilnya True. Jadi syarat itu SELALU benar, apa pun inputnya. Pengecekan senyum tidak pernah benar-benar terjadi.
+- Yang benar: dua pertanyaan lengkap di kiri dan kanan or, yaitu `":)" in emoji or ":(" in emoji`. Tidak perlu tanda kurung.
+- Setelah syaratnya saya betulkan, input `hello` malah mencetak `None`. Karena syaratnya False, isi if dilewati, function selesai tanpa return, lalu diam-diam mengembalikan None.
+- Padahal soal minta `hello` dikembalikan apa adanya. Jadi versi yang "dibetulkan" itu salah, padahal check50 hijau. check50 tidak menguji input tanpa emotikon.
+- Kesimpulan: versi lama tanpa if justru yang paling benar dan paling sederhana.
+
+Murojaah konsep (dijawab dari ingatan):
+1. Aturan desimal di f-string: lancar. Aturannya harus di dalam curly braces. Kalau di luar, tidak error tapi ikut tercetak sebagai tulisan. Yang membuat tuple itu komanya, bukan kurungnya.
+2. Function tanpa return: awalnya saya kira "tidak ada apa-apa". Ternyata mengembalikan None, dan None itu tetap sebuah nilai (seperti amplop kosong yang tetap sampai). if menganggap None sebagai False, begitu juga 0 dan "" (string kosong).
+3. Fuel Gauge: lancar setelah diingatkan konteks soalnya. Pengecekan yang menentukan reprompt harus di dalam loop sebelum break. Kalau di luar loop, program sudah tidak bisa bertanya lagi. Yang ditolak: angka negatif dan X > Y. X > Y sama dengan lebih dari 100%, misalnya 3/2 = 150%, tangki tidak mungkin lebih dari penuh.
+
+Yang saya pelajari:
+- Kode yang lulus check50 belum tentu bebas jebakan. Uji sendiri juga input yang tidak diuji check50.
+- `in`, seperti `not`, menempel ke yang paling dekat.
+- Kalau gagal tersambung, cek dulu masalahnya di mana (internet atau alatnya) sebelum panik.
+
+Perbandingan dengan pertama kali:
+- Pertama kali (19 September) saya kena TypeError dan NameError karena hasil convert tidak ditangkap. Sekarang bagian itu langsung benar dari ingatan.
+- Murojaah berikutnya untuk soal ini: sekitar pertengahan November.
