@@ -102,3 +102,168 @@ if __name__ == "__main__":
 - Buat calculator.py dan test_calculator.py sendiri, jalankan test_calculator.py. Harusnya tidak keluar apa-apa (diam = lulus).
 - Sengaja rusak square (misalnya `n + n`), jalankan tesnya lagi. Pesan mana yang muncul? (Petunjuk: 2 + 2 juga 4.)
 - Lanjut lecture dari menit 8.
+
+## Hari 2 – 17 Oktober 2026
+
+Hari ini lanjut lecture 5 dari menit 8 sampai sekitar **menit 25** (bagian pytest). Ngoding 2 jam, bahasa Inggris 35 menit.
+
+### Pemanasan (murojaah)
+- Saya sempat bilang API key yang salah itu memunculkan **ValueError**. Ternyata yang muncul **KeyError**.
+- **KeyError tidak ada hubungannya dengan API key.** "Key" di sini maksudnya **kunci dictionary**. KeyError muncul kalau kita meminta kunci yang tidak ada di dalam dictionary.
+- Di Bitcoin, KeyError bisa muncul karena dua hal:
+  1. Kita salah menyebut nama kuncinya di kode (salah ketik).
+  2. Server tidak mengirim data yang kita harapkan. Misalnya API key salah, jadi server membalas dengan pesan error, dan kunci yang kita cari tidak ada di balasan itu.
+- Pertanyaan saya: data dari API itu selalu sama atau tidak? Jawabannya, **bentuk/strukturnya konsisten** (nama-nama kuncinya sama), tapi **nilainya berubah-ubah** (harga Bitcoin naik turun). Strukturnya baru berubah kalau API-nya ganti versi, seperti CoinCap v2 ke v3.
+- Saya juga sempat mengira kalau tes lolos akan "muncul jawaban yang benar". Ternyata **tidak muncul apa-apa**. Diam = lulus (sudah dibahas di Hari 1).
+
+### Kenapa harus ada tes?
+- Tes itu untuk menangkap **kecerobohan** kita sendiri, dan juga kesalahan yang muncul **nanti** waktu kode diubah-ubah (oleh kita atau orang lain).
+- Kalau `square` diganti jadi `n + n`, hasilnya:
+
+| n | `n * n` (benar) | `n + n` (bug) | Ketahuan? |
+|---|---|---|---|
+| 2 | 4 | 4 | Tidak, kebetulan sama |
+| 3 | 9 | 6 | Ya |
+| -2 | 4 | -4 | Ya |
+| -3 | 9 | -6 | Ya |
+| 0 | 0 | 0 | Tidak, kebetulan sama |
+
+- Jadi satu angka saja tidak cukup. Harus dites dengan **beberapa macam nilai**: positif, negatif, dan nol. Istilah David: **covering your bases**, menjaga semua kemungkinan.
+- Nol itu termasuk nilai yang "aneh" (**anomalous**), jadi layak dites tersendiri.
+- Kita tidak mungkin mengetes semua angka di dunia. Kita tes beberapa nilai yang mewakili, lalu **ekstrapolasi**: menyimpulkan bahwa angka-angka lain juga benar.
+
+### `assert`
+- `assert` itu **keyword** Python. Artinya "saya menegaskan ini benar".
+- Kalau benar, tidak terjadi apa-apa. Kalau salah, Python me-*raise* **AssertionError**.
+- Saya kira pakai assert + try/except + print itu lebih ringkas. Ternyata **malah lebih panjang**: setiap satu tes butuh sekitar 4 baris (try, assert, except, print). Kalau tesnya puluhan, kodenya jadi panjang sekali. Masalah inilah yang diselesaikan pytest.
+
+### pytest
+- Saya kira pytest itu keyword seperti assert. Ternyata **bukan**. pytest itu **program pihak ketiga** (third-party), harus diinstal dulu: `pip install pytest`.
+- pytest itu **tool**. Buktinya di terminal kita tidak lagi mengetik `python test_calculator.py`, tapi `pytest test_calculator.py`.
+- Tapi pytest **tidak** otomatis mengetes seluruh kode saya. Cara kerjanya:
+  1. Membuka file tes yang saya sebut.
+  2. Mencari function yang namanya **diawali `test_`**.
+  3. Menjalankan function itu satu per satu, mencatat assert mana yang lolos dan mana yang gagal.
+- Pertanyaan saya: kalau tidak pakai assert dan tidak ada function `test_`, apakah function saya tetap diuji?
+
+| Keadaan | Hasil pytest |
+|---|---|
+| Tidak ada function `test_...` | "no tests ran", tidak ada yang dijalankan |
+| Ada `test_...` tapi tanpa `assert` | **PASSED**, asal tidak crash. Padahal tidak ada yang dicek! |
+| Ada `assert` yang salah, atau crash | **FAILED** |
+
+- Ibaratnya murid setoran hafalan, ustadznya cuma bilang "ya, lanjut" tanpa menyimak. Kelihatan lulus, padahal belum tentu benar. pytest hanya penguji yang **membacakan daftar soal buatan saya sendiri**, dia tidak mengarang soal baru.
+
+### Framework dan library
+- pytest disebut **testing framework**. Framework = kerangka. Bedanya dengan library:
+  - **Library**: saya yang memanggil kodenya (seperti `requests.get(...)`).
+  - **Framework**: saya menulis function, **framework yang memanggil**. Di pytest, saya tidak lagi memanggil `test_square()` sendiri, pytest yang memanggilnya.
+- Framework itu untuk **efisiensi**, dan juga memberi **struktur yang sama** untuk semua orang, jadi programmer lain langsung paham aturan mainnya.
+- Contoh framework: **Django, Flask, FastAPI** (Python), **Next.js** (JavaScript). Python juga punya alat tes bawaan bernama **unittest**. Sedangkan **Three.js** itu library, bukan framework.
+- FastAPI penting untuk AI engineer, karena sering dipakai untuk membuat "loket" (API) yang memanggil model AI.
+
+### Frontend dan backend (pertanyaan soal website 3D saya)
+- Saya penasaran: website yang saya buat pakai AI agent kadang butuh gambar 3D. Di Python ada library seperti Three.js atau tidak?
+
+| | Frontend | Backend |
+|---|---|---|
+| Jalan di mana | Browser pengunjung | Server |
+| Bahasa | Hampir selalu JavaScript (plus HTML, CSS) | Bebas, Python sangat bisa |
+| Tugasnya | Tampilan, animasi, grafik 3D | Data, database, API key, logika, memanggil model AI |
+
+- Gambar 3D di website **digambar oleh browser**, dan yang **berjalan** di browser itu JavaScript. Jadi untuk 3D di website tetap pakai **Three.js**. Python mengurus belakangnya (Django/Flask/FastAPI).
+- Library 3D Python ada, tapi untuk keperluan lain: **Plotly** (grafik 3D interaktif), **Matplotlib** (grafik 3D sederhana), **Blender lewat Python** (membuat model 3D yang nanti bisa ditampilkan pakai Three.js).
+- Python tetap bisa membantu tampilan web:
+  - **Django/Flask** bisa menyusun halaman HTML di server. Ibarat dapur: yang masak Python, tapi yang disajikan ke tamu tetap HTML biasa.
+  - **Streamlit** dan **Gradio**: cukup tulis Python, tampilan webnya dibuatkan otomatis. Sering dipakai AI engineer untuk demo chatbot.
+  - **PyScript**: menjalankan Python di browser, tapi masih jarang dipakai.
+- Catatan untuk proyek saya: cek ekstensi file. `.js/.jsx/.ts/.tsx` berarti JavaScript/TypeScript, `.py` berarti Python.
+
+### Membaca output pytest yang gagal
+Waktu `square` masih `n + n`, assert untuk `square(2)` lolos, tapi `square(3)` gagal. Saya bingung, kenapa -2 tidak ikut dilaporkan error?
+
+- Jawabannya ada di pelajaran **raise**: assert yang gagal me-*raise* AssertionError, dan **function langsung berhenti**. Baris -2, -3, 0 di bawahnya **belum sempat dicek**, bukan lolos.
+- Ibarat ujian tahfidz: begitu salah di ayat ketiga, ustadz bilang "stop, ulang". Ayat setelahnya tidak disimak dulu.
+
+| Bagian output | Artinya |
+|---|---|
+| `F` | Satu function tes gagal (Failed) |
+| `>` | Panah menunjuk baris yang gagal |
+| `E assert 6 == 9` | Yang dibandingkan ternyata 6 dengan 9 |
+| `E + where 6 = square(3)` | Angka 6 itu berasal dari `square(3)` |
+| `test_calculator.py:5` | Gagalnya di baris 5 |
+| `1 failed in 0.03s` | Ringkasan: 1 tes gagal |
+
+- Baris `E` itu sebenarnya sangat membantu: `where 6 = square(3)` membuat saya sadar 3 **ditambah** 3, bukan **dikali** 3.
+
+### Setelah diperbaiki: kenapa lolos padahal ada angka negatif?
+- Saya kaget waktu hasilnya `1 passed`, padahal ada tes angka negatif.
+- Ternyata bug-nya sudah diperbaiki jadi `n * n`, dan **negatif kali negatif = positif**: (-2) × (-2) = 4, (-3) × (-3) = 9. Semua assert benar.
+- Angka negatif di tes bukan untuk membuat tes gagal, tapi untuk **memastikan function tetap benar walaupun diberi angka negatif**.
+- `1 passed` artinya **satu function tes** yang lolos (bukan satu assert). Kelima assert di dalamnya semua dijalankan. Titik `.` = satu tes lolos, kebalikan dari `F`.
+
+Kode tes dari lecture:
+
+```python
+from calculator import square
+
+def test_square():
+    assert square(2) == 4
+    assert square(3) == 9
+    assert square(-2) == 4
+    assert square(-3) == 9
+    assert square(0) == 0
+```
+
+### Menguji input aneh: `square("cat")`
+Ada dua hal berbeda yang harus dipisahkan:
+
+| | Siapa yang "iseng" | Ditangani di mana |
+|---|---|---|
+| Input salah dari user | User mengetik "cat" | **Program saya**, pakai `try`/`except` (seperti di pset). Di calculator.py, `int(input())` yang error duluan, jadi "cat" tidak sampai ke square |
+| Function diberi input aneh | **Programmer** memanggil `square("cat")` langsung | **File tes**, untuk mengecek reaksi function |
+
+- `assert square("cat") == ...` sama dengan apa? Tidak ada jawabannya, karena `"cat" * "cat"` tidak menghasilkan nilai, Python langsung raise error.
+- Jadi pertanyaan tesnya diubah. Bukan "hasilnya berapa?", tapi **"apakah error yang muncul sudah tepat?"**
+
+| Tes biasa | Tes input aneh |
+|---|---|
+| Berharap hasil 4 | Berharap **muncul error jenis tertentu** |
+| Gagal kalau hasilnya bukan 4 | Gagal kalau **tidak ada error**, atau **errornya jenis lain** |
+
+- Ibarat menguji alarm kebakaran asrama: sengaja diberi asap, tesnya lolos kalau alarm **berbunyi**. Asapnya = "cat", bunyi alarmnya = error yang tepat.
+- Kenapa jenis error penting? Seperti di Bitcoin: kalau saya menulis `except RequestException` tapi yang muncul KeyError, program tetap crash. Programmer yang memakai function saya perlu tahu pasti error apa yang akan muncul.
+- Tebakan saya: `"cat" * "cat"` memunculkan **TypeError**, karena string tidak bisa dikali string. **Tebakan saya benar.**
+
+| Error | Masalahnya | Contoh |
+|---|---|---|
+| TypeError | **Jenis** datanya tidak cocok untuk operasi itu | `"cat" * "cat"` |
+| ValueError | Jenisnya cocok, tapi **isinya** tidak bisa dipakai | `int("cat")` |
+
+- Uniknya, `"cat" * 3` tidak error, hasilnya `"catcatcat"` (string diulang 3 kali).
+
+### Kosakata
+| Kata | Arti |
+|---|---|
+| so to speak | bisa dibilang begitu, istilahnya |
+| covering your bases | menjaga semua kemungkinan |
+| extrapolate | menyimpulkan hal yang lebih luas dari beberapa contoh |
+| manner | cara |
+| there's no science to it | tidak ada rumus pastinya, pakai perkiraan saja |
+| anomalous | aneh, menyimpang dari biasanya |
+| glass half full / half empty | melihat dari sisi positif / negatif |
+| framework | kerangka kerja; saya tulis function, framework yang memanggil |
+| edge case | kasus pinggiran, nilai-nilai ujung yang rawan salah |
+| essence | inti, hakikat |
+| cross my fingers | semoga berhasil (seperti "bismillah, semoga lancar") |
+| arcane | rumit dan misterius, hanya dipahami orang yang sudah biasa |
+| somewhat | agak |
+| encouraging | memberi semangat |
+| odds are | kemungkinan besar |
+| the light bulb goes off | "lampu di kepala menyala", tiba-tiba paham. *Go off* di sini artinya menyala |
+
+### Yang mau dicoba
+- Ganti nama `test_square` jadi `cek_square`, jalankan `pytest test_calculator.py`. Muncul "no tests ran"?
+- Kembalikan namanya, hapus semua assert, jalankan lagi. Hijau padahal tidak mengecek apa-apa?
+- Coba di terminal Python: `"cat" * 3` dan `"cat" * "cat"`.
+- Lanjut lecture dari menit 25: lihat bagaimana David menulis tes untuk TypeError.
