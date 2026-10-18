@@ -111,6 +111,8 @@ Perbandingan dengan pertama kali:
 - Pertama kali (19 September) saya kena TypeError dan NameError karena hasil convert tidak ditangkap. Sekarang bagian itu langsung benar dari ingatan.
 - Murojaah berikutnya untuk soal ini: sekitar pertengahan November.
 
+---
+
 ## Murojaah 4: Meal Time, ditulis ulang dari layar kosong (17 Oktober 2026)
 
 Waktu mengerjakan: 90 menit
