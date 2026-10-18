@@ -44,7 +44,7 @@ Perbandingan dengan pertama kali:
 
 ## Murojaah 2: Vanity Plates, ditulis ulang dari layar kosong (5 Oktober 2026)
 
-Waktu mengerjakan: (isi sendiri)
+Waktu mengerjakan: 60 menit
 Hasil: check50 hijau semua (10/10)
 Yang saya buka: catatan GitHub saya sendiri (pset-2.md, tidak berisi kode jawaban) dan dokumentasi Python. Kode lama tidak dibuka, tidak bertanya ke AI.
 
@@ -73,7 +73,7 @@ Yang masih mau dicoba:
 
 ## Murojaah 3: Making Faces, ditulis ulang dari layar kosong (11 Oktober 2026)
 
-Waktu mengerjakan: (isi sendiri)
+Waktu mengerjakan: 60 menit
 Hasil: check50 hijau semua (4/4)
 Aturan: tidak membuka kode lama, tidak bertanya ke AI, Copilot dimatikan. Kali ini saya juga tidak membuka dokumentasi dan catatan GitHub. Murni dari ingatan.
 
@@ -109,3 +109,38 @@ Yang saya pelajari:
 Perbandingan dengan pertama kali:
 - Pertama kali (19 September) saya kena TypeError dan NameError karena hasil convert tidak ditangkap. Sekarang bagian itu langsung benar dari ingatan.
 - Murojaah berikutnya untuk soal ini: sekitar pertengahan November.
+
+## Murojaah 4: Meal Time, ditulis ulang dari layar kosong (17 Oktober 2026)
+
+Waktu mengerjakan: 90 menit
+Hasil: check50 hijau semua (7/7)
+Aturan: tidak membuka kode lama, tidak bertanya ke AI, Copilot dimatikan. Boleh buka dokumentasi.
+Yang saya buka: setelah buntu lebih dari 30 menit, saya buka catatan GitHub saya sendiri (pset-1.md, tidak berisi kode jawaban). Yang saya lupa: cara mengubah 7:30 jadi 7.5. Ternyata menit dibagi 60 (satu jam = 60 menit), lalu ditambah jamnya.
+
+Yang membuat saya tersendat:
+- Lagi-lagi saya terlalu fokus di function convert. if elif untuk jam makan saya taruh di dalam convert, padahal convert tugasnya cuma mengubah waktu jadi angka. Yang memutuskan jam makan itu tugas main.
+- Akibatnya, kalau jamnya di luar rentang makan (14:00, 21:00), convert selesai tanpa return, hasilnya None, dan None itu ikut ter-print. Saya lama bingung "kok None", malah sibuk mencari cara menghilangkan None-nya, sampai mencoba trik `else: pass`.
+- split sempat saya taruh di main. Lalu convert tidak bisa memakai hours dan minutes, karena variabel di main tidak kelihatan dari dalam convert: `NameError: name 'hours' is not defined`.
+- Saya sempat bingung convert harus menerima dua bahan (jam dan menit) padahal parameternya satu. Akhirnya ketemu: split dipindah ke dalam convert. convert menerima satu tulisan utuh seperti "7:30", lalu dipecah di dalamnya.
+- check50 merah "convert successfully returns decimal hours", expected 7.5, actual Error. Ternyata check50 memanggil convert langsung dengan satu tulisan seperti "7:30". Jadi bentuk convert ditentukan oleh soal, bukan pilihan saya. Secara Python, function boleh saja punya dua parameter, tapi soal ini mau satu.
+
+Error yang saya temui:
+- `SyntaxError: invalid syntax` karena menulis `return pass`. pass bukan nilai, jadi tidak bisa di-return.
+- `ValueError: not enough values to unpack (expected 2, got 1)` waktu saya ketik `21` tanpa titik dua. split cuma menghasilkan satu potongan, padahal di kiri ada dua variabel. (Soal bilang boleh assume input selalu benar bentuknya, jadi ini cuma percobaan.)
+- `NameError: name 'time' is not defined` karena memakai variabel yang sudah saya ganti namanya.
+- `SyntaxError: '(' was never closed` karena tanda kutip penutup saya taruh di luar kurung: `print("dinner time)"`.
+
+Murojaah konsep (dijawab dari ingatan):
+1. check50 hijau belum tentu bebas celah, karena check50 cuma menguji kasus yang dipilih pembuat soal. Mengecek semua kemungkinan itu mustahil, yang realistis uji per jenis: input normal, input di batas, input salah/aneh. Analogi saya: penguji tahfidz cuma menyimak beberapa ayat yang dia pilih. Santri lancar di ayat itu, belum tentu benar di seluruh surat. Di tes ala Week 5, "diam artinya lulus": penguji pegang mushaf, kalau bacaannya benar dia diam, baru menegur kalau salah.
+2. `kartu = random.shuffle(kartu)`: shuffle mengacak list-nya langsung, lalu mengembalikan None. Kalau ditampung, list yang sudah teracak malah tertimpa None. Jadi tidak perlu ditampung ke variabel.
+3. try/except: kalau try berhasil, except dilewati dan else dijalankan. Kalau try gagal, except yang jalan. except cuma menjaga baris di dalam try, jadi error di else tidak ditangkap, program crash. Di while True, setelah except jalan, program balik ke awal loop. Yang menghentikan loop cuma break.
+
+Yang saya pelajari:
+- Setiap function punya tugasnya sendiri. convert = mengubah, main = memutuskan dan mencetak.
+- Variabel di satu function tidak bisa dilihat function lain. Bahan dari luar masuk lewat parameter.
+- None sudah muncul tiga kali (Making Faces, shuffle, Meal Time). Polanya sama: function selesai tanpa return, lalu hasilnya dipakai. Kalau melihat None di layar, pertanyaan pertama: function mana yang selesai tanpa return?
+- Setelah hijau, rapikan: blok `"""else: pass"""` di bawah return itu dead code (tidak akan pernah jalan), dan komentar #hours #minutes yang sudah tidak dipakai, dihapus.
+
+Perbandingan dengan pertama kali:
+- Pertama kali (24 September) saya masih dibantu arahan soal letak split dan `__name__`. Sekarang `if __name__ == "__main__":` langsung saya tulis dari ingatan, dan letak split saya temukan sendiri lewat error.
+- Rumus menit dibagi 60 masih lupa, harus buka catatan. Ini yang perlu diulang.
