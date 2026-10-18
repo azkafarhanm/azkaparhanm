@@ -267,3 +267,168 @@ Ada dua hal berbeda yang harus dipisahkan:
 - Kembalikan namanya, hapus semua assert, jalankan lagi. Hijau padahal tidak mengecek apa-apa?
 - Coba di terminal Python: `"cat" * 3` dan `"cat" * "cat"`.
 - Lanjut lecture dari menit 25: lihat bagaimana David menulis tes untuk TypeError.
+
+## Hari 3 – 18 Oktober 2026
+
+Lanjut lecture 5 dari menit 25 sampai **selesai** (50:53). Lecture 5 tamat.
+
+### Pemanasan (murojaah)
+1. **Tes tanpa assert.** Saya jawab: berbahaya karena kelihatan lulus padahal kebenarannya belum dicek. Betul. Yang perlu diluruskan:
+   - pytest **tidak diam**. Dia terang-terangan melapor **`1 passed`** warna hijau. Itu justru jebakannya.
+   - Kalau assert gagal, peringatannya **bukan lewat print**. Assert gagal me-*raise* AssertionError, lalu pytest yang menampilkan laporan merah. Cara pakai print itu cara lama sebelum ada pytest.
+2. **Assert kedua gagal, yang di bawahnya dicek atau tidak?** Saya jawab tidak. Betul. Tapi alasannya bukan karena pytest "sengaja mencari error pertama dulu", melainkan **mekanisme raise**: AssertionError di-raise, function langsung berhenti.
+3. **`int("cat")` dan `"cat" * "cat"`.** ValueError dan TypeError, betul. Catatan: string **bisa** dikali bilangan bulat (`"cat" * 3`). Yang tidak bisa itu string dikali **string**.
+
+### Tes dipecah per kategori
+- Lima assert yang tadinya di satu `test_square`, dipecah jadi tiga function: `test_positive`, `test_negative`, `test_zero`.
+- Kenapa? Assert gagal hanya menghentikan **function itu saja**. pytest tetap memanggil function tes yang lain. Jadi semua masalah ketahuan dalam **sekali jalan**, tidak perlu bolak-balik perbaiki satu, jalankan lagi, ketemu yang berikutnya.
+- Ibarat ujian tahfidz yang dibagi per juz: salah di juz 1, penguji tetap lanjut ke juz 2 dan juz 3. Di akhir kelihatan juz mana saja yang perlu diperbaiki.
+
+**Arti tanda di output pytest** (catatan di buku saya: "F" dan "."):
+
+| Tanda | Artinya |
+|---|---|
+| `.` | Satu function tes **lolos** |
+| `F` | Satu function tes **gagal** (Failed) |
+| `...` + `3 passed` | Tiga function tes, semuanya lolos |
+| misalnya `F..` | Satu gagal, dua lolos |
+
+- Yang dihitung itu **function tes**, bukan jumlah assert.
+
+### Menguji error yang diharapkan: `with pytest.raises(...)`
+
+Kode dari lecture:
+
+```python
+import pytest
+from calculator import square
+
+def test_positive():
+    assert square(2) == 4
+    assert square(3) == 9
+
+def test_negative():
+    assert square(-2) == 4
+    assert square(-3) == 9
+
+def test_zero():
+    assert square(0) == 0
+
+def test_str():
+    with pytest.raises(TypeError):
+        square("cat")
+```
+
+- **`with`** itu **keyword** Python. Untuk sekarang cukup saya pahami sebagai **"selama berada di dalam blok ini"**. Baris yang menjorok di bawahnya diawasi. Nanti dibahas lagi di Week 6 (membuka file).
+- **`pytest.raises(TypeError)`** bukan keyword, tapi **function milik pytest**. Artinya: "di blok ini saya **mengharapkan** muncul TypeError."
+- Ibarat pengawas di pintu ruang ujian: "selama di dalam ruangan ini, saya menunggu satu hal, yaitu TypeError." `square("cat")` adalah yang terjadi di dalam ruangan.
+- Sebenarnya mirip try/except: kalau TypeError muncul, berarti sesuai harapan, lulus. Kalau tidak ada error, gagal.
+
+| Yang terjadi di blok `with` | Hasil |
+|---|---|
+| Muncul **TypeError** | PASSED, error-nya ditangkap pytest, tidak crash |
+| **Tidak ada** error | FAILED: `DID NOT RAISE <class 'TypeError'>` |
+| Muncul error **jenis lain** | FAILED |
+
+- Saya sempat bingung: hasilnya `4 passed` hijau semua, berarti tidak ada error dong? Ternyata **TypeError-nya memang benar-benar terjadi**, tapi karena sudah diharapkan, dihitung lulus. Jadi hijau artinya **"semua yang terjadi sesuai harapan"**, bukan "tidak ada error".
+- Contoh gagal: kalau square masih bug `n + n`, `"cat" + "cat"` malah **tidak error** (hasilnya `"catcat"`), jadi pytest bilang DID NOT RAISE.
+- Jangan tertukar:
+  - `raise` (keyword) = **membuat** error.
+  - `pytest.raises` (function pytest) = **mengecek** bahwa error memang muncul.
+- Di sini pytest dipakai dua cara sekaligus: sebagai **tool** di terminal, dan sebagai **library** yang di-import (`import pytest`).
+
+### hello.py: print vs return
+- Function-nya `def hello(to="world")`. Saya sempat salah paham: saya kira tes `hello("David") == "hello, David"` membandingkan "hello world" dengan "hello David".
+- Ternyata `"world"` itu **nilai default (cadangan)**, hanya dipakai kalau tidak ada argumen:
+
+| Pemanggilan | Isi `to` | Yang dicetak |
+|---|---|---|
+| `hello()` | `"world"` | hello, world |
+| `hello("David")` | `"David"` | hello, David |
+
+- Lalu kenapa tesnya tetap tidak works? Karena `hello` pakai **print**, bukan **return**. Ingat murojaah Making Faces: function tanpa return mengembalikan **None**. Jadi yang dibandingkan: `None == "hello, David"`, hasilnya False.
+- **print** = menulis ke layar, untuk dilihat **manusia**. **return** = menyerahkan hasil, untuk dipakai **kode lain**. Tes itu "kode lain", jadi hanya bisa memeriksa yang di-return.
+- None itu bukan string kosong `""`. None tetap sebuah nilai (amplop kosong yang tetap sampai), jadi `None == ""` juga False.
+- Tebakan saya sebelum David memperbaiki: return di hello, print dipindah ke main, tambah assert di tes. **Tebakan saya benar.** Koreksi kecil: tanpa return, assert bukan "tidak menangkap", tapi **menangkap nilai yang salah** (None).
+- Pola penting: **function yang mudah dites adalah function yang me-return hasilnya.** Urusan print diserahkan ke main.
+
+Kode dari lecture setelah diperbaiki:
+
+```python
+def main():
+    name = input("What's your name? ")
+    print(hello(name))
+
+def hello(to="world"):
+    return f"hello, {to}"
+
+if __name__ == "__main__":
+    main()
+```
+
+### Mengetes pakai loop
+Catatan di buku saya: "function bisa juga ngetesnya pakai loop."
+
+```python
+def test_argument():
+    for name in ["Hermione", "Harry", "Ron"]:
+        assert hello(name) == f"hello, {name}"
+```
+
+- Satu assert diulang untuk tiga nama, jadi tidak perlu menulis tiga assert terpisah.
+- Tetap dihitung **satu tes**, karena masih di dalam satu function. Bersama `test_default` hasilnya `2 passed`.
+- Tapi David mengingatkan: tes sebaiknya **sederhana dan kecil**. Kalau kode tesnya rumit, **tesnya sendiri bisa salah** (flawed), lalu kita butuh tes untuk tes, dan tidak akan ada habisnya. Tujuannya: siapa pun, termasuk saya sendiri, cukup **melihat sekilas (eyeball)** dan langsung yakin tesnya benar.
+- Ibarat penguji hafalan: kalau penguji sendiri tidak lancar, siapa yang menguji pengujinya?
+
+### Pertanyaan mahasiswa soal recursion
+- Ada yang bertanya: function di dalam function, atau rekursi, bisa dites juga? Jawab David: **bisa, caranya sama persis**. Panggil function-nya, cek hasilnya dengan assert. Tes tidak peduli *bagaimana* function bekerja di dalam, hanya peduli hasilnya.
+- **Recursion** = function yang memanggil dirinya sendiri, dan harus punya **base case** (titik berhenti). Saya sudah sempat ketemu ini di kuliah kompleksitas algoritma. Tanpa base case, Python akhirnya menyerah dengan `RecursionError`.
+- Rekursi **tidak** dibahas khusus di CS50P. Adanya di CS50x (minggu Algorithms). Kemungkinan akan muncul lagi di mata kuliah Algoritma dan Struktur Data.
+
+### Package dan `__init__.py`
+
+| Istilah | Wujudnya | Analogi |
+|---|---|---|
+| function | Satu bagian kode yang punya nama | Satu bab |
+| module | Satu file `.py` | Satu kitab |
+| package | Satu folder berisi beberapa module + `__init__.py` | Satu rak berisi kitab-kitab satu rumpun |
+
+- **`__init__.py`** biasanya **sengaja dikosongkan**. Gunanya sebagai **penanda** bahwa folder itu package, ibarat **label nama di rak**. Boleh juga diberi isi: kodenya dijalankan pertama kali waktu package di-import. **init** = *initialize*, menyiapkan.
+- Namanya harus **persis** `__init__.py`: dunder-nya, kata init-nya, dan .py-nya. `init.py`, `__mulai__.py`, `__Init__.py` tidak dikenali. Nama berpola `__...__` itu nama khusus milik Python, disebut **dunder** (*double underscore*), sama seperti `__name__` dan `__main__`. Ibarat lafaz azan: kalimatnya sudah ditetapkan, kalau diganti orang tidak mengenalinya sebagai azan.
+- Tanpa `__init__.py`, Python versi baru sering masih bisa import folder itu, tapi bisa membingungkan (misalnya pytest bermasalah kalau ada dua file tes bernama sama di folder berbeda). Kebiasaan yang aman: pasang `__init__.py`.
+- Kata *package* sudah muncul di Week 4, tapi maknanya "paket yang diinstal pakai pip". Sekarang pengertian teknisnya: folder berisi module. Dua-duanya nyambung, karena paket seperti requests memang berbentuk folder.
+- Tidak semua yang di-import itu package. `requests` itu folder (ada `__init__.py`), sedangkan `random` cuma satu file `random.py`.
+- Penutup lecture: `pytest test` (test = nama folder) membuat pytest **otomatis mencari semua tes** di folder itu.
+
+### Kesimpulan lecture
+- Daripada mengetes manual satu per satu atau menunggu orang lain menemukan kesalahan, lebih baik tulis tes sekali, lalu jalankan berulang kali dengan satu perintah.
+- Tapi tes **tidak menjamin** kode bebas error selamanya. Tes itu **jaring pengaman**: setiap kali kode diubah, jalankan tes lagi. Jaringnya hanya sekuat kasus yang saya tulis (ingat `n + n` yang lolos di 2 dan 0).
+
+### Kosakata
+| Kata | Arti |
+|---|---|
+| intertwined | saling terjalin, saling terkait |
+| honestly | jujur saja |
+| incredibly painful | sangat menyiksa, sangat merepotkan |
+| pow | power = pangkat. `pow(2, 3)` = 8, `pow(n, 2)` sama dengan `n * n` |
+| in large part because | sebagian besar karena |
+| operate on | bekerja pada, memproses |
+| integer | bilangan bulat |
+| rewind | memutar mundur |
+| stipulate | menetapkan, menegaskan sebagai hal yang disepakati dulu (seperti syarat dalam akad). Dibaca *STIP-yu-leit* |
+| recursion | function yang memanggil dirinya sendiri |
+| compelling | sangat meyakinkan, punya alasan kuat |
+| flawed | cacat, mengandung kesalahan |
+| eyeball (kata kerja) | melihat sekilas lalu langsung menilai, cukup dengan mata |
+| reasonable | wajar, masuk akal |
+| yourself included | termasuk dirimu sendiri |
+| granted | memang sih, diakui (mirip *admittedly*) |
+| take for granted | menganggap sesuatu sudah biasa, sampai tidak menghargainya |
+
+### Yang mau dicoba
+- Di terminal Codespace, cek `__file__` beberapa library. Tebak dulu: folder atau satu file?
+  - `python -c "import requests; print(requests.__file__)"`
+  - `python -c "import random; print(random.__file__)"`
+  - lalu coba `emoji` dan `pyfiglet` dari Pset 4.
+- Latihan setelah Week 5: tulis function rekursif faktorial sendiri, lalu tes pakai pytest, termasuk base case-nya.
+- Mulai **Problem Set 5**. Buka dulu halaman soalnya untuk melihat soal apa saja.
