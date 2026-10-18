@@ -8,7 +8,8 @@ Jadwal: setiap Minggu jam 05.20.
 |---|---|---|---|---|
 | 1 | Math Interpreter (Pset 1) | 4 Okt | 60 menit | check50 6/6 |
 | 2 | Vanity Plates (Pset 2) | 5 Okt | 60 menit | check50 10/10 |
-| 3 | Making Faces (Pset 0) | 11 Okt | (isi sendiri) | check50 4/4 |
+| 3 | Making Faces (Pset 0) | 11 Okt | 60 menit | check50 4/4 |
+| 4 | Meal Time (Pset 1) | 17 Okt | 90 menit | check50 7/7 |
 
 ---
 
