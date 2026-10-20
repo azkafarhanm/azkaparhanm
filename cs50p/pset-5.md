@@ -241,6 +241,5 @@ Problem Set 5 selesai, keempat soal hijau dan di-submit.
 - check50 hijau belum tentu semua aturan soal terpenuhi, dan pytest hijau di kode sendiri juga belum tentu kode itu benar. Dua-duanya perlu dicek.
 
 ## Yang ingin dicoba
-- Pastikan Vanity Plate sudah di-submit (`submit50 cs50/problems/2022/python/tests/plates`).
 - Ganti nama function tes supaya sesuai dengan yang dites (misalnya `test_length`, bukan `test_without_length`).
 - Lanjut **Week 6: File I/O**. Di sana `with` akan muncul lagi.
