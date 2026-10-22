@@ -257,7 +257,7 @@ Draco,Slytherin
 - Bahasa Inggris: dikerjakan sebelum lecture, plus **shadowing** satu kalimat David 2–3 menit.
 
 ### Lecture: membaca CSV (lanjut dari menit 31)
-- Dulu saya pakai `row[0]` dan `row[1]`. Lebih jelas kalau langsung dibongkar:
+- Awalnya David memakai `row[0]` dan `row[1]` hasil `split`. Lalu diganti supaya lebih jelas, langsung dibongkar:
 
 ```python
 name, house = line.rstrip().split(",")
