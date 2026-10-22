@@ -238,3 +238,128 @@ Draco,Slytherin
 - Coba `"Ron\n".rstrip()`, `"  Ron  \n".strip()`, dan `len("Ron\n")`.
 - Catat ide fitur jurnal olahraga.
 - Lanjut lecture dari menit 31 (CSV).
+
+---
+
+## Hari 2 – 22 Oktober 2026
+
+### Kuis Kosakata #1
+- Pagi ini mengerjakan kuis kosakata pertama dari Claude (10 soal, kata-kata dari lecture). Hasilnya **100%**. Kuis berikutnya akan dibuat lebih susah: ada soal kebalikan (arti Indonesia → frasa Inggris) dan kata lama dicampur.
+
+### Pemanasan
+- Saya sempat salah: mengira mode `"w"` yang dijalankan tiga kali akan menyimpan tiga nama. Ternyata `"w"` **menimpa**, jadi yang tersisa cuma nama terakhir. Kalau mau menambah, pakai `"a"`.
+- `with` menutup file **otomatis** setelah blok selesai, jadi tidak perlu `file.close()`.
+
+### Roadmap versi 2
+- Saya bertanya soal Fase 0 di roadmap. Ternyata bagian keamanan TahfidzFlow (backup/restore Neon, log Vercel, rollback Vercel) **belum sama sekali** saya pelajari.
+- Keputusan: target waktu **tidak diubah**, supaya saya bisa membandingkan rencana dengan kenyataan. Ditambah kolom **realisasi**.
+- Keamanan TahfidzFlow dikerjakan bareng Claude di sesi akhir pekan, tidak mendesak.
+- Bahasa Inggris: dikerjakan sebelum lecture, plus **shadowing** satu kalimat David 2–3 menit.
+
+### Lecture: membaca CSV (lanjut dari menit 31)
+- Dulu saya pakai `row[0]` dan `row[1]`. Lebih jelas kalau langsung dibongkar:
+
+```python
+name, house = line.rstrip().split(",")
+```
+
+- Awalnya David menyimpan kalimat jadi (`f"{name} is in {house}"`) ke list lalu di-sort. Ini disebut **hackish**: jalan, tapi akal-akalan. Yang di-sort itu kalimat, bukan data.
+- Lebih baik simpan **datanya**: satu santri = satu **dictionary**, lalu semua dikumpulkan di list. Jadi **list of dicts**.
+
+```python
+student = {"name": name, "house": house}
+students.append(student)
+```
+
+- `sorted(students)` langsung **error (TypeError)**, karena Python tidak tahu dictionary mau diurutkan berdasarkan apa. Perlu diberi `key`.
+
+### `key=` dan bagaimana `sorted` memanggilnya
+- David membuat function kecil:
+
+```python
+def get_name(student):
+    return student["name"]
+```
+
+- Lalu `sorted(students, key=get_name)`. **Tanpa tanda kurung**, karena kita tidak memanggil `get_name`, kita **menyerahkannya** ke `sorted`.
+- Yang paling lama saya pahami: **siapa yang memanggil `get_name`?** Jawabannya `sorted` sendiri. `sorted` mengambil satu per satu dictionary dari `students`, memanggil `get_name(dict itu)`, dapat **patokan** (namanya), memasangkan patokan dengan dictionary aslinya, mengurutkan berdasarkan patokan, lalu yang dikembalikan tetap **dictionary utuh**.
+- Bisa juga `get_house` kalau mau diurutkan berdasarkan asrama.
+- Saya juga bertanya: apakah kita harus bisa membuat semua ini **from scratch**? Kesimpulannya: yang penting memahami konstruksi berpikirnya. Library yang sudah ada dipakai saja.
+- Saya bertanya kenapa tidak dictionary di dalam dictionary. Bisa, tapi list of dicts lebih cocok di sini karena tiap santri punya bentuk data yang sama dan kita ingin mengurutkannya.
+
+### lambda
+- Function `get_name` cuma dipakai sekali. Jadi David menggantinya dengan **lambda**: function **tanpa nama** (*anonymous function*), ditulis langsung di tempat. `return`-nya tidak ditulis, otomatis.
+
+```python
+for student in sorted(students, key=lambda student: student["name"]):
+    print(f"{student['name']} is in {student['house']}")
+```
+
+### Masalah koma di dalam data
+- David mengganti asrama (*house*) dengan rumah (*home*). Alamat Harry: `Number Four, Privet Drive` (Privet Drive = nama jalan di cerita Harry Potter).
+- Barisnya jadi `Harry,Number Four, Privet Drive`. `split(",")` menghasilkan **tiga** potongan, padahal yang menampung cuma dua (`name, home`). Hasilnya:
+
+```
+ValueError: too many values to unpack (expected 2)
+```
+
+- Ibaratnya membagi tiga kitab ke dua santri. Sama dengan Refueling kalau user mengetik `1/2/3`.
+- Masalahnya: koma dipakai untuk **dua tugas**, sebagai pemisah dan sebagai isi data.
+
+### Library `csv`
+- David tidak mau **reinvent the wheel** (membuat ulang sesuatu yang sudah ada), jadi pakai library `csv`.
+- Di file CSV, isi yang mengandung koma diberi **tanda kutip**: `Harry,"Number Four, Privet Drive"`.
+- `csv.reader(file)` itu juga **objek**, bukan isi file. Ibaratnya **qari** yang paham aturan: tahu koma mana yang pemisah dan mana yang isi. Isi file baru dibaca saat `for` berjalan.
+- Setiap putaran, `reader` memberikan satu baris dalam bentuk **list** yang sudah dipotong dengan benar: `["Harry", "Number Four, Privet Drive"]`. `rstrip()` juga tidak perlu lagi.
+- Bisa diambil pakai indeks `row[0]`, `row[1]`. Indeks itu **nomor posisi** di list, bukan `row`-nya.
+- Saya menebak bisa dibongkar seperti dulu (`name, home = row`). Ternyata benar, dan David malah langsung membongkarnya di dalam `for`:
+
+```python
+import csv
+
+students = []
+
+with open("students.csv") as file:
+    reader = csv.reader(file)
+    for name, home in reader:
+        students.append({"name": name, "home": home})
+
+for student in sorted(students, key=lambda student: student["name"]):
+    print(f"{student['name']} is from {student['home']}")
+```
+
+- Hasilnya terurut, dan alamat Harry tampil utuh dengan komanya.
+
+### Kosakata
+| Kata | Arti |
+|---|---|
+| jagged | bergerigi, tidak rata |
+| conversely | sebaliknya |
+| instinctively / intuitively | secara naluri / secara intuitif |
+| no longer | tidak lagi |
+| hackish | akal-akalan, jalan tapi tidak rapi |
+| verbose | bertele-tele, terlalu panjang |
+| improve upon | memperbaiki, menyempurnakan |
+| upon | di atas, saat |
+| from scratch | dari nol |
+| arguably | bisa dibilang |
+| in one breath | dalam satu tarikan napas, sekaligus |
+| if you will | kalau boleh dibilang begitu |
+| take certain liberties | mengambil kebebasan tertentu, sedikit menyederhanakan |
+| standardize on | sepakat memakai sebagai standar |
+| in order to | untuk, supaya |
+| delineate | menandai batas, memisahkan |
+| reinvent the wheel | membuat ulang sesuatu yang sudah ada (buang waktu) |
+| so to speak | istilahnya |
+| dealing with | mengurus, menangani |
+| albeit | meskipun (formal) |
+| instead of | bukan, sebagai ganti |
+| figure out | mencari tahu, memecahkan |
+| no less | bahkan, pula (penekanan) |
+| get out of the business of | terbebas dari urusan |
+
+### Yang mau dicoba
+- Kuis Kosakata #2 besok (lebih susah).
+- Buat `students.csv` sendiri dengan satu alamat berkoma, coba versi `split(",")` sampai error, lalu versi `csv.reader`.
+- Coba `sorted(..., key=lambda ...)` untuk mengurutkan berdasarkan `home`, juga dengan `reverse=True`.
+- Lanjut lecture dari menit 1:05 (pertanyaan mahasiswa soal csv reader, lalu menulis CSV).
