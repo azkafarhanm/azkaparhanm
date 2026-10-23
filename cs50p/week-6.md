@@ -196,16 +196,6 @@ Draco,Slytherin
 | apples and oranges | dua hal yang jenisnya berbeda |
 | ambiguous | ambigu, bisa ditafsirkan lebih dari satu cara |
 
-### Bahasa Inggris saya keteteran
-- Jujur, saya lebih banyak coding. Bahasa Inggris cuma istiqomah di Duocards dan freeCodeCamp (satu task sehari). Ngobrol dengan AI 10 menit hampir tidak pernah. Kadang jam 9 malam sudah mau istirahat, bahasa Inggris belum.
-- Duocards saya sudah bercampur dengan kosakata umum, jadi kosakata coding tenggelam.
-- Keputusan: **setiap hari Claude memberi 10 kuis kosakata** khusus dari lecture CS50P (bisa mode flashcard juga), di awal sesi bersama pemanasan coding. Kata lama diulang, yang salah lebih sering muncul.
-- Saran lain dari Claude:
-  - Kerjakan bahasa Inggris **duluan**, sebelum membuka lecture.
-  - Satu segmen pendek per hari, tonton dulu tanpa pause dan tanpa DeepL, tebak intinya, baru diputar ulang.
-  - Speaking diganti **shadowing satu kalimat David** per hari, 2–3 menit.
-  - Jurnal mencatat menit bahasa Inggris yang **sebenarnya**.
-
 ### Yang mau dicoba
 - Kerjakan Kuis Kosakata #1 besok pagi.
 - Di terminal Python: `file = open("coba.txt", "w")`, lalu `print(file)`, `file.close()`. Lihat `coba.txt` muncul di daftar file.
