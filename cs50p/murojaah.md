@@ -10,6 +10,7 @@ Jadwal: setiap Minggu jam 05.20.
 | 2 | Vanity Plates (Pset 2) | 5 Okt | 60 menit | check50 10/10 |
 | 3 | Making Faces (Pset 0) | 11 Okt | 60 menit | check50 4/4 |
 | 4 | Meal Time (Pset 1) | 17 Okt | 90 menit | check50 7/7 |
+| 5 | Tip Calculator (Pset 0) | 25 Okt | 60 menit | check50 3/3 |
 
 ---
 
@@ -147,3 +148,36 @@ Yang saya pelajari:
 Perbandingan dengan pertama kali:
 - Pertama kali (24 September) saya masih dibantu arahan soal letak split dan `__name__`. Sekarang `if __name__ == "__main__":` langsung saya tulis dari ingatan, dan letak split saya temukan sendiri lewat error.
 - Rumus menit dibagi 60 masih lupa, harus buka catatan. Ini yang perlu diulang.
+
+---
+
+## Murojaah 5: Tip Calculator, ditulis ulang dari layar kosong (25 Oktober 2026)
+
+Waktu mengerjakan: 60 menit
+Hasil: check50 hijau semua (3/3)
+Aturan: tidak membuka kode lama, tidak bertanya ke AI, Copilot dimatikan. Saya cuma membuka dokumentasi Python (string methods). Catatan GitHub tidak dibuka.
+
+Yang saya temukan sendiri di dokumentasi:
+- `removeprefix` untuk membuang `$` di awal dan `removesuffix` untuk membuang `%` di akhir. Waktu pertama mengerjakan saya pakai replace.
+- Bedanya: removeprefix/removesuffix hanya membuang di awal/akhir, replace membuang di mana saja. Untuk soal ini removeprefix lebih tepat maksudnya.
+
+Error yang saya temui:
+- `TypeError: can't multiply sequence by non-int of type 'float'`. Sequence di sini artinya string. dollars masih berupa tulisan, belum jadi angka. Nyambung dengan catatan Einstein: `"3" * 2` jadi `"33"` (string dikali int = diulang), tapi string dikali float tidak bisa.
+- `SyntaxError: invalid decimal literal` dua kali, karena saya menulis `:.1f` di luar f-string (di return dan di dalam float). Aturan desimal hanya hidup di dalam curly braces f-string. Ini kesalahan berulang sejak Math Interpreter.
+- Saya juga sempat ingin membulatkan desimal di dalam function, padahal tidak perlu. Ini salah tebak yang sama seperti waktu pertama mengerjakan (20 September).
+
+Murojaah konsep (dijawab dari ingatan):
+1. Function yang cuma print tanpa return: tes assert menerima None, jadi gagal. Tulisan print memang muncul di layar, tapi tes tidak melihat layar, cuma menerima yang di-return. Seperti santri yang membaca di kamar sendiri tapi tidak menyetor ke penguji. (None keempat kalinya.)
+2. `assert value("hey")` tanpa `==`: saya sempat tertukar, mengira yang dicek "hey". Ternyata yang dicek HASILNYA (100 atau 20). Angka selain 0 dianggap True, jadi dua-duanya lolos. Tesnya cuma memastikan "bukan kosong", tidak menyimak berapa angkanya. Seperti ustadz yang cuma bertanya "santri ini membaca sesuatu atau tidak?" tanpa menyimak bacaannya.
+3. KeyError: kuncinya tidak ada di dictionary. ValueError: jenisnya benar tapi isinya tidak cocok, misalnya `int("abc")`, atau split menghasilkan 3 potongan padahal variabelnya 2 (too many values to unpack). ValueError tidak selalu dari user, data dari file atau API juga bisa.
+
+Yang saya pelajari:
+- Kalau tidak tahu method-nya, cari di dokumentasi string methods. Ternyata saya bisa menemukannya sendiri.
+- Kali ini saya lebih banyak mengulik dulu. Awalnya saya kira desimal harus diatur di dalam function supaya angkanya rapi. Setelah membaca dokumentasi, baru sadar ternyata bisa langsung saja: function cukup mengembalikan angkanya, pengaturan desimal urusan f-string di print. Banyak hal terbuka lewat dokumentasi, termasuk waktu mencari-cari prefix dan suffix.
+- Kode yang ditulis langkah demi langkah tidak apa-apa. Mudah dibaca lebih penting daripada ringkas.
+- Rapikan: indentasi harus konsisten 4 spasi (dollars_to_float sempat 5 spasi), dan biasakan pakai `if __name__ == "__main__":` seperti di Week 5.
+
+Perbandingan dengan pertama kali:
+- Pertama kali (20 September) saya kena TypeError karena pembagian 100 ada di dalam kurung float. Sekarang urutannya langsung benar: jadikan float dulu, baru dibagi 100.
+- Pertama kali pakai satu baris padat `float(d.replace("$", ""))`. Sekarang langkah demi langkah: buang prefix, jadikan float, return.
+- Yang masih berulang: aturan desimal di luar f-string. Ini yang perlu diulang.
