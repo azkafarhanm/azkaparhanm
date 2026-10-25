@@ -67,6 +67,63 @@ Lumayan menantang. Saya mulai sekitar jam 4.30 pagi, selesai jam 7.
   - **Tulis tebakan dulu** di komentar kode sebelum bertanya. Hari ini hampir semua tebakan saya benar (strip dulu, `endswith`, `try` di sekitar `open`). Itu bukti ide saya bisa dipercaya.
   - Simpan pertanyaan ke Duck untuk saat benar-benar tidak tahu harus mulai dari mana.
 
+## Pemanasan sebelum soal 2 (25 Oktober 2026)
+
+Pagi ini murojaah mingguan dulu (Tip Calculator, lihat `murojaah.md`), lalu lanjut soal.
+
+Kuis Kosakata #4: **60%** (6 benar, 4 salah). Memang lebih susah. Yang salah, akan diulang di kuis berikutnya:
+
+| Frasa | Arti | Kunci mengingat |
+|---|---|---|
+| take a **peek** | melihat sekilas | *peek* (dua e) = mengintip, *peak* = puncak |
+| **resort to** | terpaksa memakai (pilihan terakhir) | bukan *re-sort* (mengurutkan ulang) |
+| **break down** (asumsi) | tidak berlaku lagi, gagal | asumsi yang runtuh |
+| **to recap** | untuk merangkum | *recap* = rangkum, *recall* = mengingat |
+
+Pertanyaan coding, semua benar:
+1. `csv.reader` → setiap baris berupa **list berisi string**. `csv.DictReader` → **dictionary**.
+2. Memasang library luar: `pip install nama_library`, diketik di **terminal**, bukan di kode.
+3. Dokumentasi library baru: biasanya di halaman library itu di **pypi.org**.
+
+## 2. Pizza Py — selesai, check50 hijau semua 7/7 (25 Oktober 2026)
+
+Yang diminta soal: program yang menerima **tepat satu** command-line argument (file CSV berisi menu pizza), lalu menampilkannya sebagai tabel ASCII art memakai library **tabulate** dengan format **grid**. Keluar dengan `sys.exit` kalau argumennya kurang/lebih, bukan `.csv`, atau filenya tidak ada.
+
+Seperti biasa, saya mulai dari memikirkan kerangkanya dulu: bagaimana `open`-nya, lalu bangun kerangka di sekitarnya. Soal ini mirip Lines of Code (cek argumen, cek akhiran file, file tidak ada), jadi saya melihat kode Lines saya sendiri untuk pola cek argumennya. Tidak terlalu sulit.
+
+Persiapan di terminal: `wget` untuk mengunduh `sicilian.csv` dan `regular.csv`, lalu `pip install tabulate`.
+
+### Kebingungan 1: perlu writer dan mode `"a"`?
+- Saya kira harus pakai `csv.writer` atau `DictWriter`, karena isi CSV harus "diubah" jadi tabel.
+- Ternyata soal cuma minta **menampilkan** tabel ke layar ("outputs"), bukan menulis ke file. Jadi cukup **membaca**. Mana yang untuk membaca: `reader`. Mana yang untuk menulis: `writer`.
+
+### Kebingungan 2: membuka dua file sekaligus?
+- Satu `open` hanya membuka **satu** file. Kalau butuh dua file, pakai dua `open`. (Di soal ini ternyata tidak perlu.)
+
+### Kebingungan 3: list atau dictionary?
+- Dari dokumentasi tabulate, dia bisa menerima dua-duanya: list of lists, atau iterable of dictionaries.
+- Saya pilih `csv.reader` (list). Baris pertama CSV adalah header (`Sicilian Pizza,Small,Large`), jadi di tabulate saya pakai pengaturan **`headers="firstrow"`**. Format tabelnya pakai **`tablefmt="grid"`**. Dua-duanya saya temukan di dokumentasi, dengan petunjuk dari Duck.
+- `tabulate` bisa langsung menerima `reader`, karena reader bisa di-loop baris per baris.
+
+### Error yang saya temui
+- `csv.reader()` tanpa isi → `TypeError: expected at least 1 argument, got 0`. Juru tulis pembaca harus diberi file yang mau dibaca.
+- `endswith(.csv)` tanpa tanda kutip → `SyntaxError`. Di sini kutip **wajib**, karena `.csv` itu teks.
+- `open("sys.argv[1]")` **pakai** tanda kutip → semua file dianggap tidak ada, bahkan `regular.csv` yang jelas ada. Python malah mencari file yang namanya `sys.argv[1]`.
+  - Ini **kesalahan berulang**. Kemarin di Lines saya sudah menanyakannya ke Duck (Kebingungan 4), tapi hari ini tetap tertulis pakai kutip.
+  - Kunci membedakan: `".csv"` itu **teks** → pakai kutip. `sys.argv[1]` itu **variabel** → tanpa kutip.
+  - Tips Duck: kalau program mencari file yang salah, `print` dulu nama filenya sebelum `open`, di dalam programnya.
+- Di terminal Python (`>>>`), `print(sys.argv[1])` → `NameError`, karena `sys` belum di-import. Lagi pula terminal `>>>` tidak menerima command-line argument, jadi cara mengecek yang benar adalah `print` sementara di dalam `pizza.py`.
+
+### Eksperimen di terminal
+- Awalnya saya mencoba tabulate langsung dengan nama file tertentu, jadi tabel tetap muncul walaupun argumennya `ff.py` atau `sala.csv`. Setelah cek argumen dan `sys.argv[1]` dipasang dengan benar, pesan errornya muncul sesuai harapan.
+- Sebelum check50, saya uji: tanpa argumen, dua argumen, file bukan `.csv`, file yang tidak ada, dan dua file pizza.
+
+### Yang saya pelajari
+- Baca soal dengan teliti: "outputs" artinya tampil di layar. Tidak semua soal file perlu menulis.
+- Membaca dokumentasi library baru (tabulate) itu bisa. Contoh di dokumentasi langsung menunjukkan cara memakai `headers` dan `tablefmt`.
+- Memakai ulang pola dari kode sendiri itu sah, asal paham kenapa polanya begitu.
+
 ## Yang ingin dicoba
 - Coba `style50 lines.py` untuk melihat saran kerapian kode.
-- Soal berikutnya: Pizza Py.
+- Soal berikutnya: Scourgify.
+- Ulangi beda tanda kutip: teks pakai kutip, variabel tanpa kutip.
