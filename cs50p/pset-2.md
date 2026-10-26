@@ -34,9 +34,8 @@ Tentang autocomplete:
 - IntelliSense (kotak daftar nama method) itu bawaan VS Code. Tulisan abu-abu yang melanjutkan kode itu AI.
 - Untuk latihan CS50, AI autocomplete dimatikan, dan soal dikerjakan ulang di cs50.dev dari layar kosong.
 
-Kendala yang saya rasakan:
-- Kalau stuck, saya malah bengong, bingung mau coba apa.
-- Cara mengatasinya: tulis pseudocode sebagai komentar dulu, lalu kerjakan satu baris saja. Tanyakan kata kerjanya: minta = input, untuk setiap = for, kalau = if, tulis = print.
+Kalau stuck:
+- Tulis pseudocode sebagai komentar dulu, lalu kerjakan satu baris saja. Tanyakan kata kerjanya: minta = input, untuk setiap = for, kalau = if, tulis = print.
 
 ## 2. Just setting up my twttr — selesai, check50 hijau semua (1 Oktober 2026)
 

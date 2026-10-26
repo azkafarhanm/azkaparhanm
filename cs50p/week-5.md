@@ -2,7 +2,7 @@
 
 ## Hari 1 – 16 Oktober 2026
 
-Hari ini capek sekali, baru perjalanan lumayan jauh. Cuma sempat nonton sekitar 8 menit awal lecture, sisanya dipakai bertanya. Paginya juga memperbaiki bitcoin.py dulu (catatannya di pset-4.md).
+Hari ini cuma sempat nonton sekitar 8 menit awal lecture, sisanya dipakai bertanya. Paginya juga memperbaiki bitcoin.py dulu (catatannya di pset-4.md).
 
 ### Kenapa harus menulis tes?
 - Kata David: lebih baik membiasakan diri menulis tes **sejak awal**, selagi programnya masih kecil, daripada nanti sesudah programnya besar dan rumit.

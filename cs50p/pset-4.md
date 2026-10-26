@@ -50,7 +50,7 @@ Yang diminta soal:
 
 ## 2. Frank, Ian and Glen's Letters (figlet) — selesai, check50 hijau semua 8/8 (13 Oktober 2026)
 
-Soal ini lumayan struggle. Banyak bertanya ke Duck, tapi Duck tidak kasih jawaban, cuma petunjuk dan pertanyaan pancingan. Akhirnya selesai, dan saya paham alur kodenya.
+Banyak bertanya ke Duck, tapi Duck tidak kasih jawaban, cuma petunjuk dan pertanyaan pancingan. Akhirnya selesai, dan saya paham alur kodenya.
 
 Yang diminta soal:
 - Program menerima **nol** atau **dua** command-line argument.
