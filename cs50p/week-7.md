@@ -68,9 +68,5 @@ Lanjut Lecture 7, **10 menit kedua**. Ngoding 1 jam, bahasa Inggris 10 menit.
 
 ## Yang masih tertunda
 - [ ] Murojaah materi Hari 1 dan Hari 2, lalu kuis kosakata.
-- [ ] **Perbaiki `shirt.py` (Pset 6)**, lalu check50 dan submit ulang:
-  1. `.jpeg` belum masuk daftar ekstensi.
-  2. Belum case-insensitive (`FOTO.JPG` ditolak).
-  3. Satu argumen masih crash `IndexError`.
-  4. Pesan error "Invalid output" kurang pas.
+- [x] **Perbaiki `shirt.py` (Pset 6)**: selesai 29 Oktober, tidak submit ulang. Pembahasannya di `pset-6.md`.
 - [ ] Lanjut Lecture 7: bagian *Case Sensitivity* (`re.IGNORECASE`, `?` untuk bagian opsional), lalu *Cleaning Up User Input*.

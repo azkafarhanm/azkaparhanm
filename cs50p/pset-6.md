@@ -241,7 +241,7 @@ Yang diminta soal: program yang menerima **dua** command-line argument, yaitu fo
 - `pip install Pillow` (ternyata di codespace sudah terpasang).
 - Saya sempat salah ketik `pytohn`, hasilnya `command not found`.
 
-### Yang masih perlu diperbaiki (check50 hijau, tapi belum sesuai soal)
+### Yang masih perlu diperbaiki (check50 hijau, tapi belum sesuai soal) → sudah diperbaiki 29 Oktober, lihat di bawah
 Ini **kesalahan berulang yang keempat kalinya**: check50 hijau belum tentu semua aturan soal terpenuhi.
 
 1. **`.jpeg` belum ditangani.** Soal menyebut tiga ekstensi: `.jpg`, `.jpeg`, dan `.png`. Tuple di `endswith` saya baru berisi dua.
@@ -262,6 +262,76 @@ Ini **kesalahan berulang yang keempat kalinya**: check50 hijau belum tentu semua
 - Pola `from X import Y` hanya menyediakan `Y`, bukan `X`.
 - Untuk `paste`, yang di depan titik adalah **background**.
 
+### Perbaikan 29 Oktober 2026
+
+Empat hal yang belum sesuai soal sudah saya perbaiki. **Tidak saya submit ulang**, karena nilainya sudah 13/13. Perbaikan ini untuk pemahaman saya sendiri.
+
+#### Hasil uji
+| Perintah | Pesan yang keluar |
+|---|---|
+| `python shirt.py` | `Too few command-line arguments` |
+| `python shirt.py foto.jpg` | `Too few command-line arguments` (dulu crash `IndexError`) |
+| `python shirt.py a.jpg b.jpg c.jpg` | `Too many command-line arguments` |
+| `python shirt.py catatan.txt out.txt` | `Invalid format` |
+| `python shirt.py foto.jpg out.png` | `Input and output have different extensions` |
+| `python shirt.py FOTO.JPG OUT.JPG` | berhasil (dulu ditolak) |
+| `python shirt.py foto.jpeg out.jpeg` | lolos pengecekan format (dulu ditolak) |
+
+`style50` bilang: *"Looks good, but consider adding more comments!"*
+
+#### Penamaan itu penting
+- Nama variabel lama (`im`, `image`, `resize`) saya ganti jadi `before`, `after`, dan `shirt`, supaya terlihat perannya masing-masing.
+- Di soal ini ada beberapa gambar sekaligus. Nama yang tidak jelas gampang bikin salah paham, misalnya tertukar mana background dan mana tempelan, seperti yang sempat terjadi waktu mengerjakan.
+- Ibarat di halaqah: lebih jelas memanggil "penyetor" dan "penyimak" daripada "santri 1" dan "santri 2".
+
+#### Atribut vs metode
+| | Atribut | Metode |
+|---|---|---|
+| Artinya | keterangan yang sudah menempel di objek | pekerjaan yang dijalankan objek |
+| Ditulis | tanpa kurung | pakai kurung |
+| Contoh di soal ini | `shirt.size` | `after.paste(...)`, `after.save(...)` |
+| Contoh Week 6 | `file.name` | `file.write(...)` |
+
+Patokannya: atribut itu **keterangan**, metode itu **perbuatan**.
+
+#### `lower()` cuma singgahan
+- `.lower()` menghasilkan string **baru**. `sys.argv[1]` aslinya tidak berubah, kecuali hasilnya disimpan ke variabel.
+- Di soal ini justru itu yang dibutuhkan: `.lower()` dipakai sebentar untuk mengecek ekstensi, sedangkan nama asli (misalnya `FOTO.JPG`) tetap utuh untuk dibuka dengan `Image.open`.
+- Kalau nama aslinya ikut diubah jadi `foto.jpg`, pengecekannya lolos tapi filenya tidak ketemu, karena **Linux itu case-sensitive**: `FOTO.JPG` dan `foto.jpg` dianggap dua file berbeda. Codespace CS50 memakai Linux. Windows sebaliknya, menganggap keduanya file yang sama.
+- Saya sempat menyebutnya "case insensitive". Yang benar case-**sensitive**, artinya **membedakan** huruf besar-kecil.
+- Ibarat menyalin nama santri ke kertas buram untuk dicocokkan dengan absen. Nama di rapor aslinya tidak ikut diubah.
+
+#### Satu `except` memayungi semua baris
+- Percobaan: `shirt.png` saya sembunyikan dengan `mv shirt.png shirt-simpan.png`, lalu menjalankan `python shirt.py before1.jpg after.jpg`. Hasilnya `File does not exist`, padahal `before1.jpg` ada. Yang hilang `shirt.png`. Setelah itu dikembalikan dengan `mv shirt-simpan.png shirt.png`.
+- Sebabnya: `try` itu **satu payung besar**. `except FileNotFoundError` tidak peduli baris mana yang gagal, selama jenis errornya sama.
+- Ini **bukan pelanggaran soal**, check50 tetap hijau. Cuma pesannya menyalahkan file yang salah, dan itu menyesatkan saat mencari masalah.
+- Usul saya pesan "Invalid format", tapi kurang cocok: pesan itu sudah dipakai untuk ekstensi yang salah, jadi user akan mengecek ekstensinya padahal sudah benar. Pesannya harus tetap tentang file yang tidak ditemukan, tapi menyebut dua kemungkinannya, misalnya `Input file or shirt.png does not exist`.
+- `shirt.png` juga dibuka tanpa `with`. Di program pendek ini tidak apa-apa, karena Python menutupnya sendiri saat program selesai. Ini soal kebiasaan untuk program yang lebih besar.
+
+#### Komentar dalam bahasa Inggris
+- Komentar itu bekal **murojaah**: saat menulis ulang dari layar kosong, saya tidak perlu membaca ulang soal untuk ingat kenapa sebuah baris ada. Juga untuk developer lain kalau nanti bekerja sama.
+- Tulis **kenapa**, bukan **apa**.
+- Tidak perlu kalimat lengkap. Cukup bentuk perintah pendek, diawali kata kerja, jadi tidak pusing soal tenses:
+
+| Pola | Contoh |
+|---|---|
+| Check ... | `# Check that the user gave exactly two files` |
+| Make sure ... | `# Make sure both files have the same extension` |
+| Allow only ... | `# Allow only .jpg, .jpeg, and .png files` |
+| Use ... only for ... | `# Use lower() only for checking, keep the original name` |
+| Open ... and ... | `# Open the photo and resize it to fit the shirt` |
+
+- Cara melatihnya: pikirkan dulu dalam bahasa Indonesia, cari kata kerjanya, lalu sambung dengan nama variabel yang sudah ada di kode.
+- Koreksi komentar pertama saya:
+
+| Yang saya tulis | Masalah | Lebih baik |
+|---|---|---|
+| Komentar yang sama ditulis dua kali, di atas cek "terlalu sedikit" dan "terlalu banyak" | Dobel | Cukup satu komentar di atas dua `if` itu |
+| `# Make sure both files have the same extension` di atas cek format | **Salah tempat**: baris di bawahnya mengecek format yang diizinkan, bukan ekstensi yang sama | `# Allow only .jpg, .jpeg, and .png files` |
+| `# file input and output must be same` | Urutan kata ala bahasa Indonesia ("file input"), dan tidak jelas apanya yang sama | `# Input and output files must have the same extension` |
+
+- Pelajaran terpenting: **komentar harus cocok dengan baris di bawahnya.** Komentar yang salah tempat lebih membingungkan daripada tidak ada komentar.
+
 ## Penutup Problem Set 6 — selesai semua (26 Oktober 2026)
 
 | Soal | check50 |
@@ -281,6 +351,9 @@ Ini **kesalahan berulang yang keempat kalinya**: check50 hijau belum tentu semua
 ## Yang ingin dicoba
 - Coba `style50 lines.py` untuk melihat saran kerapian kode.
 - ~~Coba jalankan `python scourgify.py before.csv` (hanya satu argumen)~~ → sudah, hasilnya IndexError. Sudah diperbaiki jadi `<= 2` dan submit ulang.
-- Perbaiki shirt.py: tambah `.jpeg`, buat case-insensitive, perbaiki cek jumlah argumen, perjelas pesan error. Lalu check50 dan submit ulang.
+- ~~Perbaiki shirt.py: tambah `.jpeg`, buat case-insensitive, perbaiki cek jumlah argumen, perjelas pesan error.~~ → sudah, 29 Oktober (tidak submit ulang).
+- Buktikan Linux case-sensitive: di folder `shirt`, jalankan `ls HASIL.JPG` lalu `ls hasil.jpg`. Bandingkan hasilnya.
+- Rapikan tiga komentar di `shirt.py` sesuai koreksi di atas.
+- Ganti pesan `File does not exist` jadi pesan yang menyebut dua file.
 - Lanjut **Week 7: Regular Expressions**.
 - Ulangi beda tanda kutip: teks pakai kutip, variabel tanpa kutip.
