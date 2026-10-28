@@ -1,13 +1,10 @@
 # CS50P Week 7: Regular Expressions
 
-> Catatan: pembagian "10 menit pertama" dan "10 menit kedua" di bawah disusun dari urutan materi resmi lecture 7, belum dicocokkan dengan detik videonya. Kalau di videomu batasnya beda, geser saja isinya.
+Dua hari pertama Week 7 diisi menonton lecture saja, masing-masing sekitar 10 menit video.
 
 ## Hari 1 – 27 Oktober 2026
 
 Mulai Lecture 7, **10 menit pertama**. Ngoding 1 jam, bahasa Inggris 10 menit.
-
-### Pemanasan (murojaah)
-(isi sendiri dari murojaah hari ini)
 
 ### Masalah: memeriksa apakah teks itu "bentuknya" email
 David membuat `validate.py`: minta user mengetik email, lalu program menentukan **valid** atau **invalid**. Percobaannya dari yang paling sederhana, dan setiap percobaan **masih ada celahnya**:
@@ -29,9 +26,6 @@ David membuat `validate.py`: minta user mengetik email, lalu program menentukan 
 - `re.search(pola, teks)` mencari apakah **pola** ada di dalam **teks**. Kalau cocok, hasilnya sebuah objek kecocokan (`re.Match`). Kalau tidak cocok, hasilnya `None`. Jadi bisa langsung dipakai di `if`.
 - Langkah pertama David: `re.search("@", email)`. Ini baru mencari huruf `@` apa adanya, hasilnya sama dengan `"@" in email`, jadi belum ada kemajuan. Tapi sekarang ada **tempat untuk memasang pola**, dan itu yang dikembangkan di bagian berikutnya.
 
-### Kosakata
-(isi sendiri dari kata-kata yang kamu pause hari ini)
-
 ### Yang mau dicoba
 - Ketik ulang percobaan 1 sampai 4 sendiri, lalu uji dengan `@.`, `malan@harvard`, dan `malan@.edu`. Lihat sendiri celahnya.
 - Di Python interaktif: `import re`, lalu `re.search("@", "a@b")` dan `re.search("@", "ab")`. Bandingkan hasilnya (objek vs `None`).
@@ -41,9 +35,6 @@ David membuat `validate.py`: minta user mengetik email, lalu program menentukan 
 ## Hari 2 – 28 Oktober 2026
 
 Lanjut Lecture 7, **10 menit kedua**. Ngoding 1 jam, bahasa Inggris 10 menit.
-
-### Pemanasan (murojaah)
-(isi sendiri dari murojaah hari ini)
 
 ### Metacharacter: karakter yang punya arti khusus
 - Di dalam pola, sebagian karakter **tidak berarti dirinya sendiri**. Namanya **metacharacter**. Analogi: tanda tajwid di mushaf. Hurufnya sama, tapi tanda di atasnya memberi aturan cara membaca.
@@ -68,18 +59,15 @@ Lanjut Lecture 7, **10 menit kedua**. Ngoding 1 jam, bahasa Inggris 10 menit.
 - Muncul masalah baru: di string Python biasa, `\` juga punya arti khusus (misalnya `\n`). Solusinya **raw string**: awali tanda kutip dengan `r`, misalnya `r".+@.+\.edu"`, supaya Python menyerahkan garis miring itu apa adanya ke `re`.
 - Analogi: raw string seperti titipan surat tertutup. Python tidak membukanya, langsung diserahkan ke `re`.
 
-### Kosakata
-(isi sendiri dari kata-kata yang kamu pause hari ini)
-
 ### Yang mau dicoba
 - `re.search(".+@.+", "@")` dan `re.search(".+@.+", "a@b")`.
 - `re.search(".+@.+.edu", "malan@harvardXedu")` lalu bandingkan dengan `r".+@.+\.edu"`.
 - Ganti `+` jadi `*` pada pola email, lihat apa yang berubah.
-- Kuis kosakata hari ini.
 
 ---
 
 ## Yang masih tertunda
+- [ ] Murojaah materi Hari 1 dan Hari 2, lalu kuis kosakata.
 - [ ] **Perbaiki `shirt.py` (Pset 6)**, lalu check50 dan submit ulang:
   1. `.jpeg` belum masuk daftar ekstensi.
   2. Belum case-insensitive (`FOTO.JPG` ditolak).
