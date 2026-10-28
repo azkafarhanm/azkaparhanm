@@ -188,8 +188,99 @@ Setiap nama dipecah jadi nama depan dan nama belakang. Kalau argumennya tidak te
 - Reader dan writer tidak tersambung otomatis. Saya yang menyambungkan lewat dictionary di `writerow`.
 - `fieldnames` = contekan urutan kolom, `writeheader()` = menuliskan contekan itu sebagai baris pertama, `writerow()` = menulis satu baris data.
 
+## 4. CS50 P-Shirt — selesai, check50 hijau semua 13/13 (26 Oktober 2026)
+
+Dikerjakan malam harinya, setelah Scourgify. Soal baru, dan banyak dibantu petunjuk Duck.
+
+Yang diminta soal: program yang menerima **dua** command-line argument, yaitu foto input dan nama file output. Program menempelkan (**overlay**) `shirt.png` yang background-nya transparan ke atas foto, setelah fotonya di-**resize dan di-crop** supaya ukurannya sama dengan shirt, lalu hasilnya disimpan sebagai output. Keluar dengan `sys.exit` kalau argumennya tidak tepat dua, ekstensinya bukan `.jpg`/`.jpeg`/`.png`, ekstensi input dan output berbeda, atau file input tidak ada.
+
+### Memahami soal dulu
+- **overlay** = menumpuk/menempelkan di atas. Jadi kaos ditempel di atas foto orang, bukan sebaliknya.
+- Kenapa `shirt.png` berformat PNG? Karena PNG bisa punya bagian **transparan**. Ibarat plastik mika bergambar kaos yang ditaruh di atas foto: bagian bergambar menutupi foto, bagian bening membiarkan foto (kepala, latar) tetap terlihat.
+- Alat yang disebut soal, berurutan: `Image.open` → `ImageOps.fit` → `Image.paste` → `Image.save`.
+
+### Validasi argument
+- `endswith` bisa menerima **beberapa akhiran sekaligus**, tapi harus dikemas sebagai **tuple**. Saya sempat menulis `endswith(".jpg", ".png")` dengan dua argumen terpisah, hasilnya `TypeError: slice indices must be integers`. Yang benar pakai kurung tambahan: `endswith((".jpg", ".png"))`, karena argumen keduanya sebenarnya adalah posisi awal potongan, bukan akhiran kedua.
+- Untuk membandingkan apakah **ekstensi input sama dengan output**, `endswith` kurang cocok. Duck mengarahkan saya ke **`os.path.splitext`**:
+  - `os.path.splitext("aku.py")` hasilnya **tuple** `('aku', '.py')`.
+  - Saya sempat memanggil `splitext('aku.py')` langsung dan kena `NameError`. Lalu sudah `import os` pun tetap NameError, karena function itu ada di dalam `os.path`, jadi harus ditulis lengkap: `os.path.splitext(...)`.
+  - Mengambil isi tuple pakai **indeks**, sama seperti list. Indeks 0 = nama file, indeks 1 = ekstensi. Saya belum pernah diajarkan ini di lecture, jadi ini pelajaran baru.
+  - Bisa langsung `os.path.splitext(...)[1]` tanpa variabel perantara.
+
+### Kebingungan: file mana yang saya buka dan isi?
+- Saya bingung, apakah foto input itu "sudah terisi" atau saya yang mengisinya.
+- Jawabannya ada di soal: **input = file yang user sediakan** (saya buka dan baca), **output = file baru hasil olahan saya** (saya simpan). `shirt.png` adalah file ketiga yang disediakan CS50, dan namanya ditulis langsung di kode karena selalu sama.
+- Jadi ada tiga sumber gambar, dan `Image.open` dipanggil dua kali: untuk input dan untuk shirt.
+
+### Kebingungan: ukuran resize-nya dari mana?
+- Saya kira ukurannya bebas saya tentukan. Ternyata tidak: ukurannya **diambil dari shirt**, lewat `size = shirt.size` (hasilnya tuple lebar dan tinggi).
+- Tujuannya supaya foto dan shirt **sama persis ukurannya**, baru bisa ditempel dengan pas.
+- `ImageOps.fit` **me-return gambar baru**, jadi hasilnya harus ditangkap ke variabel. Saya sempat memanggilnya tanpa menyimpan hasilnya, jadi hasilnya hilang.
+- Nilai di `image=im` ditulis **tanpa tanda kutip**, karena `im` itu variabel berisi objek gambar, bukan teks.
+
+### Kebingungan terbesar: siapa yang ditempel ke siapa
+- Pola dari soal: `photo.paste(shirt, shirt)`.
+  - Yang **di depan titik** adalah gambar **dasar/background**.
+  - Argumen pertama = gambar yang ditempel.
+  - Argumen kedua = **mask**.
+- Saya beberapa kali tertukar, sempat menulis shirt sebagai background dan foto sebagai tempelan. Duck memancing dengan pertanyaan: masuk akal tidak kalau foto orang ditempel di atas kaos? Dari situ baru nyambung: **yang jadi background adalah foto yang sudah di-fit**, dan shirt yang ditempel di atasnya.
+- **Mask** itu semacam cetakan yang menentukan bagian mana yang ikut tertempel dan bagian mana yang dibiarkan tembus. Karena `shirt.png` punya area transparan, shirt dipakai **dua kali** (sebagai gambar dan sebagai mask) supaya bagian transparannya tetap transparan, tidak menutupi foto dengan kotak.
+- `save` juga dipanggil dari objek background yang sama, dan nama file output diisi dari `sys.argv[2]`. Saya sempat menulis `image.save(image)`, padahal save butuh **nama file**, bukan objek gambar.
+
+### Error yang saya temui
+- `shirt.png` ukurannya **0 byte** sehingga muncul `PIL.UnidentifiedImageError: cannot identify image file`. Penyebabnya: saya sempat membuat file kosong dengan `code shirt.png`, lalu `wget` menyimpan file yang asli dengan nama `shirt.png.1` karena namanya sudah terpakai.
+  - Cara mengeceknya: **`ls -l`** untuk melihat ukuran file. 0 byte hampir selalu berarti file kosong atau gagal diunduh.
+  - Solusinya: hapus yang kosong, lalu ganti nama `shirt.png.1` jadi `shirt.png`.
+- `NameError: name 'PIL' is not defined` saat memanggil `PIL.ImageOps.fit(...)`. Pola `from PIL import Image` membuat **`Image`** tersedia, tapi bukan `PIL` itu sendiri.
+- `NameError: name 'Image' is not defined` setelah saya mengutak-atik baris import.
+- "file does not exist" saat menjalankan `python shirt.py before1.png after.png`, padahal file muppet semuanya `.jpg`. Ternyata itu **pertanda bagus**: program saya memang benar menolak file yang tidak ada.
+- Sebelum file muppet diunduh, folder cuma berisi `shirt.png` dan `shirt.py`. Cara mengeceknya: **`ls`**.
+
+### Persiapan di terminal
+- `wget <url>` untuk mengunduh `shirt.png` dan `muppets.zip`, lalu `unzip muppets.zip` untuk mengeluarkan `before1.jpg`, `before2.jpg`, `before3.jpg`.
+- `pip install Pillow` (ternyata di codespace sudah terpasang).
+- Saya sempat salah ketik `pytohn`, hasilnya `command not found`.
+
+### Yang masih perlu diperbaiki (check50 hijau, tapi belum sesuai soal)
+Ini **kesalahan berulang yang keempat kalinya**: check50 hijau belum tentu semua aturan soal terpenuhi.
+
+1. **`.jpeg` belum ditangani.** Soal menyebut tiga ekstensi: `.jpg`, `.jpeg`, dan `.png`. Tuple di `endswith` saya baru berisi dua.
+2. **Belum case-insensitive.** Soal bilang pengecekan ekstensi harus mengabaikan huruf besar-kecil, jadi `FOTO.JPG` seharusnya diterima. Sekarang ditolak. Perlu disamakan dulu huruf besar-kecilnya sebelum dicek.
+3. **Satu argumen bikin crash.** Saya mengecek `== 1` dan `>= 4`, jadi kasus **dua** isi `sys.argv` (satu file saja) lolos, lalu program crash `IndexError` saat mengambil `sys.argv[2]`. Ini persis masalah yang sudah saya perbaiki di Scourgify dengan `<= 2`, tapi lupa diterapkan di sini.
+4. **Pesan error "Invalid output" kurang jelas**, padahal yang dicek input dan output sekaligus.
+
+### Masukan desain dari Duck
+- Validasi input dan output sebaiknya **simetris**: dua-duanya dicek dengan aturan yang sama.
+- Pertimbangkan membungkus logika ke dalam `main()` dan function pembantu, supaya lebih rapi dan mudah dites.
+- Nama variabel `im`, `image`, `resize` kurang menjelaskan perannya. Nama yang menyebut **foto** dan **shirt** lebih mudah dibaca, apalagi karena di sini ada beberapa gambar sekaligus.
+- `shirt.png` dibuka tanpa `with`, jadi tidak dijamin tertutup rapi seperti input.
+- Import sebaiknya konsisten: cukup `from PIL import Image, ImageOps`, lalu panggil `ImageOps.fit(...)` tanpa awalan `PIL.`.
+
+### Yang saya pelajari
+- `ls -l` untuk mengecek ukuran file, dan `wget` serta `unzip` untuk menyiapkan bahan soal.
+- Tuple diakses dengan indeks seperti list.
+- Pola `from X import Y` hanya menyediakan `Y`, bukan `X`.
+- Untuk `paste`, yang di depan titik adalah **background**.
+
+## Penutup Problem Set 6 — selesai semua (26 Oktober 2026)
+
+| Soal | check50 |
+|---|---|
+| Lines of Code | 9/9 |
+| Pizza Py | 7/7 |
+| Scourgify | 8/8 |
+| CS50 P-Shirt | 13/13 |
+
+### Pelajaran umum
+- Semua soal Pset 6 polanya sama di awal: **cek command-line argument dulu, baru buka file.**
+- `sys.argv[1]` ditulis **tanpa** tanda kutip (variabel), `".csv"` dan `".jpg"` **pakai** kutip (teks).
+- Library baru (tabulate, Pillow) bisa dipelajari sendiri dari dokumentasinya. Bagian **Hints** di soal selalu menunjuk ke halaman dokumentasi yang tepat.
+- Banyak function me-**return** objek baru, jadi hasilnya harus ditangkap ke variabel: `ImageOps.fit`, `replace`, `strip`.
+- **check50 hijau belum tentu semua aturan soal terpenuhi.** Terjadi lagi di P-Shirt (`.jpeg`, case-insensitive, satu argumen). Program yang crash juga dianggap "exits", jadi check50 tetap hijau.
+
 ## Yang ingin dicoba
 - Coba `style50 lines.py` untuk melihat saran kerapian kode.
-- Soal berikutnya: CS50 P-Shirt (PIL).
-- Coba jalankan `python scourgify.py before.csv` (hanya satu argumen). Apa yang terjadi?
+- ~~Coba jalankan `python scourgify.py before.csv` (hanya satu argumen)~~ → sudah, hasilnya IndexError. Sudah diperbaiki jadi `<= 2` dan submit ulang.
+- Perbaiki shirt.py: tambah `.jpeg`, buat case-insensitive, perbaiki cek jumlah argumen, perjelas pesan error. Lalu check50 dan submit ulang.
+- Lanjut **Week 7: Regular Expressions**.
 - Ulangi beda tanda kutip: teks pakai kutip, variabel tanpa kutip.
