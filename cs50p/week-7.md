@@ -67,6 +67,6 @@ Lanjut Lecture 7, **10 menit kedua**. Ngoding 1 jam, bahasa Inggris 10 menit.
 ---
 
 ## Yang masih tertunda
-- [ ] Murojaah materi Hari 1 dan Hari 2, lalu kuis kosakata.
+- [x] Murojaah materi Hari 1 dan Hari 2, lalu kuis kosakata: selesai 29 Oktober pagi (Kuis Kosakata #6, 30 soal, 83%).
 - [x] **Perbaiki `shirt.py` (Pset 6)**: selesai 29 Oktober, tidak submit ulang. Pembahasannya di `pset-6.md`.
 - [ ] Lanjut Lecture 7: bagian *Case Sensitivity* (`re.IGNORECASE`, `?` untuk bagian opsional), lalu *Cleaning Up User Input*.
