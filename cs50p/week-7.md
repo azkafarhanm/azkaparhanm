@@ -230,7 +230,310 @@ Dua kesalahan saya waktu mencoba:
 
 ---
 
+## Hari 4 – 30 Oktober 2026
+
+Lanjut Lecture 7 dari menit 50 sampai sekitar **menit 1:31** (Walrus Operator). Ngoding 2 jam, bahasa Inggris 10 menit.
+
+### Kuis Kosakata #7
+15 soal: lima kata yang kemarin salah (bentuk soal diubah) dan sepuluh kata baru. Hasilnya **15/15**. Mulai hari ini soal kuis diberi nomor, supaya kalau ada yang salah langsung ketahuan nomor berapa.
+
+### Pemanasan (murojaah)
+Lima pertanyaan dari materi Hari 3. Tiga benar, dua perlu diluruskan.
+
+| Pertanyaan | Jawaban saya | Koreksi |
+|---|---|---|
+| `re.search` mengembalikan apa? | objek kalau cocok, `None` kalau tidak | Benar |
+| Dua arti `^` | di luar kurung = diawali, di dalam kurung = pengecualian | Benar. Tambahan: `^` berarti "kecuali" hanya kalau letaknya **paling depan** di dalam kurung siku. Di tengah seperti `[a^b]` dia karakter biasa |
+| Kenapa `r"..."` saja tidak cukup? | karena `r` dan backslash dua pembaca berbeda | Arahnya benar, tapi saya masih bilang `r` artinya "dianggap satu baris". **Salah.** `r` artinya Python **tidak mengolah backslash**-nya |
+| Kenapa `..*` sama dengan `.+`? | titik pertama tidak punya pengait jadi wajib satu, titik kedua pengaitnya `*` | Benar, dan istilah "pengait" ini saya pakai sendiri |
+| Isi `\w` | semua karakter **kecuali** digit | **Salah.** Angka justru **termasuk** `\w` |
+
+Koreksi `\w` saya buktikan sendiri:
+
+| Karakter | `\w` | `\d` | `\s` |
+|---|---|---|---|
+| `a`, `Z` | True | False | False |
+| `7` | **True** | **True** | False |
+| `_` | True | False | False |
+| spasi | False | False | True |
+| `.` `@` `-` | False | False | False |
+
+Angka `7` cocok di `\w` **dan** `\d` sekaligus. Jadi `\d` itu **bagian dari** `\w`, bukan dikecualikan. Seperti "santri kelas 7" itu bagian dari "santri", bukan lawannya.
+
+Kalimat pegangan untuk raw string, supaya tidak salah lagi: **"`r` itu bukan soal baris, tapi soal backslash."**
+
+### Kurung: stabilo dan pagar
+Bagian ini yang paling lama saya pahami hari ini. Awalnya saya bilang terus terang belum paham, lalu dipecah pelan-pelan.
+
+Kuncinya: selama ini `re.search` cuma saya pakai untuk bertanya "cocok atau tidak". Ternyata regex juga bisa **mengambilkan potongan** teksnya. Caranya, potongan yang mau diambil **distabilo pakai kurung**.
+
+Saya buktikan sendiri di `latihan.py`:
+
+```python
+import re
+m = re.search(r"(\w+)@(\w+)", "azka@nusaputra")
+print(m.group(1))
+print(m.group(2))
+```
+
+Hasilnya `azka` dan `nusaputra`, terpisah, padahal yang saya kasih cuma satu teks utuh. Istilahnya **capturing**.
+
+Gunanya di dunia nyata: dari teks `Ahmad-7A` bisa langsung dipisah nama dan kelasnya tanpa `split`. Cocok untuk membersihkan data yang masuk berantakan.
+
+Jadi kurung punya **dua tugas**:
+
+| Tanda | Memagari | Bisa diambil? |
+|---|---|---|
+| `( )` | ya | ya, pakai `.group()` |
+| `(?: )` | ya | tidak |
+
+`(?:` itu **satu kesatuan tiga karakter**, bukan tiga tanda terpisah. `?` di situ bukan `?` yang artinya "nol atau satu".
+
+Logikanya: `(` sudah terpakai untuk kurung biasa, jadi perancang regex membuat aturan **`(` lalu `?` = ini kurung jenis khusus**, dan karakter sesudah `?` menyebutkan jenisnya. Jadi `:` cuma label jenis.
+
+Analogi saya sendiri: seperti plat nomor. Huruf F di plat menandakan wilayah Sukabumi, tapi F itu bukan singkatan dari nama kotanya. Cuma kode yang disepakati. Tiga karakter `(?:` juga begitu, tidak punya makna masing-masing.
+
+Satu bukti bahwa `?` di situ bukan `?` biasa: `?` yang biasa selalu menempel pada sesuatu di depannya, padahal di `(?:` yang ada di depannya cuma kurung buka, tidak ada yang bisa diulang.
+
+### Kenapa `|` butuh dipagari
+Saya menebak sendiri bahwa pagar itu berguna untuk `|`, dan ternyata benar. Buktinya:
+
+| Teks | `^\w+@\w+\.edu|com$` | `^\w+@\w+\.(?:edu|com)$` |
+|---|---|---|
+| `azka@nusaputra.edu` | True | True |
+| `azka@nusaputra.com` | True | True |
+| `com` | **True** | False |
+| `ini bukan email com` | **True** | False |
+
+Tanpa kurung, `|` membelah **seluruh pola** jadi dua pilihan: `^\w+@\w+\.edu` **atau** `com$`. Jadi apa pun yang berakhiran `com` lolos lewat pilihan kanan, tidak peduli ada `@` atau tidak.
+
+Kurung di sini jadi **pagar** yang membatasi sampai mana `|` boleh memilih. Mirip tanda kurung di matematika yang menentukan operasi mana dikerjakan duluan.
+
+### Teks biasa itu peka huruf besar-kecil
+David mengetik `MALAN@HARVARD.EDU` dan hasilnya **Invalid**, padahal polanya pakai `\w` yang menerima huruf besar maupun kecil. Saya kira `\w`-nya yang bermasalah. Ternyata bukan.
+
+| Pola | Hasil untuk `MALAN@HARVARD.EDU` |
+|---|---|
+| `^\w+@\w+\.edu$` (edu huruf **kecil**) | **False** |
+| `^\w+@\w+\.EDU$` (EDU huruf **besar**) | True |
+
+Biangnya tulisan **`edu`** itu sendiri. Di dalam pola ada dua jenis isi:
+
+| Jenis | Contoh | Peka huruf besar-kecil? |
+|---|---|---|
+| Simbol / singkatan | `\w`, `\d`, `.`, `+` | tidak |
+| Teks biasa | `edu`, `@`, `harvard` | **ya**, harus sama persis |
+
+Prinsipnya sama dengan Linux yang membedakan `HASIL.JPG` dan `hasil.jpg` waktu `shirt.py` kemarin. Komputer tidak menganggap huruf besar dan kecil itu sama kecuali disuruh.
+
+### Flags
+**flag** artinya bendera. Di pemrograman, penanda yang dikibarkan untuk menyalakan suatu perilaku. Istilah ini pernah saya pakai sendiri di Vanity Plates dengan sebutan **variabel penanda**.
+
+`flags` juga cuma keyword argument biasa, sama seperti `end=""` di `print`, `reverse=True` di `sorted`, dan `font=` di Figlet.
+
+| Flag | Gunanya |
+|---|---|
+| `re.IGNORECASE` | abaikan huruf besar-kecil |
+| `re.MULTILINE` | `^` dan `$` berlaku **per baris** |
+| `re.DOTALL` | `.` ikut mencocokkan pindah baris |
+
+David cuma menampilkan tiga, padahal sebenarnya ada **delapan** (ditambah `ASCII`, `LOCALE`, `UNICODE`, `VERBOSE`, `DEBUG`). Lima sisanya tidak dipakai di CS50P.
+
+`re.DOTALL` menarik karena menghapus pengecualian yang saya catat di Hari 2: `.` itu apa saja **kecuali** pindah baris.
+
+Flag bisa digabung pakai `|`, misalnya `flags=re.IGNORECASE | re.DOTALL`. Perhatikan `|` di sini **bukan** "atau" seperti di dalam pola. Ini `|` milik Python untuk menggabungkan flag. Simbol sama, tempat beda, arti beda, persis seperti `^`.
+
+Contoh MULTILINE yang saya coba:
+
+```
+Ahmad 7A lancar
+Budi 7B mengulang
+Ahmad 8C lancar
+```
+
+| | Arti `^` | Hasil `findall(r"^Ahmad.*")` |
+|---|---|---|
+| Tanpa MULTILINE | awal **seluruh teks** | ketemu 1 |
+| Pakai MULTILINE | awal **setiap baris** | ketemu 2 |
+
+Dari situ saya kenal **`re.findall`**, saudaranya `re.search`. Bedanya `search` berhenti di kecocokan pertama, `findall` mengumpulkan **semua** dan mengembalikan list.
+
+### Pola email resmi
+David menampilkan regex resmi yang dipakai browser untuk memeriksa kolom email, panjangnya berbaris-baris dan penuh simbol seperti `!#$%&'*+`. Dia bercanda kelihatan seperti orang **swearing** (mengumpat), karena di komik kata kasar memang diganti simbol acak seperti `@#$%&!`. Padahal karakter-karakter itu memang sah secara resmi.
+
+Pelajarannya: pola resminya ada, tapi **tidak perlu dihafal**. Kalau suatu saat butuh validasi email sungguhan, tinggal salin pola yang sudah teruji.
+
+Istilah penting: **syntactically valid** = sah secara **bentuk penulisannya**. Regex cuma bisa memeriksa bentuk, tidak bisa tahu alamat itu benar-benar ada. `tidakada@harvard.edu` bentuknya sah, tapi kotak suratnya mungkin tidak pernah ada.
+
+### `search`, `match`, `fullmatch`
+Tiga bersaudara, bedanya cuma soal di mana polanya boleh menempel. Diuji dengan pola `\w+@\w+\.edu` **tanpa** `^` dan `$`:
+
+| Teks | `search` | `match` | `fullmatch` |
+|---|---|---|---|
+| `malan@harvard.edu` | True | True | True |
+| `kirim ke malan@harvard.edu` | True | **False** | False |
+| `malan@harvard.edux` | True | True | **False** |
+
+| Function | Mulai dari | Harus habis sampai ujung? | Setara dengan |
+|---|---|---|---|
+| `re.search` | di mana saja | tidak | pola apa adanya |
+| `re.match` | wajib dari awal | tidak | pola dengan `^` |
+| `re.fullmatch` | wajib dari awal | **ya** | pola dengan `^` dan `$` |
+
+Jadi pakai `fullmatch` berarti **tidak perlu menulis `^` dan `$`** lagi. Untuk memvalidasi input, `fullmatch` biasanya paling aman.
+
+Ini menyambung ke tiga lubang Hari 3: lubang 2 dan 3 sebenarnya bisa tertutup cuma dengan mengganti `search` jadi `fullmatch`, tanpa menambah simbol apa pun.
+
+Saya sempat mengira `group()` cuma bisa dipakai dengan `re.search`. **Salah.** Ketiganya menghasilkan **objek Match** yang sama, jadi ketiganya punya `.group()`. Ini kembali ke pola Week 6: **panggil function → dapat objek → pakai method-nya.** Yang beda sendiri cuma `re.findall`, karena dia menghasilkan list, bukan objek Match.
+
+### f-string bukan milik `print`
+Penemuan saya hari ini. Selama ini f-string selalu saya lihat langsung masuk ke `print`, jadi saya kira menempel di situ. Ternyata dua langkah terpisah:
+
+1. `f"{first} {last}"` **menghasilkan string baru**
+2. String itu mau diapakan terserah
+
+```python
+nama = f"{first} {last}"
+daftar.append(f"{first} {last}")
+file.write(f"{first} {last}\n")
+return f"{first} {last}"
+```
+
+Ini tema yang berulang di catatan saya: banyak hal menghasilkan nilai baru, dan nilai itu harus ditangkap kalau mau dipakai. Sama seperti `ImageOps.fit`, `replace`, dan `strip`.
+
+Istilah menggabungkan string itu **concatenate**. Cara lamanya pakai `+`: `first + " " + last`. Hasilnya sama, f-string lebih enak dibaca.
+
+### Method string tidak mengerti regex
+Dugaan saya benar: `split` bawaan string tidak mendukung regex, jadi harus `import re`.
+
+| Teks | `str.split(", ")` | `re.split(r",\s*")` |
+|---|---|---|
+| `Malan, David` | terbelah benar | terbelah benar |
+| `Malan,David` | **tidak terbelah** | terbelah benar |
+| `Malan,   David` | terbelah, **spasi ikut terbawa** | terbelah bersih |
+
+`str.split(", ")` mencari persis koma-lalu-satu-spasi. Kalau user mengetik tanpa spasi atau dengan tiga spasi, langsung meleset. `\s*` artinya "spasi, nol atau lebih", jadi ketiganya tertangani sekali jalan.
+
+Polanya, tiap method string punya saudara di `re`:
+
+| Method string | Padanannya di `re` |
+|---|---|
+| `"x" in teks` | `re.search` |
+| `teks.split(...)` | `re.split(...)` |
+| `teks.replace(...)` | `re.sub(...)` |
+
+Yang kiri cukup untuk kasus sederhana. Yang kanan dipakai kalau bentuk datanya bisa bermacam-macam, seperti input user yang tidak bisa ditebak.
+
+### Walrus operator `:=`
+Saya bertanya: `matches` kan variabel yang belum dideklarasikan, kok bisa langsung dibuat di dalam `if`? Ternyata memang **tidak bisa** pakai `=` biasa. Yang David tampilkan di layar itu justru kode yang **error**, dia sengaja mencoba yang gagal dulu.
+
+```
+SyntaxError: invalid syntax. Maybe you meant '==' or ':=' instead of '='?
+```
+
+Pesan errornya sendiri sudah menyebut jalan keluarnya.
+
+**Kenapa `=` dilarang di dalam `if`?** Untuk mencegah salah ketik yang berbahaya. Di bahasa lain seperti C, `if (x = 5)` itu sah, padahal maksud orang biasanya `==`. Programnya jalan tapi salah, dan bug begitu sulit dicari. Python melarangnya sama sekali.
+
+| Tanda | Nama | Tugasnya | Boleh di dalam `if`? |
+|---|---|---|---|
+| `=` | assignment | menyimpan ke variabel | **tidak** |
+| `==` | perbandingan | membandingkan dua nilai | ya |
+| `:=` | walrus | menyimpan **sekaligus** memakai nilainya | ya |
+
+Jadi kalau betul-betul mau menyimpan di dalam `if`, harus ditulis **terang-terangan** dengan `:=`, bukan diam-diam dengan `=`.
+
+Yang terjadi waktu pakai walrus:
+
+1. `re.search` dijalankan
+2. Hasilnya (objek Match atau `None`) disimpan ke `matches`
+3. `if` menilai hasil itu: objek dianggap benar, `None` dianggap salah
+4. `matches` **tetap hidup** setelah itu
+
+Namanya walrus karena `:=` kalau dimiringkan mirip wajah singa laut dengan dua taring.
+
+### Scope: `if` tidak membuat ruang lingkup baru
+Saya bertanya apakah variabel walrus masih bisa dipakai **di luar** `if`. Ternyata bisa.
+
+| Blok | Variabel di dalamnya bocor ke luar? |
+|---|---|
+| `if`, `for`, `while` | **ya**, tetap bisa dipakai |
+| `def` (function) | tidak, hanya hidup di dalam |
+
+Jadi yang membuat ruang lingkup baru cuma **function**. Ini nyambung ke pelajaran *scope* di Week 0.
+
+Tapi ada jebakannya. Waktu polanya **tidak cocok**, variabelnya tetap ada, isinya `None`. Kalau dipakai di luar tanpa dicek dulu, muncul `AttributeError: 'NoneType' object has no attribute 'group'`. Ini keluarga error yang sudah sering saya temui: memanggil method pada `None`.
+
+| Kondisi | Isi variabelnya | Dipakai di luar `if` |
+|---|---|---|
+| Polanya cocok | objek Match | aman |
+| Polanya tidak cocok | `None` | kena `AttributeError` |
+
+Kebiasaan yang aman: **pakai hasilnya di dalam blok `if`**, karena di situ sudah dipastikan bukan `None`. Polanya sama dengan `KeyError` di Week 2: jangan langsung mengambil, pastikan dulu isinya ada.
+
+Untuk sekarang saya pakai cara **dua baris** dulu waktu mengerjakan problem set, karena lebih mudah dibaca ulang saat murojaah dan lebih gampang dilacak kalau error. Walrus cukup dikenali dulu supaya tidak bingung kalau ketemu di kode orang.
+
+### Regex ada di mana-mana (lanjutan)
+Ada mahasiswa bertanya: bisakah yang diketik **user** itu justru sebuah regex, bukan teks biasa? David: secara teknis bisa, tapi bukan itu yang dikerjakan di sini.
+
+Contoh nyatanya Google Forms, dan ternyata ada **dua lapis**:
+
+| Lapis | Siapa penggunanya | Dia memberi apa |
+|---|---|---|
+| Google membuat Google Forms | penggunanya **saya** (pembuat formulir) | saya memberi **regex** |
+| Saya membuat formulir | penggunanya **wali santri** (pengisi) | mereka memberi **teks biasa** |
+
+Jadi regexnya mengalir dari saya ke program Google, lalu dipakai memeriksa jawaban orang lain. Misalnya kolom NIS diberi pola `^[0-9]{8}$`, maka yang mengetik `abc` langsung ditolak dan formulirnya tidak bisa dikirim.
+
+Gunanya: **data yang masuk sudah bersih sejak awal**, tidak perlu dibersihkan belakangan.
+
+### Membersihkan data
+**canonicalize** = membakukan ke satu bentuk standar. Nama orang bisa ditulis `David Malan` atau `Malan, David`, tapi di database sebaiknya disimpan satu bentuk saja.
+
+| Yang diketik user | Bentuk baku yang disimpan |
+|---|---|
+| `David Malan` | `David Malan` |
+| `Malan, David` | `David Malan` |
+| `malan, david` | `David Malan` |
+
+Analogi: **rasm Utsmani**. Satu mushaf baku yang disepakati supaya semua salinan seragam.
+
+Kalau tersimpan campur-campur, pencarian dan pengurutan jadi kacau, dan nama yang sama bisa terbaca sebagai dua orang berbeda. Di TahfidzFlow ini persis masalah yang muncul kalau nama santri diketik beda-beda oleh tiap guru.
+
+### Kosakata
+| Kata | Arti |
+|---|---|
+| flag | bendera; penanda yang menyalakan suatu perilaku |
+| swearing | mengumpat, memaki |
+| syntactically valid | sah secara bentuk penulisannya |
+| too restrictive | terlalu ketat, terlalu banyak menolak |
+| excessively long | panjang berlebihan, kepanjangan |
+| retool | merombak alatnya, menyesuaikan ulang |
+| at our disposal | tersedia untuk kita pakai |
+| regression | kemunduran, mundur ke masalah lama |
+| preemptively | mendahului, sebelum masalahnya muncul |
+| refine | memperhalus, menyempurnakan |
+| forge ahead | maju terus, melanjutkan |
+| unbeknownst to us | tanpa kita sadari |
+| up until now | selama ini, sampai sekarang |
+| presumably | agaknya, kemungkinan besar |
+| rub someone the wrong way | bikin tidak nyaman, mengganjal |
+| canonicalize | membakukan ke satu bentuk standar |
+| backwardness | keterbalikan, urutan terbalik |
+| concatenate | menggabungkan string |
+| alphanumeric | gabungan huruf dan angka |
+| non-capturing | tidak disimpan, tidak bisa diambil |
+
+### Yang mau dicoba
+- Uji sendiri `re.match` dan `re.fullmatch` dengan pola tanpa `^` dan `$`, bandingkan dengan `re.search`.
+- Coba `re.findall` pada teks beberapa baris, dengan dan tanpa `re.MULTILINE`.
+- Coba `re.split(r",\s*")` pada nama yang ditulis tanpa spasi dan dengan banyak spasi.
+- Buat sendiri contoh walrus, lalu pakai variabelnya di luar `if` saat polanya tidak cocok, dan lihat `AttributeError`-nya.
+- Buat formulir Google Forms percobaan dengan Response validation regex, misalnya NIS 8 angka.
+
+---
+
 ## Yang masih tertunda
 - [x] Murojaah materi Hari 1 dan Hari 2, lalu kuis kosakata: selesai 29 Oktober pagi (Kuis Kosakata #6, 30 soal, 83%).
 - [x] **Perbaiki `shirt.py` (Pset 6)**: selesai 29 Oktober, tidak submit ulang. Pembahasannya di `pset-6.md`.
-- [ ] Lanjut Lecture 7 dari sekitar menit 50: bagian *Case Sensitivity* (`re.IGNORECASE`, `?` untuk bagian opsional), lalu *Cleaning Up User Input*.
+- [ ] Lanjut Lecture 7 dari sekitar **menit 1:31**: lanjutan *Walrus Operator*, lalu *Extracting User Input* (`re.sub`).
