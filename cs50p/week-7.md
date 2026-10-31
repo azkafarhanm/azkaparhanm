@@ -533,7 +533,312 @@ Kalau tersimpan campur-campur, pencarian dan pengurutan jadi kacau, dan nama yan
 
 ---
 
+## Hari 5 – 31 Oktober 2026
+
+Lanjut Lecture 7 dari menit 1:31 sampai **selesai (2:04:59)**. Ngoding 2 jam, bahasa Inggris 10 menit. **Lecture 7 tamat.**
+
+### Kuis Harian #8
+Skema kuisnya saya ubah mulai hari ini: bukan kosakata saja, tapi **dicampur konsep dari lecture lama**, supaya materi lama ikut ter-recall dan tidak ditinggal begitu saja. Alasannya sama dengan murojaah hafalan: yang lama perlu disentuh berkala.
+
+Giliran hari ini Week 1 dan Week 5. Isinya 8 kosakata, 4 soal Week 1 (if terpisah vs elif, `case _`, kapan harus pakai if), dan 3 soal Week 5 (pytest tanpa assert, `pytest.raises`, function tanpa return). Hasilnya **15/15**.
+
+### Membebani program, bukan user
+David: jangan membebani user dengan aturan ketat. Biarkan dia mengetik sesukanya, **programmer yang membereskan**. Kata kuncinya *take on the burden* = memikul bebannya.
+
+Ini kebalikan dari contoh Google Forms kemarin yang justru **menolak** input salah. Dua-duanya sah, tergantung keadaan:
+
+| Keadaan | Sikapnya |
+|---|---|
+| Maksud user masih bisa ditebak (URL tanpa `https`) | bereskan sendiri |
+| Tidak bisa ditebak (NIS salah ketik) | tolak sejak awal |
+
+### `re.sub`: cari lalu ganti
+Bentuknya: `re.sub(pattern, repl, string, count=0, flags=0)`
+
+| Urutan | Nama | Isinya |
+|---|---|---|
+| ke-1 | `pattern` | yang dicari |
+| ke-2 | `repl` | penggantinya |
+| ke-3 | `string` | teks yang dikerjakan |
+| ke-4 | `count` | berapa kali diganti, bawaan `0` |
+| ke-5 | `flags` | bendera, bawaan `0` |
+
+Saya sempat mengira parameter `string` berarti "harus disimpan di variabel dulu". **Bukan.** Itu cuma menyebut jenis isinya, yaitu teks. Boleh ditulis langsung pakai kutip, boleh lewat variabel. Yang menentukan posisinya adalah **urutannya**.
+
+Yang gampang tertukar: **pola di depan, teksnya di belakang.** Sama seperti `re.search(pola, teks)`.
+
+Kalau penggantinya string kosong `""`, efeknya **menghapus**. Jadi `re.sub` juga dipakai untuk membuang, bukan cuma mengganti.
+
+### Jebakan `count=0`
+`count=0` **bukan** berarti "tidak ada yang diganti", tapi **"tanpa batas"**, alias semua.
+
+Percobaan saya dengan teks `Ahmad-7A-Juz30-Lancar` yang punya tiga tanda minus:
+
+| count | Yang diganti | Hasil |
+|---|---|---|
+| tidak diisi (0) | ketiganya | `Ahmad \| 7A \| Juz30 \| Lancar` |
+| 1 | minus pertama saja | `Ahmad \| 7A-Juz30-Lancar` |
+| 2 | minus pertama dan kedua | `Ahmad \| 7A \| Juz30-Lancar` |
+
+Hitungannya **dari kiri**, bukan pilih-pilih. Jumlah penggantinya selalu sama dengan angka count-nya.
+
+Konvensi `0 = tanpa batas` ini sudah pernah saya temui di Week 6: `loop=0` pada animated GIF artinya **berulang selamanya**, dan angka lain justru membatasi.
+
+### `flags` di `re.sub`
+Percobaan `IGNORECASE` dengan teks `Ahmad LANCAR, Budi lancar, Citra Lancar` dan pola `lancar` huruf kecil:
+
+| | Hasil |
+|---|---|
+| tanpa flags | **cuma punya Budi** yang berubah |
+| `flags=re.IGNORECASE` | ketiganya berubah |
+
+Sebabnya pola `lancar` huruf kecil cuma cocok dengan `lancar` huruf kecil. `LANCAR` dan `Lancar` dilewati, karena bagi komputer `L` dan `l` itu dua karakter berbeda. Masalah yang sama dengan `edu` kemarin dan `HASIL.JPG` di `shirt.py`.
+
+Percobaan `MULTILINE` yang paling kelihatan: pola `^` diganti dengan `"- "` pada teks tiga baris.
+
+| | Hasil |
+|---|---|
+| tanpa MULTILINE | cuma baris pertama dapat `- ` |
+| pakai MULTILINE | ketiga baris dapat `- ` |
+
+Ringkasnya: **`count` mengatur berapa banyak, `flags` mengatur cara mencocokkan.**
+
+### Contoh `re.sub` yang saya coba
+1. Membuang awalan URL, diganti string kosong.
+2. `\s+` jadi satu spasi, untuk merapikan spasi berlebih dari ketikan orang.
+3. `\d` jadi `*`, untuk menyensor angka.
+4. Membalik urutan tanggal.
+
+Nomor 4 yang paling menarik, karena penggantinya `r"\3-\2-\1"`:
+
+| Bagian pola | Menangkap | Nomornya |
+|---|---|---|
+| `(\d{2})` | `31` | 1 |
+| `(\d{2})` | `10` | 2 |
+| `(\d{4})` | `2026` | 3 |
+
+Lalu `\1`, `\2`, `\3` **memanggil kembali** isi kurung itu di dalam string pengganti. Ditulis `\3-\2-\1`, urutannya jadi terbalik: `2026-10-31`.
+
+Jadi kurung yang saya pelajari sebagai **stabilo** bisa dipakai dua arah: diambil lewat `.group()`, atau dipanggil ulang di dalam pengganti `re.sub`. Cocok untuk membakukan format tanggal yang ditulis macam-macam.
+
+### Kenapa `re.sub` tidak pakai `$`
+Polanya `^https?://(www\.)?twitter\.com/` memakai `^` tapi **tidak** memakai `$`. Saya uji sendiri kenapa:
+
+| Pola | Hasil untuk `https://twitter.com/davidjmalan` |
+|---|---|
+| tanpa `$` | `davidjmalan` |
+| pakai `$` | **tidak berubah sama sekali** |
+
+Dengan `$`, polanya menuntut teks habis tepat di garis miring. Padahal setelah itu masih ada username, jadi tidak pernah cocok.
+
+| Tujuan | Polanya |
+|---|---|
+| Memeriksa seluruh teks (validasi) | `^` dan `$` dua-duanya |
+| Membuang sepotong bagian | cuma `^`, tanpa `$` |
+
+Kata David: *"I want to tolerate a username there"* — sengaja memberi ruang untuk username. Dan `^` tetap dipakai supaya yang dibuang memang awalan **di depan**, bukan tulisan serupa yang nyempil di tengah.
+
+### Method string tidak mengerti regex
+Dugaan saya benar. `str.split(", ")` mencari persis koma-lalu-satu-spasi, jadi gampang meleset.
+
+| Teks | `str.split(", ")` | `re.split(r",\s*")` |
+|---|---|---|
+| `Malan, David` | benar | benar |
+| `Malan,David` | **tidak terbelah** | benar |
+| `Malan,   David` | spasi ikut terbawa | bersih |
+
+Tiap method string punya saudara di `re`:
+
+| Method string | Padanannya di `re` |
+|---|---|
+| `"x" in teks` | `re.search` |
+| `teks.split(...)` | `re.split(...)` |
+| `teks.replace(...)` | `re.sub(...)` |
+
+Yang kiri mencocokkan **teks apa adanya**, yang kanan mencocokkan **bentuk**.
+
+### Non-capturing menggeser nomor grup
+Ini saya sadari sendiri waktu melihat kode David. Ternyata `(?:...)` bukan cuma soal "tidak disimpan", tapi juga **menggeser penomoran**:
+
+| Pola | Hasilnya |
+|---|---|
+| `(www\.)?twitter\.com/(.+)` | `group(1)` = `None`, username di `group(2)` |
+| `(?:www\.)?twitter\.com/(.+)` | username naik jadi `group(1)` |
+
+Jadi itu alasan praktis memakai non-capturing: supaya nomor `.group()` tidak kacau oleh kurung yang sebenarnya cuma pagar. Perhatikan juga `group(1)` bisa berisi `None` kalau kurung opsionalnya tidak terpakai.
+
+### Kurung bersarang
+Ada mahasiswa bertanya: kalau ada kurung di dalam kurung, apakah saling mengganggu? Jawab David: tidak masalah.
+
+Penomorannya mengikuti **urutan kurung buka dari kiri**:
+
+| | Isinya |
+|---|---|
+| `group(0)` | seluruh bagian yang cocok |
+| `group(1)` | kurung yang buka paling kiri (terluar) |
+| `group(2)`, `group(3)` | kurung-kurung di dalamnya |
+
+Lalu David menyebut ini *the reassuring lesson*: sepanjang apa pun polanya kelihatan, **isinya cuma aturan yang sama diulang-ulang**. Tidak ada simbol baru, cuma dirangkai lebih panjang.
+
+### Usul mahasiswa yang ditolak
+Ada yang mengusulkan: `^` dipindah saja ke depan `twitter.com`, lalu urusan protokol dan `www` dibuang. Kelihatannya lebih sederhana. Saya uji dengan pola `^twitter\.com/(.+)$`:
+
+| Yang diketik user | Hasil |
+|---|---|
+| `twitter.com/azka` | lolos |
+| `https://twitter.com/azka` | **ditolak** |
+| `www.twitter.com/azka` | **ditolak** |
+
+Sebabnya: `^` bukan berarti "mulai membaca dari sini", tapi **teksnya harus dimulai persis di sini**. Jadi user dipaksa mengetik tanpa `https://`. Itu yang David sebut **regression**, kemunduran.
+
+### Menangani banyak akhiran domain
+Pertanyaan saya sendiri: kalau mau menerima `com`, `org`, dan `edu` sekaligus, pakai apa supaya tidak panjang seperti `if` berantai? Ada dua cara, dan saya uji dua-duanya:
+
+**Cara 1, di dalam pola:** `twitter\.(?:com|org|edu)/` — kurung memagari, `|` memilih, `?:` supaya tidak distabilo.
+
+**Cara 2, ambil dulu lalu cek di Python:** polanya `twitter\.(\w+)/`, lalu `if m.group(1).lower() in DIIZINKAN`. Ini yang David sebut *factoring out the logic*.
+
+| Keadaan | Pilih |
+|---|---|
+| Daftar pendek dan tetap | Cara 1, lebih ringkas |
+| Daftar panjang atau bisa bertambah | Cara 2 |
+| Daftar datang dari file atau pengaturan | Cara 2 |
+
+Keunggulan cara 2: menambah `.co.id` cukup menambah satu kata di daftar Python, **tanpa menyentuh regex**. Regex yang sering diubah-ubah itu rawan salah.
+
+`in` sudah saya pakai sejak Week 2 untuk mengecek key dictionary. Prinsipnya sama: menanyakan "ada di dalam daftar ini atau tidak". Satu baris, menggantikan `if` berantai yang panjang.
+
+### Kenapa `[a-z0-9_]` masih perlu `+`
+Kurung siku cuma menentukan **karakter apa yang boleh**, bukan berapa banyak. Tanpa `+`, yang diterima cuma username satu huruf:
+
+| Nama | tanpa `+` | pakai `+` |
+|---|---|---|
+| `a` | lolos | lolos |
+| `azka` | **ditolak** | lolos |
+| `azka_123` | **ditolak** | lolos |
+
+Ini aturan lama: **pengulang mengikat satu hal tepat di depannya.** Di sini "satu hal" itu seluruh kurung siku. Bentuknya sama dengan `\w+` dan `.+`: sebutkan satu karakter dulu, lalu ulang.
+
+Catatan: David menulis `a-z` huruf kecil saja, tapi huruf besar tetap diterima karena ada `re.IGNORECASE` di ujung baris.
+
+### Terlalu longgar dan terlalu ketat
+Pola `(.+)` untuk username ternyata **terlalu longgar** (*too generous*), karena `.` menerima spasi dan tanda baca. Menurut dokumentasi Twitter, username cuma boleh huruf, angka, dan garis bawah. Itu **persis isi `\w`**.
+
+Sepanjang lecture ini David bolak-balik mengatur timbangan:
+
+| Istilah | Artinya |
+|---|---|
+| stringent / restrictive | terlalu ketat, menolak yang seharusnya diterima |
+| generous | terlalu longgar, menerima yang seharusnya ditolak |
+
+Membuat pola itu soal mencari titik tengahnya.
+
+### `re.sub` tidak bisa menolak
+Bug yang David tunjukkan: user mengetik alamat Google, lalu program mencetak `Username: https://www.google.com/`.
+
+Sebabnya `re.sub` **tidak pernah memberi tahu** apakah dia menemukan sesuatu. Kalau tidak cocok, teksnya dikembalikan utuh, dan program menganggapnya berhasil.
+
+| | Hasilnya | Bisa menolak? |
+|---|---|---|
+| `re.sub` | selalu string | tidak |
+| `re.search` | objek Match atau `None` | **ya** |
+
+Makanya David kembali ke `re.search`, supaya bisa dipakai di `if`. Alasan praktisnya: di backend, username hanya **disimpan ke database** kalau memang cocok polanya. Jangan sampai alamat Google ikut tersimpan.
+
+Dan `re.search` sekaligus bisa **mengambil** username lewat kurung dan `.group()`, jadi satu function mengerjakan dua hal: memeriksa dan mengambil.
+
+### `re.split` dan `re.findall`
+Dua function yang disebut sekilas di penutup.
+
+**`re.split`** membelah teks jadi list, dengan pemisah berupa **pola**. Contoh teks berantakan `Ahmad, Budi;Citra   Dadang` yang pemisahnya campur koma, titik koma, dan spasi berlebih: `str.split(",")` gagal, satu pola `re.split` membereskan semuanya.
+
+**`re.findall`** mengumpulkan **semua** yang cocok.
+
+| | Berhenti di mana | Hasilnya |
+|---|---|---|
+| `re.search` | yang pertama ketemu | objek Match |
+| `re.findall` | tidak berhenti | list |
+
+Dari `Ahmad juz 30, Budi juz 29, Citra juz 28`, `search` cuma dapat `30`, `findall` dapat `['30', '29', '28']`.
+
+**Jebakan `findall`:** kurung mengubah isi hasilnya.
+
+| Pola | Hasil |
+|---|---|
+| `r"juz \d+"` tanpa kurung | `['juz 30', 'juz 29', 'juz 28']` |
+| `r"juz (\d+)"` pakai kurung | `['30', '29', '28']` |
+
+Karena hasilnya list, `.group()` **tidak berlaku** di `findall`. Itu satu-satunya yang beda sendiri.
+
+### Rekap enam function `re`
+| Function | Tugasnya | Hasilnya |
+|---|---|---|
+| `re.search` | cari pola di mana saja | objek Match / `None` |
+| `re.match` | cari dari awal teks | objek Match / `None` |
+| `re.fullmatch` | harus cocok seluruh teks | objek Match / `None` |
+| `re.split` | belah teks pakai pola | list |
+| `re.sub` | cari lalu ganti | string baru |
+| `re.findall` | kumpulkan semua yang cocok | list |
+
+Tiga yang pertama cuma **memeriksa**. Tiga sisanya **mengubah atau mengambil**.
+
+### Cara kerja yang diajarkan hari ini
+Beberapa nasihat David yang bukan soal sintaks:
+
+- **chip away at the problems one by one** — selesaikan satu per satu, jangan sekaligus.
+- **avoid the inclination to write long regexes all at once** — kalau langsung panjang lalu salah, kita cuma melotot ke layar mencari kesalahannya. Kalau bertahap, kesalahannya ketahuan sejak langkah kecil.
+- **stipulate** — sengaja mempersempit masalah dulu. Tanda `?` dan `#` di URL diabaikan untuk sekarang.
+
+Cara bertahap ini sebenarnya sudah saya praktikkan kemarin waktu pencarian VS Code tidak ketemu: naik dari `sys`, lalu `sys\.exit`, baru `sys\.exit\(.+\)`. Dari situ ketahuan tombol `ab` yang jadi biangnya.
+
+### Kosakata
+| Kata | Arti |
+|---|---|
+| burden | beban, tanggungan |
+| to take on the burden | memikul beban itu |
+| tolerant of | mau menerima, tidak rewel terhadap |
+| lend | meminjamkan (lawannya borrow = meminjam) |
+| perhaps | barangkali |
+| suboptimal | kurang optimal, di bawah yang terbaik |
+| critique | mengkritik, menelaah |
+| find fault with | mencari kekurangan pada |
+| fragile | rapuh, gampang pecah |
+| contrive | mengarang, merekayasa skenario |
+| chip away at | mengikis sedikit demi sedikit |
+| wave my hands at | menjelaskan sekilas lalu melewatinya |
+| viable | bisa dijalankan, layak |
+| succinct | ringkas, padat |
+| explicit | ditulis jelas, gamblang |
+| pluck off | memetik, mengambil satu dari sekian |
+| mouthful | panjang dan sulit diucapkan |
+| reassuring | menenangkan, melegakan |
+| to interfere | mengganggu, saling campur |
+| admittedly | harus diakui |
+| inclination | kecenderungan, dorongan |
+| sophisticated | rumit, canggih |
+| all at once | sekaligus |
+| incrementally | sedikit demi sedikit, bertahap |
+| to stare at | melotot, memandangi lama-lama |
+| stipulate | menetapkan, menyepakati sebagai ketentuan |
+| for simplicity | demi kesederhanaan |
+| stringent | ketat, keras aturannya |
+| generous | longgar, terlalu banyak menerima |
+| trailing | di bagian belakang, di ujung |
+| leading | di bagian depan |
+
+Dua kata lama yang muncul lagi: **regression** (kemunduran) dan **stipulate**, yang sudah ada di catatan Week 5.
+
+### Yang mau dicoba
+- Jalankan `contoh2.py` lagi, ubah angkanya dan hapus flagnya untuk melihat bedanya.
+- Coba `re.sub` dengan pengganti `r"\2 \1"` untuk menukar urutan nama depan dan belakang.
+- Coba `re.findall` pada catatan setoran, dengan dan tanpa kurung di polanya.
+- Buat formulir Google Forms percobaan dengan Response validation regex, misalnya NIS 8 angka.
+- Mulai **Problem Set 7**.
+
+---
+
 ## Yang masih tertunda
 - [x] Murojaah materi Hari 1 dan Hari 2, lalu kuis kosakata: selesai 29 Oktober pagi (Kuis Kosakata #6, 30 soal, 83%).
 - [x] **Perbaiki `shirt.py` (Pset 6)**: selesai 29 Oktober, tidak submit ulang. Pembahasannya di `pset-6.md`.
-- [ ] Lanjut Lecture 7 dari sekitar **menit 1:31**: lanjutan *Walrus Operator*, lalu *Extracting User Input* (`re.sub`).
+- [x] **Lecture 7 selesai** (31 Oktober).
+- [ ] Mulai **Problem Set 7**.
