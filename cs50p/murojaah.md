@@ -181,3 +181,27 @@ Perbandingan dengan pertama kali:
 - Pertama kali (20 September) saya kena TypeError karena pembagian 100 ada di dalam kurung float. Sekarang urutannya langsung benar: jadikan float dulu, baru dibagi 100.
 - Pertama kali pakai satu baris padat `float(d.replace("$", ""))`. Sekarang langkah demi langkah: buang prefix, jadikan float, return.
 - Yang masih berulang: aturan desimal di luar f-string. Ini yang perlu diulang.
+
+  ---
+
+## Murojaah 6: Indoor Voice, ditulis ulang dari layar kosong (1 November 2026)
+
+Waktu mengerjakan: 10 menit
+Hasil: check50 hijau semua (4/4)
+Aturan: tidak membuka kode lama, tidak bertanya ke AI, Copilot dimatikan.
+
+Error yang saya temui: tidak ada. Langsung hijau sekali jalan.
+
+Perbandingan dengan pertama kali (19 September):
+- Dulu saya kena NameError karena mengira lower bisa berdiri sendiri, lalu
+  AttributeError karena lower saya tempelkan ke function input, bukan ke
+  string hasilnya. Sekarang langsung benar dari ingatan.
+- Dulu lower sempat ditulis tanpa parentheses, jadi methodnya cuma disebut
+  dan belum dijalankan. Sekarang tidak terulang.
+- Dulu check50 saya jalankan tanpa slug sehingga error. Sekarang langsung
+  lengkap dengan alamat soalnya.
+
+Catatan: soal ini terasa ringan. Yang dulu susah di sini adalah errornya,
+bukan logikanya. Murojaah berikutnya ambil yang lebih berat.
+Saya tidak menulis rencana sebagai komentar #. Untuk soal sependek ini
+tidak terasa perlu, tapi tetap harus dibiasakan untuk soal yang panjang.
