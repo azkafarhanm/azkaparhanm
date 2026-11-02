@@ -68,3 +68,7 @@ Dulu saya mengomentari baris satu per satu untuk menguji pola. Ternyata tidak pe
 Soalnya: mengambil link video dari potongan HTML `<iframe>` milik YouTube, lalu mengembalikannya dalam bentuk link pendek `youtu.be`. Kalau yang diberikan bukan iframe YouTube, kembalikan `None`.
 
 (Pembahasan lengkap menyusul.)
+
+## 3. Working 9 to 5 — selesai (2 November 2026)
+
+(Pembahasan lengkap menyusul.)
