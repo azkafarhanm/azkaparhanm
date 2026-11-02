@@ -63,12 +63,36 @@ Dulu saya mengomentari baris satu per satu untuk menguji pola. Ternyata tidak pe
 - Empat bagian dipisah titik berarti tiga pemisah, bukan empat.
 - REPL plus penjaga `__name__` jauh lebih cepat daripada mengomentari kode.
 
-## 2. Watch on YouTube — selesai (1 November 2026)
+## 2. Watch on YouTube — selesai, check50 hijau semua (2 November 2026)
 
-Soalnya: mengambil link video dari potongan HTML `<iframe>` milik YouTube, lalu mengembalikannya dalam bentuk link pendek `youtu.be`. Kalau yang diberikan bukan iframe YouTube, kembalikan `None`.
+Soalnya: mengambil alamat video YouTube dari atribut src pada elemen iframe, lalu mengubahnya menjadi link pendek youtu.be. Jika link YouTube tidak ada di src sebuah iframe, fungsi harus mengembalikan None.
 
-(Pembahasan lengkap menyusul.)
+Catatan ini saya susun kembali dari log terminal. Percakapan dengan CS50 Duck sudah ter-reset, jadi bagian kebingungan di bawah hanya yang masih bisa dilihat dari percobaan dan error, bukan rekonstruksi lengkap diskusi.
 
+### Kebingungan yang terlihat dari log
+
+- **Pencocokan regex bisa gagal.** Saat pola tidak cocok, matches bernilai None. Memanggil matches.group(...) setelah itu menimbulkan AttributeError. Di log, ini terjadi ketika saya memberi URL biasa atau iframe yang bukan YouTube. Saya kemudian membuat kasus seperti itu menghasilkan None, sesuai yang diminta soal.
+- **Menyusun ulang URL perlu memperhatikan pemisah dan protokol.** Saya sempat mendapatkan http://youtu.bexv... karena garis miring antara domain dan ID video hilang. Di percobaan lain, hasilnya menjadi http://youtu.be/...; keluaran akhir check50 meminta link HTTPS, yaitu https://youtu.be/....
+- **Grup regex menentukan seberapa banyak teks yang diambil.** Saat menguji iframe lengkap, hasil pernah menyertakan teks sesudah URL (title, frameborder, dan atribut lain). Di percobaan berikutnya, ID yang terambil hanya xv, belum seluruh xvFZjo5PgG0. Dari sini terlihat saya sedang menyesuaikan batas pencocokan agar URL dan ID video diambil utuh tanpa menyertakan atribut HTML setelahnya.
+- **URL harus berada di tempat yang tepat.** Check50 sempat menemukan bahwa program menerima link YouTube yang berada di luar atribut src. Setelah itu pemeriksaan tersebut lulus.
+- **Link harus berada di dalam iframe juga.** Pada satu putaran check50, kasus link di luar iframe masih diterima. Beberapa perubahan regex berikutnya sempat membuat kasus-kasus URL valid ikut gagal, lalu saya perbaiki kembali. Pada check50 terakhir, link valid dalam iframe diterima dan kasus link di luar iframe ditolak.
+
+### Perjalanan check50
+
+- Pemeriksaan awal: format http, https, dan www serta beberapa iframe valid lolos, tetapi link di luar src dan di luar iframe belum ditolak.
+- Putaran berikutnya: kasus di luar src sudah tertangani, tetapi kasus di luar iframe masih gagal.
+- Ketika memperketat pencocokan, beberapa contoh valid sempat menghasilkan None.
+- Setelah diperbaiki lagi, check50 terakhir menunjukkan semua pemeriksaan lulus: variasi http/https/www, iframe dengan satu atau beberapa atribut, iframe tanpa link YouTube, salah ketik pada link, link di luar src, dan link di luar iframe.
+
+### Yang saya pelajari dari percobaan ini
+
+- Sebelum mengambil group, pastikan hasil pencocokan regex bukan None.
+- Saat menyusun URL dari beberapa bagian, cek pemisah seperti ://, titik, dan garis miring; satu karakter yang hilang bisa mengubah hasil.
+- Pola yang mengambil ID perlu berhenti tepat di akhir ID, bukan ikut memakan atribut HTML sesudahnya atau berhenti terlalu cepat.
+- Validasi bukan cuma soal menemukan teks URL. Posisi URL juga penting: ia harus ada sebagai nilai src di dalam iframe.
+- Perubahan pola bisa memperbaiki satu kasus sambil merusak kasus lain. Karena itu saya menguji ulang contoh valid dan invalid setiap kali mengubah regex.
+
+Rincian tentang cara saya sampai ke regex akhir dan kebingungan yang tidak tampak di terminal masih perlu saya ingat atau diskusikan lagi nanti. Untuk sekarang, catatan ini hanya merangkum hal yang dapat dibuktikan oleh log dan hasil check50.
 ## 3. Working 9 to 5 — selesai, check50 hijau semua (2 November 2026)
 
 Soalnya: menerima rentang waktu seperti 9 AM to 5 PM, lalu mengubah kedua waktunya dari format 12 jam ke format 24 jam. Menit boleh tidak ditulis; jika tidak ada, hasilnya 00. Input yang format atau nilainya tidak sah harus menghasilkan ValueError.
