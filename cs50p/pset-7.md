@@ -97,7 +97,7 @@ Rincian tentang cara saya sampai ke regex akhir dan kebingungan yang tidak tampa
 
 Soalnya: menerima rentang waktu seperti 9 AM to 5 PM, lalu mengubah kedua waktunya dari format 12 jam ke format 24 jam. Menit boleh tidak ditulis; jika tidak ada, hasilnya 00. Input yang format atau nilainya tidak sah harus menghasilkan ValueError.
 
-Saya mengerjakan soal ini dari pagi sampai sore menjelang Maghrib, dengan jeda-jeda karena juga menjalankan tugas sebagai asisten guru dan guru tahfiz. Rasanya cukup lama, tetapi saya menyelesaikannya sendiri lewat percobaan di terminal, membaca error, dan meminta petunjuk bertahap ke CS50 Duck.
+Saya mengerjakan soal ini dari pagi sampai sore menjelang Maghrib, dengan jeda-jeda karena juga menjalankan tugas sebagai guru. Rasanya cukup lama, tetapi saya menyelesaikannya sendiri lewat percobaan di terminal, membaca error, dan meminta petunjuk bertahap ke CS50 Duck.
 
 ### Kebingungan 1: aturan konversi AM dan PM
 - Saya sempat berpikir waktu PM harus ditambah 13. Setelah dicek dengan contoh, ternyata jam 1 PM harus menjadi 13:00, jadi yang ditambahkan adalah 12.
