@@ -65,79 +65,162 @@ Dulu saya mengomentari baris satu per satu untuk menguji pola. Ternyata tidak pe
 
 ## 2. Watch on YouTube — selesai, check50 hijau semua (2 November 2026)
 
-Soalnya: mengambil alamat video YouTube dari atribut src pada elemen iframe, lalu mengubahnya menjadi link pendek youtu.be. Jika link YouTube tidak ada di src sebuah iframe, fungsi harus mengembalikan None.
+Soalnya: mengambil URL video YouTube dari atribut src elemen iframe, lalu mengubahnya menjadi link pendek youtu.be. Kalau masukan tidak berisi URL YouTube yang benar di dalam iframe, fungsi harus mengembalikan None.
 
-Catatan ini saya susun kembali dari log terminal. Percakapan dengan CS50 Duck sudah ter-reset, jadi bagian kebingungan di bawah hanya yang masih bisa dilihat dari percobaan dan error, bukan rekonstruksi lengkap diskusi.
+Percakapan dengan CS50 Duck sudah ter-reset. Jadi bagian ini saya susun dari log terminal, kode akhir yang tersimpan, dan hasil check50. Saya tidak bisa memastikan semua pertanyaan yang dulu saya ajukan; catatan ini fokus pada kesalahan yang terlihat dan cara saya memperbaikinya.
 
-### Kebingungan yang terlihat dari log
+### Kebingungan dan kesalahan yang terlihat
 
-- **Pencocokan regex bisa gagal.** Saat pola tidak cocok, matches bernilai None. Memanggil matches.group(...) setelah itu menimbulkan AttributeError. Di log, ini terjadi ketika saya memberi URL biasa atau iframe yang bukan YouTube. Saya kemudian membuat kasus seperti itu menghasilkan None, sesuai yang diminta soal.
-- **Menyusun ulang URL perlu memperhatikan pemisah dan protokol.** Saya sempat mendapatkan http://youtu.bexv... karena garis miring antara domain dan ID video hilang. Di percobaan lain, hasilnya menjadi http://youtu.be/...; keluaran akhir check50 meminta link HTTPS, yaitu https://youtu.be/....
-- **Grup regex menentukan seberapa banyak teks yang diambil.** Saat menguji iframe lengkap, hasil pernah menyertakan teks sesudah URL (title, frameborder, dan atribut lain). Di percobaan berikutnya, ID yang terambil hanya xv, belum seluruh xvFZjo5PgG0. Dari sini terlihat saya sedang menyesuaikan batas pencocokan agar URL dan ID video diambil utuh tanpa menyertakan atribut HTML setelahnya.
-- **URL harus berada di tempat yang tepat.** Check50 sempat menemukan bahwa program menerima link YouTube yang berada di luar atribut src. Setelah itu pemeriksaan tersebut lulus.
-- **Link harus berada di dalam iframe juga.** Pada satu putaran check50, kasus link di luar iframe masih diterima. Beberapa perubahan regex berikutnya sempat membuat kasus-kasus URL valid ikut gagal, lalu saya perbaiki kembali. Pada check50 terakhir, link valid dalam iframe diterima dan kasus link di luar iframe ditolak.
+#### 1. Mengambil group saat regex tidak menemukan kecocokan
+
+Saat saya memasukkan URL biasa seperti http://youtube.com/embed/... atau iframe yang src-nya mengarah ke situs lain, regex tidak menemukan pola yang dicari. Hasil re.search saat tidak cocok adalah None. Karena itu, pemanggilan matches.group(1) menimbulkan:
+
+`AttributeError: 'NoneType' object has no attribute 'group'`
+
+Awalnya program langsung mengambil group seolah-olah kecocokan pasti ada. Solusinya adalah memeriksa matches lebih dulu. Jika tidak ada kecocokan, parse mengembalikan None; kalau ada, barulah group URL digunakan.
+
+#### 2. URL hasil gabungan kehilangan tanda pemisah
+
+Dalam salah satu percobaan, hasilnya menjadi:
+
+`http://youtu.bexvFZjo5PgG0`
+
+Domain dan ID video menempel karena garis miring setelah domain belum ikut dirangkai. Hasil yang diinginkan punya pemisah:
+
+`https://youtu.be/xvFZjo5PgG0`
+
+Ini mengingatkan saya bahwa saat bagian URL dibentuk dari beberapa group regex, setiap karakter yang tidak berasal dari group—seperti `s://`, `.be/`, dan garis miring sebelum ID—harus ditambahkan secara sengaja.
+
+Saya juga sempat menghasilkan `http://youtu.be/...`. Kode akhir mengambil awalan `http` dari URL yang ditemukan, lalu menambahkan `s://`, sehingga hasil akhirnya memakai HTTPS baik ketika masukan memakai HTTP maupun HTTPS. Ini sesuai hasil yang diperiksa check50.
+
+#### 3. Group ID terlalu pendek atau terlalu panjang
+
+Saat menguji HTML iframe lengkap, satu hasil ikut membawa teks atribut setelah URL seperti `title`, `frameborder`, dan `allowfullscreen`. Di percobaan lain, hasil ID-nya hanya `xv`, padahal ID lengkapnya `xvFZjo5PgG0`.
+
+Keduanya menunjukkan batas pola belum tepat:
+- Jika bagian setelah ID ikut tercocokkan, hasil URL mencakup sisa HTML.
+- Jika pola ID terlalu sempit, group berhenti sebelum seluruh ID tertangkap.
+
+Di kode akhir, pola untuk ID menerima satu atau lebih karakter huruf besar, huruf kecil, atau angka, lalu pola ditutup pada batas URL/atribut berikutnya. Prinsip yang saya pelajari: group harus menangkap seluruh nilai yang dibutuhkan dan berhenti sebelum teks yang bukan bagian nilai itu.
+
+#### 4. Menemukan URL saja belum cukup
+
+Check50 menunjukkan dua syarat tambahan:
+- URL YouTube harus menjadi nilai atribut `src`, bukan sekadar muncul di tempat lain dalam HTML.
+- URL itu harus berada di dalam elemen `iframe`, bukan di teks atau elemen lain.
+
+Pada pemeriksaan awal, kasus URL di luar `src` dan di luar iframe masih diterima. Setelah pola diperketat, kasus di luar `src` lulus lebih dahulu, sedangkan kasus di luar iframe masih gagal. Beberapa perubahan kemudian sempat membuat URL valid ikut menghasilkan None. Saya perlu menjaga dua sisi sekaligus: menerima variasi URL yang sah dan menolak URL yang berada di konteks yang salah.
+
+#### 5. Memahami pola regex dari group hasilnya
+
+Kode akhir menggunakan group terpisah untuk bagian protokol, nama `youtu`, dan ID video. Bagian-bagian itu kemudian disusun ulang menjadi URL pendek. Membaca nomor group saja terasa membingungkan; lebih mudah bila setiap group dihubungkan dengan bagian konkret dari input:
+- group 1: bagian `http`
+- group 2: teks `youtu`
+- group 3: ID video
+
+Teks tetap seperti `s://`, `.be/` ditambahkan di antara group. Dari log, saya sempat lupa atau keliru menaruh sebagian pemisah itu.
 
 ### Perjalanan check50
 
-- Pemeriksaan awal: format http, https, dan www serta beberapa iframe valid lolos, tetapi link di luar src dan di luar iframe belum ditolak.
-- Putaran berikutnya: kasus di luar src sudah tertangani, tetapi kasus di luar iframe masih gagal.
-- Ketika memperketat pencocokan, beberapa contoh valid sempat menghasilkan None.
-- Setelah diperbaiki lagi, check50 terakhir menunjukkan semua pemeriksaan lulus: variasi http/https/www, iframe dengan satu atau beberapa atribut, iframe tanpa link YouTube, salah ketik pada link, link di luar src, dan link di luar iframe.
+- Awalnya beberapa variasi iframe valid lolos, tetapi URL di luar `src` dan di luar iframe belum ditolak.
+- Setelah perubahan, kasus URL di luar `src` sudah tertangani, tetapi link di luar iframe masih ditemukan.
+- Saat pola diperketat, sebagian URL valid sempat tidak cocok dan menghasilkan None.
+- Pada percobaan terakhir, semua pemeriksaan lulus: URL HTTP, HTTPS, dan www; iframe dengan satu atau banyak atribut; iframe tanpa link YouTube; salah ketik pada link; serta link yang muncul di luar `src` atau di luar iframe.
 
-### Yang saya pelajari dari percobaan ini
+### Pelajaran dan solusi yang saya bawa
 
-- Sebelum mengambil group, pastikan hasil pencocokan regex bukan None.
-- Saat menyusun URL dari beberapa bagian, cek pemisah seperti ://, titik, dan garis miring; satu karakter yang hilang bisa mengubah hasil.
-- Pola yang mengambil ID perlu berhenti tepat di akhir ID, bukan ikut memakan atribut HTML sesudahnya atau berhenti terlalu cepat.
-- Validasi bukan cuma soal menemukan teks URL. Posisi URL juga penting: ia harus ada sebagai nilai src di dalam iframe.
-- Perubahan pola bisa memperbaiki satu kasus sambil merusak kasus lain. Karena itu saya menguji ulang contoh valid dan invalid setiap kali mengubah regex.
+- Cek apakah hasil pencarian regex ada sebelum memanggil `.group()`; hasil tidak cocok adalah None.
+- Saat menggabungkan URL, tulis dan cek kembali pemisahnya satu per satu.
+- Tentukan dengan jelas karakter apa yang boleh menjadi bagian ID video dan kapan group itu harus berhenti.
+- Validasi lokasi URL, bukan hanya bentuk URL-nya: harus menjadi nilai `src` dalam iframe.
+- Setelah mengubah regex, jalankan kembali kasus valid dan invalid. Perbaikan untuk satu kasus bisa membuat kasus lain gagal.
+- Check50 memberi contoh konkret tentang syarat yang belum terpenuhi. Saya bisa memakai nama pemeriksaannya untuk mencari kelas input yang perlu diuji, lalu mengecek perilaku program sendiri.
 
-Rincian tentang cara saya sampai ke regex akhir dan kebingungan yang tidak tampak di terminal masih perlu saya ingat atau diskusikan lagi nanti. Untuk sekarang, catatan ini hanya merangkum hal yang dapat dibuktikan oleh log dan hasil check50.
+Catatan ini merangkum hal yang tampak dari log dan kode akhir. Rincian diskusi Duck yang tidak terekam masih bisa saya tambahkan kalau nanti saya ingat kembali.
+
 ## 3. Working 9 to 5 — selesai, check50 hijau semua (2 November 2026)
 
-Soalnya: menerima rentang waktu seperti 9 AM to 5 PM, lalu mengubah kedua waktunya dari format 12 jam ke format 24 jam. Menit boleh tidak ditulis; jika tidak ada, hasilnya 00. Input yang format atau nilainya tidak sah harus menghasilkan ValueError.
+Soalnya: mengubah dua waktu dari format 12 jam menjadi format 24 jam. Contoh `9 AM to 5 PM` menjadi `09:00 to 17:00`. Menit boleh tidak ditulis; jika tidak ada, hasilnya `:00`. Format atau nilai waktu yang tidak sah harus menghasilkan `ValueError`.
 
-Saya mengerjakan soal ini dari pagi sampai sore menjelang Maghrib, dengan jeda-jeda karena juga menjalankan tugas sebagai guru. Rasanya cukup lama, tetapi saya menyelesaikannya sendiri lewat percobaan di terminal, membaca error, dan meminta petunjuk bertahap ke CS50 Duck.
+Saya mengerjakannya dari pagi sampai sore menjelang Maghrib, dengan jeda karena juga menjalankan tugas sebagai asisten guru dan guru tahfiz. Percakapan Duck sudah ter-reset, tetapi log terminal, kode akhir, dan tangkapan layar file tes membantu saya mengingat kembali bagian yang membingungkan.
 
-### Kebingungan 1: aturan konversi AM dan PM
-- Saya sempat berpikir waktu PM harus ditambah 13. Setelah dicek dengan contoh, ternyata jam 1 PM harus menjadi 13:00, jadi yang ditambahkan adalah 12.
-- Saya perlu membandingkan penanda yang ditangkap regex dengan string AM atau PM. Hasil matches.group(...) bisa disimpan di variabel, lalu dibandingkan dengan ==.
-- Ada kasus khusus: 12 AM menjadi 00; 12 PM tetap 12; jam PM selain 12 ditambah 12; jam AM selain 12 tetap.
-- Memisahkan konversi satu jam ke fungsi pembantu membuat aturan ini lebih mudah dilihat dan dipakai untuk waktu awal maupun akhir.
+### Kebingungan dan kesalahan yang saya temui
 
-### Kebingungan 2: menyusun regex dan menangani menit opsional
-- Saya mulai dari pola untuk jam, menit, AM/PM, kata to, lalu waktu kedua. re.fullmatch membantu memastikan seluruh masukan cocok dengan format, bukan hanya sebagian.
-- Menit boleh tidak ada (9 AM), tetapi kalau tanda titik dua muncul, dua digit menit harus ikut ada. Saya belajar mengelompokkan bagian titik dua dan menit sebagai satu grup opsional: keduanya muncul bersama atau sama-sama tidak ada.
-- Batas menit bisa dibatasi di regex ke 00–59. Karena itu 9:60 AM tidak cocok dengan pola.
-- Kalau regex tidak cocok, re.fullmatch menghasilkan None, sehingga memanggil .group() langsung akan menimbulkan AttributeError. Masukan yang tidak cocok harus diubah menjadi ValueError.
-- Saya sempat menulis raise "ValueError". Ternyata raise harus diberi objek exception, bukan string. Bentuk yang benar adalah menaikkan ValueError.
+#### 1. Berapa yang ditambahkan untuk PM?
 
-### Kebingungan 3: merangkai output dengan menit
-- Kalau menit tidak diberikan, hasilnya tetap harus memiliki menit 00.
-- Saya sempat mendapatkan output tanpa titik dua (0900) dan dengan titik dua ganda (09::00). Penyebabnya adalah saya belum konsisten apakah nilai menit sudah menyertakan tanda titik dua.
-- Setelah menentukan bentuk nilai menit secara konsisten, saya bisa merangkai jam hasil konversi dan menit menjadi format HH:MM untuk masing-masing waktu.
+Saya sempat memperkirakan jam PM perlu ditambah 13. Contoh sederhana membetulkan hitungan itu: jam 1 PM harus menjadi 13, jadi 1 ditambah 12. Aturannya:
+- AM selain 12: jam tetap.
+- 12 AM: menjadi 00.
+- PM selain 12: tambahkan 12.
+- 12 PM: tetap 12.
 
-### Kebingungan 4: apa yang sebenarnya diuji oleh pytest dan check50?
-- Untuk memeriksa exception, pytest.raises(ValueError) harus mengelilingi pemanggilan fungsi yang memang diharapkan gagal.
-- Setiap kasus invalid perlu punya blok with pytest.raises(...) sendiri. Begitu satu pemanggilan melempar exception, baris berikutnya dalam blok itu tidak dijalankan.
-- Saya awalnya bingung membaca pesan check50 seperti “catches ... not raising ValueError”. Check50 sengaja menjalankan tes saya terhadap versi program yang dimodifikasi dan rusak. Tes yang baik harus gagal pada versi rusak itu, dan lulus pada program saya yang benar.
-- Pemeriksaan “off by one” dan “minutes off by five” juga menguji mutu tes saya: apakah tes akan menangkap jika hasil jam atau menit sengaja dibuat meleset.
+Kesalahan awalnya adalah belum memeriksa aturan dengan contoh batas. Solusinya: uji setiap cabang dengan angka yang mudah diverifikasi, terutama 12 AM, 12 PM, 1 PM, dan 1 AM.
 
-### Error dan hasil yang saya temui
-- AttributeError: 'NoneType' object has no attribute 'group' saat input tidak cocok regex. Ini mengajari saya untuk memeriksa hasil pencocokan dan mengubah masukan tak valid menjadi ValueError.
-- TypeError: exceptions must derive from BaseException saat saya mencoba raise "ValueError".
-- Output sempat salah format: 0900, 09::00, dan variasi sejenis karena tanda titik dua pada menit tidak konsisten.
-- Saya menguji contoh valid dan invalid di terminal, menjalankan pytest, lalu memperbaiki tes sampai setiap kasus benar-benar diperiksa.
-- Pada percobaan check50 awal, beberapa pemeriksaan untuk tes invalid belum lolos. Setelah memperbaiki cakupan tes dan mengulang check50, hasil akhirnya semua pemeriksaan lulus, termasuk format valid, batas waktu/menit, dan kemampuan tes menangkap versi kode yang sengaja dirusak.
+#### 2. Membandingkan AM/PM dari hasil regex
+
+Saya sempat bingung apakah hasil `matches.group(...)` bisa dibandingkan langsung. Bisa: group berisi string seperti `"AM"` atau `"PM"`, jadi dapat dibandingkan menggunakan `==`. Di kode akhir, group penanda disimpan ke variabel `penanda1` dan `penanda2`, lalu diberikan bersama jam ke fungsi pembantu `helper`.
+
+Pemisahan ke `helper(jam, penanda)` menghindari menulis aturan AM/PM dua kali. Fungsi itu mengembalikan jam dua digit sebagai string; setelah itu `convert` merangkai jam dan menit untuk waktu awal serta akhir.
+
+#### 3. Menyusun pola regex untuk jam dan menit opsional
+
+Regex perlu mengenali rentang waktu lengkap, bukan sekadar menemukan potongan yang mirip. `re.fullmatch` dipakai agar seluruh input harus sesuai susunan: jam, menit opsional, penanda AM/PM, kata `to`, lalu bagian waktu kedua.
+
+Menit opsional menjadi kebingungan tersendiri:
+- `9 AM` sah tanpa menit.
+- `9:00 AM` sah dengan menit.
+- `9:60 AM` tidak sah karena menit hanya boleh 00 sampai 59.
+
+Tanda titik dua dan dua digit menit perlu menjadi satu kelompok opsional. Kalau hanya tanda titik duanya yang opsional, pola dapat menerima bentuk yang tidak lengkap; kalau seluruh bagian tidak opsional, input tanpa menit ikut ditolak. Batas digit menit di pola membuat 60 tidak cocok.
+
+#### 4. Mengapa muncul AttributeError?
+
+Pada input yang tidak sesuai pola, `re.fullmatch` mengembalikan `None`. Kode saya lalu mencoba menjalankan `matches.group(1)`, padahal `matches` bukan objek hasil pencocokan. Error yang muncul:
+
+`AttributeError: 'NoneType' object has no attribute 'group'`
+
+Solusinya adalah menangani keadaan saat tidak ada kecocokan dan mengubahnya menjadi `ValueError`, sesuai kontrak fungsi. Kode akhir menangkap `AttributeError` yang timbul ketika group diminta dari hasil None, lalu menaikkan `ValueError`.
+
+#### 5. Mengapa `raise "ValueError"` salah?
+
+Saya pernah mencoba menaikkan nama exception sebagai string. Python menjawab:
+
+`TypeError: exceptions must derive from BaseException`
+
+`raise` membutuhkan kelas atau objek exception, bukan teks biasa. Perbaikannya adalah `raise ValueError`. Ini berbeda dari mencetak tulisan “ValueError”: yang satu benar-benar melempar exception dan dapat diuji pytest, yang lain hanya menghasilkan teks.
+
+#### 6. Memperbaiki format menit dan titik dua
+
+Saya sempat menghasilkan `0900` tanpa titik dua, lalu `09::00` dengan titik dua ganda. Akar masalahnya: kadang nilai menit yang disimpan sudah berisi tanda titik dua, tetapi saat dirangkai saya menambahkan tanda itu lagi atau tidak menambahkannya sama sekali.
+
+Pada kode akhir, group menit yang cocok mencakup tanda titik dua beserta menitnya, misalnya `:30`. Jika group itu kosong/None karena menit tidak ditulis, saya mengisinya dengan `:00`. Dengan demikian output dapat dirangkai secara konsisten sebagai jam hasil konversi ditambah string menit.
+
+#### 7. Salah memahami pesan check50 tentang tes
+
+File tes pada tangkapan layar menguji contoh valid dan invalid. Untuk input invalid, tiap pemanggilan fungsi dibungkus dalam `with pytest.raises(ValueError)` tersendiri. Awalnya saya menaruh beberapa pemanggilan dalam satu blok. Begitu pemanggilan pertama melempar ValueError, Python keluar dari blok itu, sehingga pemanggilan berikutnya tidak ikut diuji. Solusinya: satu blok `pytest.raises` untuk setiap input yang diharapkan gagal.
+
+Pesan seperti “catches working.py not raising ValueError” juga sempat membingungkan. Check50 menjalankan tes saya pada versi program yang sengaja diubah agar salah. Tes saya harus gagal pada program rusak itu supaya membuktikan bahwa tes mampu menangkap masalahnya. Jadi:
+- program benar + tes benar → tes lulus;
+- program sengaja rusak + tes cukup kuat → tes gagal, dan itu berarti pemeriksaan check50 untuk kemampuan tes berhasil.
+
+Pemeriksaan “hours off by one” dan “minutes off by five” memakai gagasan yang sama: apakah tes saya akan mendeteksi jika hasil konversi dibuat meleset?
+
+### Hasil pengujian
+
+- Contoh valid tanpa menit dan dengan menit menghasilkan format `HH:MM`.
+- Input dengan menit di luar 00–59 ditolak.
+- Format keliru, pemisah yang salah, atau jam di luar rentang tidak cocok dan harus menghasilkan `ValueError`.
+- Awalnya beberapa pemeriksaan check50 untuk kekuatan tes belum lulus. Setelah setiap input invalid diberi pemeriksaan sendiri dan tes diperbaiki, check50 terakhir lulus semua.
+- Tangkapan layar tes menunjukkan empat contoh valid serta tiga contoh invalid: menit 60, pemisah `-` menggantikan `to`, dan format waktu 24 jam yang tidak sesuai format input soal.
 
 ### Yang saya pelajari
-- Tangani hasil regex yang tidak cocok sebelum mengambil grupnya.
-- raise ValueError menaikkan exception; menulis nama exception sebagai string tidak sama.
-- Menit opsional perlu diperlakukan konsisten saat membentuk output.
-- Tes exception harus menguji setiap kasus secara terpisah.
-- Check50 juga memeriksa apakah tes buatan saya cukup kuat untuk menangkap implementasi yang rusak.
-- Percobaan gagal dan pesan error membantu saya menemukan asumsi yang keliru. Saya tidak perlu langsung tahu seluruh solusi; saya bisa menyusun logika, menguji satu kasus, membaca hasilnya, lalu memperbaiki bagian yang belum tepat.
 
+- Contoh batas membantu memeriksa aturan konversi, khususnya 12 AM dan 12 PM.
+- Regex memvalidasi susunan karakter dan rentang menit; hasil pencocokan tetap perlu diperiksa sebelum group dipakai.
+- `None` dari regex bukan exception dengan sendirinya. Error muncul saat saya mencoba mengakses group darinya; fungsi lalu perlu mengubah input yang tidak cocok menjadi `ValueError`.
+- Nilai yang disimpan untuk menit harus punya format konsisten agar tanda titik dua tidak hilang atau ganda.
+- Setiap kasus exception perlu diuji sendiri supaya tidak terlewat.
+- Check50 tidak hanya memeriksa fungsi konversi, tetapi juga apakah tes buatan saya mampu menemukan beberapa jenis bug.
 ## Catatan proses belajar
 
 Pada problem set ini saya menggunakan CS50 Duck untuk petunjuk dan pertanyaan pemandu, sesuai aturan CS50P yang saya ikuti. Saya tetap menulis, mengubah, dan menguji kode sendiri.
