@@ -222,6 +222,69 @@ Pemeriksaan “hours off by one” dan “minutes off by five” memakai gagasan
 - Setiap kasus exception perlu diuji sendiri supaya tidak terlewat.
 - Check50 tidak hanya memeriksa fungsi konversi, tetapi juga apakah tes buatan saya mampu menemukan beberapa jenis bug.
 
+
+## 4. Um — selesai, check50 dan submit berhasil (3 November 2026)
+
+Soalnya: menghitung berapa kali kata `um` muncul sebagai kata utuh dalam teks. Pencocokan harus mengabaikan perbedaan huruf besar dan kecil. Jadi `um`, `Um`, dan `UM` dihitung; bagian dari kata lain seperti `yummy`, `album`, atau `umm` tidak dihitung.
+
+Soal ini terasa jauh lebih ringan daripada soal Working. Saya membaca ulang permintaan soal dan dokumentasi regex di GitHub serta dokumentasi Python, lalu mencoba pola dan contoh langsung di VS Code sebelum memastikan dengan pytest dan check50.
+
+### Kebingungan 1: bagaimana membedakan kata utuh dari potongan kata?
+
+Awalnya saya berpikir mungkin perlu memakai caret `^` dan dolar `$` untuk melarang karakter sebelum atau sesudah `um`. Namun keduanya menandai awal dan akhir string. Karena `um` bisa muncul di tengah kalimat, keduanya tidak menyatakan batas kata di posisi mana pun dalam teks.
+
+Petunjuk yang saya temukan di dokumentasi `re` adalah word boundary, ditulis `\b`. Pola akhirnya adalah:
+
+`\bum\b`
+
+- `\b` pertama meminta batas kata sebelum huruf `u`.
+- `um` mencocokkan huruf yang dicari.
+- `\b` kedua meminta batas kata setelah huruf `m`.
+
+Batas kata bukan karakter yang dikonsumsi atau dicetak. Ia menandai peralihan antara karakter kata dan karakter bukan kata, atau tepi teks. Karena itu tanda baca seperti koma, titik, dan tanda tanya dapat mengapit `um`: `um,`, `(um)`, atau `um?` tetap cocok. Sebaliknya, di `yummy` atau `album`, setidaknya satu sisi `um` masih menempel pada huruf, jadi tidak ada batas kata di sisi itu dan pola tidak menghitungnya. Spasi pun tidak wajib: tanda baca dapat menjadi pemisah.
+
+### Kebingungan 2: apakah fungsi hanya mengembalikan 0 atau 1?
+
+Saya sempat mengira hasilnya 1 kalau `um` ditemukan dan 0 kalau tidak. Duck mengingatkan bahwa fungsi harus menghitung **semua** kemunculan sebagai kata utuh.
+
+Contoh:
+- `um, um, um` menghasilkan 3.
+- `hello, um, world` menghasilkan 1.
+- `yummy` menghasilkan 0.
+- `Um, thanks, um...` menghasilkan 2.
+
+Untuk itu, `re.findall` mengumpulkan semua kecocokan, lalu `len(matches)` menghitung jumlahnya. Kalau daftar kecocokannya kosong, panjangnya memang 0. Di kode akhir ada cabang yang mengembalikan `len(matches)` jika ada hasil dan 0 jika tidak ada.
+
+### Kebingungan 3: menerima huruf besar-kecil
+
+Soal meminta pencarian case-insensitive. Artinya pola yang sama harus mengenali `um`, `Um`, `uM`, dan `UM`. Daripada menulis semua variasi huruf di pola, saya menggunakan flag `re.IGNORECASE` pada `re.findall`. Dengan begitu regex tetap ringkas dan pencarian mengabaikan kapitalisasi.
+
+### Error dan percobaan yang membantu
+
+- Saya sempat menulis `re findall(...)` tanpa titik di antara `re` dan `findall`. Python menampilkan `SyntaxError: invalid syntax`. Perbaikannya adalah pemanggilan fungsi melalui modul: `re.findall(...)`.
+- Saya mencoba `pytest um.py`. Pytest menjawab “no tests ran” karena file itu berisi program, bukan file tes. Menjalankan `pytest test_um.py` menemukan tes yang benar.
+- Tes pertama gagal pada `count("Um, thanks, um...")`: fungsi memberi 2, sedangkan ekspektasi tes saya tertulis 1. Setelah dihitung ulang, ternyata input itu memang memiliki dua kata `um`; ekspektasi yang perlu diperbaiki menjadi 2.
+- Saya mencoba `UMMM` dengan mengetiknya di prompt shell, bukan setelah prompt `Text:`. Shell menganggapnya nama perintah dan menjawab `command not found`. Untuk menguji program interaktif, jalankan `python um.py` lebih dulu, kemudian masukkan teks saat diminta.
+- Uji manual juga membantu memastikan tanda baca tetap diperbolehkan: `um?` dan `(um)` dihitung, sedangkan `u m` tidak.
+
+### Tes dan hasil akhir
+
+File tes memeriksa beberapa hal terpisah:
+- variasi kapitalisasi dan tanda baca;
+- lebih dari satu kemunculan dalam satu kalimat;
+- potongan `um` yang ada di dalam kata lain, seperti `yummy`;
+- `um` yang dikelilingi spasi saja, untuk memastikan solusinya benar-benar memakai batas kata dan tidak hanya mencari pola dengan spasi di kiri-kanan.
+
+Setelah ekspektasi tes diperbaiki, `pytest test_um.py` lulus. Check50 juga lulus semua pemeriksaan, termasuk pemeriksaan bahwa tes dapat menangkap tiga implementasi keliru: menghitung `um` di dalam kata lain, hanya menerima spasi di sekitar `um`, atau tidak mengabaikan kapitalisasi. Setelah itu saya berhasil menjalankan `submit50).
+
+### Yang saya pelajari
+
+- `^` dan `$` menandai tepi seluruh string; `\b` menandai batas kata di mana pun kata itu muncul.
+- Batas kata dapat bersebelahan dengan spasi atau tanda baca. Kita tidak harus mensyaratkan spasi di kiri dan kanan.
+- `re.findall` berguna untuk menghitung semua kemunculan; `len` menghasilkan jumlahnya, termasuk 0 ketika tidak ada.
+- `re.IGNORECASE` menangani variasi kapitalisasi tanpa memperpanjang pola.
+- Tes juga perlu diperiksa: kegagalan tadi berasal dari angka ekspektasi yang salah, bukan dari hasil fungsi.
+- Membaca dokumentasi, mencoba contoh sendiri di VS Code, lalu membandingkan hasilnya dengan spesifikasi membuat konsep word boundary lebih mudah saya pahami.
 ## Catatan proses belajar
 
 Pada problem set ini saya menggunakan CS50 Duck untuk petunjuk dan pertanyaan pemandu, sesuai aturan CS50P yang saya ikuti. Saya tetap menulis, mengubah, dan menguji kode sendiri.
