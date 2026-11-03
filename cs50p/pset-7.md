@@ -221,6 +221,7 @@ Pemeriksaan “hours off by one” dan “minutes off by five” memakai gagasan
 - Nilai yang disimpan untuk menit harus punya format konsisten agar tanda titik dua tidak hilang atau ganda.
 - Setiap kasus exception perlu diuji sendiri supaya tidak terlewat.
 - Check50 tidak hanya memeriksa fungsi konversi, tetapi juga apakah tes buatan saya mampu menemukan beberapa jenis bug.
+
 ## Catatan proses belajar
 
 Pada problem set ini saya menggunakan CS50 Duck untuk petunjuk dan pertanyaan pemandu, sesuai aturan CS50P yang saya ikuti. Saya tetap menulis, mengubah, dan menguji kode sendiri.
