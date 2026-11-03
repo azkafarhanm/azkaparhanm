@@ -345,6 +345,12 @@ Yang diperiksa adalah apakah alamat email ditulis dengan bentuk yang diterima va
 
 Saat memasang `validator-collection`, pip juga menampilkan peringatan konflik versi dependency: `compare50` meminta `attrs<21`, sedangkan proses instalasi memasang `attrs 26.1.0`. Instalasi tetap selesai dan check50 untuk soal ini lulus. Ini saya catat sebagai pesan dari lingkungan Codespace yang muncul selama instalasi.
 
+### Rujukan yang saya baca
+
+- [Spesifikasi Response Validation — CS50P](https://cs50.harvard.edu/python/psets/7/response/)
+- [Dokumentasi validator-collection](https://validator-collection.readthedocs.io/en/latest/)
+- [Dokumentasi validators.email](https://python-validators.github.io/validators/reference/email/)
+
 ### Yang saya pelajari
 
 - Periksa dokumentasi untuk mencocokkan nama paket instalasi dengan nama modul dan cara import.
