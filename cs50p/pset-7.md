@@ -241,7 +241,7 @@ Petunjuk yang saya temukan di dokumentasi `re` adalah word boundary, ditulis `\b
 - `um` mencocokkan huruf yang dicari.
 - `\b` kedua meminta batas kata setelah huruf `m`.
 
-Batas kata bukan karakter yang dikonsumsi atau dicetak. Ia menandai peralihan antara karakter kata dan karakter bukan kata, atau tepi teks. Karena itu tanda baca seperti koma, titik, dan tanda tanya dapat mengapit `um`: `um,`, `(um)`, atau `um?` tetap cocok. Sebaliknya, di `yummy` atau `album`, setidaknya satu sisi `um` masih menempel pada huruf, jadi tidak ada batas kata di sisi itu dan pola tidak menghitungnya. Spasi pun tidak wajib: tanda baca dapat menjadi pemisah.
+Anggap `\b` sebagai penanda di pinggir kata. `um` dihitung kalau tidak menempel pada huruf, angka, atau garis bawah (`_`) di kiri maupun kanannya. Jadi `um,`, `(um)`, dan `um?` dihitung karena tanda baca memisahkannya. `yummy`, `album`, `um7`, dan `um_` tidak dihitung karena `um` menempel pada karakter kata (`\w`). Pemisahnya tidak harus spasi; tanda baca juga bisa.
 
 ### Kebingungan 2: apakah fungsi hanya mengembalikan 0 atau 1?
 
