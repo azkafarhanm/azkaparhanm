@@ -285,6 +285,73 @@ Setelah ekspektasi tes diperbaiki, `pytest test_um.py` lulus. Check50 juga lulus
 - `re.IGNORECASE` menangani variasi kapitalisasi tanpa memperpanjang pola.
 - Tes juga perlu diperiksa: kegagalan tadi berasal dari angka ekspektasi yang salah, bukan dari hasil fungsi.
 - Membaca dokumentasi, mencoba contoh sendiri di VS Code, lalu membandingkan hasilnya dengan spesifikasi membuat konsep word boundary lebih mudah saya pahami.
+
+## 5. Response Validation — selesai, check50 dan submit berhasil (4 November 2026)
+
+Soalnya: meminta alamat email dari pengguna, lalu mencetak `Valid` jika bentuk alamatnya sah atau `Invalid` jika tidak. Soal melarang penggunaan `re` dan meminta memakai salah satu dari dua library: `validators` atau `validator-collection`. Soal juga menegaskan bahwa program tidak perlu mengecek apakah domain email itu benar-benar ada.
+
+Saya mengerjakan soal ini tanpa CS50 Duck. Saya membaca spesifikasi soal dan dokumentasi library, mencoba program di VS Code, lalu memeriksanya dengan contoh manual, check50, dan submit50.
+
+### Kebingungan dan kesalahan yang saya temui
+
+#### 1. Nama paket yang dipasang berbeda dengan nama yang di-import
+
+Saya mulai dengan perintah:
+
+`pip install validator-collection`
+
+Instalasi berhasil, tetapi kode saya menggunakan:
+
+`import validators`
+
+Saat dijalankan, Python memberi:
+
+`ModuleNotFoundError: No module named 'validators'`
+
+Penyebabnya: `validator-collection` dan `validators` adalah dua paket berbeda. Nama paket yang ditulis ke `pip install` tidak selalu sama dengan nama modul yang dipakai dalam `import`. Dokumentasi keduanya juga menunjukkan cara pemakaian yang berbeda:
+- Paket `validators` dipasang dengan `pip install validators`, lalu dipakai dengan `import validators` dan `validators.email(...)`.
+- Paket `validator-collection` dipasang dengan `pip install validator-collection`, lalu validator-nya diimpor dari `validator_collection`, misalnya `from validator_collection import validators`.
+
+Kode akhir saya memakai API paket pertama. Jadi perbaikannya adalah memasang paket yang cocok dengan import tersebut. Setelah saya menjalankan `pip install validators`, import berhasil dan program dapat berjalan.
+
+#### 2. Memilih library dan membaca hasil validasinya
+
+Awalnya saya mencoba `validator-collection`, lalu berpindah ke `validators` setelah melihat nama import yang dipakai kode saya. Dokumentasi membantu saya membedakan keduanya, walaupun nama keduanya mirip.
+
+Pada kode akhir:
+1. `validators.email(email)` memeriksa bentuk alamat email.
+2. Hasil pemeriksaan disimpan dalam `validation`.
+3. Kondisi `if validation` memilih tulisan `Valid` atau `Invalid`.
+
+Saya tidak perlu menulis regex sendiri. Ini juga sesuai batas soal yang melarang `re`. Check50 mengonfirmasi bahwa program menggunakan library yang diizinkan dan tidak menggunakan `re`.
+
+#### 3. Mengapa input diproses dengan `strip()`?
+
+Program mengambil teks dengan `input(...)`. Saya menambahkan `.strip()` untuk membuang spasi atau karakter whitespace di awal dan akhir input sebelum memeriksanya. Contohnya, input yang diketik sebagai ` alifsetia@yahoo.edu ` dibersihkan menjadi `alifsetia@yahoo.edu`.
+
+`.strip()` tidak menghapus spasi di tengah alamat. Setelah dibersihkan, nilai yang sama itulah yang diberikan ke `validators.email`.
+
+#### 4. Apa arti “valid” menurut soal?
+
+Yang diperiksa adalah apakah alamat email ditulis dengan bentuk yang diterima validator. Program tidak mencari domain di internet atau mengirim email untuk memastikan alamat itu aktif. Jadi “Valid” pada soal berarti bentuk alamatnya lolos pemeriksaan library, bukan bukti bahwa kotak surat tersebut benar-benar ada.
+
+### Percobaan dan hasil
+
+- Memasukkan `azka` menghasilkan `Invalid`.
+- `azka@gmail.com`, `alifsetia@yahoo.edu`, dan `malan@harvard.edu` menghasilkan `Valid`.
+- `malan@@@harvard.edu` dan `azka@gmail..com` menghasilkan `Invalid`.
+- Check50 lulus semua pemeriksaan: file ada, tidak memakai `re`, memakai salah satu library yang diperbolehkan, dan memberi hasil yang diharapkan untuk beberapa alamat valid dan invalid.
+- Setelah check50 hijau, saya menjalankan submit50 dan proses pengiriman selesai.
+
+Saat memasang `validator-collection`, pip juga menampilkan peringatan konflik versi dependency: `compare50` meminta `attrs<21`, sedangkan proses instalasi memasang `attrs 26.1.0`. Instalasi tetap selesai dan check50 untuk soal ini lulus. Ini saya catat sebagai pesan dari lingkungan Codespace yang muncul selama instalasi.
+
+### Yang saya pelajari
+
+- Periksa dokumentasi untuk mencocokkan nama paket instalasi dengan nama modul dan cara import.
+- Dua library dengan tujuan serupa belum tentu punya API atau cara melaporkan hasil yang sama.
+- Baca spesifikasi untuk mengetahui batas tugas: di sini cukup memeriksa bentuk email, tidak perlu mengecek keberadaan domain.
+- Mencoba beberapa contoh valid dan invalid membantu memastikan program menghasilkan dua keluaran yang diminta.
+- Untuk soal ini saya belajar dari spesifikasi dan dokumentasi library, kemudian menguji sendiri program di VS Code.
 ## Catatan proses belajar
 
 Pada problem set ini saya menggunakan CS50 Duck untuk petunjuk dan pertanyaan pemandu, sesuai aturan CS50P yang saya ikuti. Saya tetap menulis, mengubah, dan menguji kode sendiri.
