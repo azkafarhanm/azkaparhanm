@@ -12,7 +12,7 @@ Jadwal: setiap Minggu jam 05.20.
 | 4 | Meal Time (Pset 1) | 17 Okt | 90 menit | check50 7/7 |
 | 5 | Tip Calculator (Pset 0) | 25 Okt | 60 menit | check50 3/3 |
 | 6 | Indoor Voice (Pset 0) | 1 Nov | 10 menit | check50 4/4 |
-| 7 | CS50 P-Shirt (Pset 6) | 4 Nov | — | check50 13/13 |
+| 7 | CS50 P-Shirt (Pset 6) | 4 Nov | 90 menit | check50 13/13 |
 
 ---
 
