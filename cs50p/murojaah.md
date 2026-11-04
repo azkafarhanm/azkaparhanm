@@ -12,6 +12,7 @@ Jadwal: setiap Minggu jam 05.20.
 | 4 | Meal Time (Pset 1) | 17 Okt | 90 menit | check50 7/7 |
 | 5 | Tip Calculator (Pset 0) | 25 Okt | 60 menit | check50 3/3 |
 | 6 | Indoor Voice (Pset 0) | 1 Nov | 10 menit | check50 4/4 |
+| 7 | CS50 P-Shirt (Pset 6) | 4 Nov | — | check50 13/13 |
 
 ---
 
@@ -206,3 +207,51 @@ Catatan: soal ini terasa ringan. Yang dulu susah di sini adalah errornya,
 bukan logikanya. Murojaah berikutnya ambil yang lebih berat.
 Saya tidak menulis rencana sebagai komentar #. Untuk soal sependek ini
 tidak terasa perlu, tapi tetap harus dibiasakan untuk soal yang panjang.
+
+
+---
+
+## Murojaah 7: CS50 P-Shirt, ditulis ulang dari layar kosong (4 November 2026)
+
+Waktu mengerjakan: tidak dicatat  
+Hasil: check50 hijau semua (13/13)  
+Aturan: kode lama tidak dibuka, tidak bertanya ke AI, Copilot dimatikan. Saya mengerjakan tanpa CS50 Duck. Yang saya gunakan hanya spesifikasi soal, petunjuk/dokumentasi yang dirujuk soal, catatan Week 6 saya sendiri, dan dokumentasi Python/Pillow.
+
+### Yang saya ingat dan susun sendiri
+
+Program menerima nama file foto input dan file output lewat command-line argument. Saya melakukan pemeriksaan jumlah argumen, ekstensi kedua file, dan apakah ekstensi input sama dengan ekstensi output. Setelah itu foto dibuka, ukuran gambar kaus dibaca, foto di-fit ke ukuran kaus, kaus ditempel sebagai overlay, lalu hasilnya disimpan ke nama file output.
+
+Kali ini saya masih ingat alur utama P-Shirt dari awal sampai akhir. Terminal tidak mencetak pesan saat berhasil karena program menyimpan gambar ke file. Saya bisa membuka hasilnya, seperti `after1.jpg`, `after2.jpg`, dan `after3.jpg`, untuk melihat gambar jadi.
+
+### Yang sempat tersendat
+
+- **Nama library Pillow dan nama import-nya berbeda.** Saya sempat mengira harus menulis `import Pillow`. Dokumentasi dan percobaan mengingatkan bahwa nama paket instalasinya Pillow, tetapi namespace yang dipakai di kode adalah `PIL`: `from PIL import Image, ImageOps`.
+- **Salah tanda saat memberi argumen bernama.** Saya menulis `image: photo` pada pemanggilan `ImageOps.fit`, lalu mendapat `SyntaxError: invalid syntax`. Untuk memberi nilai pada keyword argument, sintaksnya memakai tanda sama dengan: `image=photo`. Titik dua dipakai untuk hal lain, misalnya anotasi tipe atau awal blok, bukan untuk mengisi argumen fungsi.
+- Saya bolak-balik antara catatan Week 6, dokumentasi Python, dan spesifikasi soal beserta hints. Membaca ulang urutan kerja dan fungsi yang disebut soal membantu saya mengingat hubungan antara foto, ukuran shirt, hasil fit, paste, dan save.
+
+### Perbandingan dengan pengerjaan pertama
+
+Dibandingkan catatan P-Shirt di Pset 6, pengerjaan ulang ini menunjukkan bahwa saya sudah lebih mandiri mengingat alur pengolahan gambar dan pemeriksaan file.
+
+- **Import Pillow:** dulu saya pernah bingung antara nama paket `Pillow` dan namespace `PIL`, sampai mencoba memanggil nama yang tidak di-import. Kali ini saya memakai `from PIL import Image, ImageOps`.
+- **Nama variabel:** catatan lama menyebut nama seperti `im`, `image`, dan `resize` sempat membuat peran gambar membingungkan. Di kode baru saya memakai `photo`, `shirt`, `size`, dan `picture_fit`, sehingga lebih terlihat mana foto, kaus, ukuran target, dan hasil foto yang sudah di-fit.
+- **Alur gambar:** sekarang saya mengingat bahwa ukuran target berasal dari `shirt.size`; `ImageOps.fit` mengembalikan gambar baru yang saya simpan sebagai `picture_fit`; lalu gambar hasil fit menjadi dasar untuk `paste` dan `save`.
+- **Pemeriksaan file:** perbaikan yang dicatat setelah pengerjaan pertama sekarang sudah ada di kode baru: menerima `.jpg`, `.jpeg`, dan `.png`; mengabaikan kapitalisasi ekstensi dengan `.lower()`; mengecek jumlah argumen terlalu sedikit maupun terlalu banyak; dan memastikan ekstensi input serta output sama.
+- **Pemisahan peran import:** `from os import path` memberi akses ke `path.splitext`, sedangkan `from PIL import Image, ImageOps` memberi akses ke objek dan operasi gambar yang dipakai.
+
+Perbandingan ini mengacu pada kode baru di layar dan catatan proses P-Shirt di `pset-6.md`. Saya tidak membuka kode lama saat murojaah.
+
+### Error dan pemeriksaan terminal
+
+- Error sintaks `image: photo` hilang setelah saya mengganti titik dua dengan `=`.
+- Saya menjalankan program untuk tiga foto yang tersedia, `before1.jpg`, `before2.jpg`, dan `before3.jpg`; hasilnya tersimpan tanpa perlu mencetak apa pun.
+- Saya juga mencoba `python shirt.py before.jpg after.jpg`. Program menjawab `File does not exist` karena file bernama `before.jpg` memang tidak ada; file yang tersedia bernama `before1.jpg`, `before2.jpg`, dan `before3.jpg`. Ini bukan kerusakan proses overlay, tetapi percobaan yang memastikan pengecekan file hilang bekerja.
+- Check50 terakhir lulus semua 13/13, termasuk validasi argumen/ekstensi serta hasil overlay pada enam gambar uji.
+
+### Yang saya pelajari
+
+- Nama paket untuk `pip install` tidak harus sama dengan nama yang dipakai untuk `import`.
+- Keyword argument memakai bentuk `nama=nilai`; kesalahan satu tanda baca bisa membuat program gagal dibaca Python.
+- `ImageOps.fit` membuat hasil gambar baru; simpan hasilnya sebelum memanggil `paste` atau `save`.
+- Saat perintah berhasil menyimpan file, terminal bisa tetap diam. Periksa file output untuk melihat hasilnya.
+- Pengerjaan ulang terasa jauh lebih ringan daripada saat pertama kali. Saya bisa merakit program tanpa bantuan Duck dengan mengandalkan spesifikasi, dokumentasi, dan catatan belajar sendiri.
