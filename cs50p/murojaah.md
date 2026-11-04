@@ -229,18 +229,33 @@ Kali ini saya masih ingat alur utama P-Shirt dari awal sampai akhir. Terminal ti
 - **Salah tanda saat memberi argumen bernama.** Saya menulis `image: photo` pada pemanggilan `ImageOps.fit`, lalu mendapat `SyntaxError: invalid syntax`. Untuk memberi nilai pada keyword argument, sintaksnya memakai tanda sama dengan: `image=photo`. Titik dua dipakai untuk hal lain, misalnya anotasi tipe atau awal blok, bukan untuk mengisi argumen fungsi.
 - Saya bolak-balik antara catatan Week 6, dokumentasi Python, dan spesifikasi soal beserta hints. Membaca ulang urutan kerja dan fungsi yang disebut soal membantu saya mengingat hubungan antara foto, ukuran shirt, hasil fit, paste, dan save.
 
-### Perbandingan dengan pengerjaan pertama
+### Perbandingan kode lama dan kode murojaah
 
-Dibandingkan catatan P-Shirt di Pset 6, pengerjaan ulang ini menunjukkan bahwa saya sudah lebih mandiri mengingat alur pengolahan gambar dan pemeriksaan file.
+Sekarang saya sudah memberikan tangkapan layar kode lama, jadi bagian ini membandingkan dua kode yang benar-benar terlihat. Kode lama sudah menangani ekstensi yang diizinkan, kapitalisasi, jumlah argumen, dan kecocokan ekstensi input/output. Jadi pemeriksaan tersebut bukan hal baru di kode murojaah; cara menuliskannya yang berubah.
 
-- **Import Pillow:** dulu saya pernah bingung antara nama paket `Pillow` dan namespace `PIL`, sampai mencoba memanggil nama yang tidak di-import. Kali ini saya memakai `from PIL import Image, ImageOps`.
-- **Nama variabel:** catatan lama menyebut nama seperti `im`, `image`, dan `resize` sempat membuat peran gambar membingungkan. Di kode baru saya memakai `photo`, `shirt`, `size`, dan `picture_fit`, sehingga lebih terlihat mana foto, kaus, ukuran target, dan hasil foto yang sudah di-fit.
-- **Alur gambar:** sekarang saya mengingat bahwa ukuran target berasal dari `shirt.size`; `ImageOps.fit` mengembalikan gambar baru yang saya simpan sebagai `picture_fit`; lalu gambar hasil fit menjadi dasar untuk `paste` dan `save`.
-- **Pemeriksaan file:** perbaikan yang dicatat setelah pengerjaan pertama sekarang sudah ada di kode baru: menerima `.jpg`, `.jpeg`, dan `.png`; mengabaikan kapitalisasi ekstensi dengan `.lower()`; mengecek jumlah argumen terlalu sedikit maupun terlalu banyak; dan memastikan ekstensi input serta output sama.
-- **Pemisahan peran import:** `from os import path` memberi akses ke `path.splitext`, sedangkan `from PIL import Image, ImageOps` memberi akses ke objek dan operasi gambar yang dipakai.
+| Bagian | Kode lama | Kode murojaah |
+|---|---|---|
+| Import path | `import os`, lalu `os.path.splitext(...)` | `from os import path`, lalu `path.splitext(...)` |
+| Ekstensi yang diizinkan | Memakai `endswith((".jpg", ".png", ".jpeg"))` setelah `.lower()` | Menyimpan `.jpg`, `.jpeg`, `.png` dalam list `ekstensi`, lalu membandingkan hasil `path.splitext(...)[1]` yang sudah di-`.lower()` |
+| Samakan ekstensi input/output | Membandingkan hasil `os.path.splitext(...)[1]` dari kedua nama setelah `.lower()` | Logika sama, memakai `path.splitext(...)[1]` |
+| Nama gambar | `before` untuk foto input dan `after` untuk hasil fit | `photo` untuk foto input dan `picture_fit` untuk hasil fit |
+| Penjelasan di kode | Ada komentar untuk pemeriksaan argumen, ekstensi, proses gambar, dan error file | Versi baru lebih sedikit komentar; nama variabelnya lebih menjelaskan objek yang dipegang |
+| Pesan file hilang | `Input file or shirt.png does not exist` | `File does not exist` |
 
-Perbandingan ini mengacu pada kode baru di layar dan catatan proses P-Shirt di `pset-6.md`. Saya tidak membuka kode lama saat murojaah.
+#### Apa yang berubah dan apa artinya
 
+- **Import `os.path` disingkat.** Keduanya benar. Kode lama memanggil `os.path.splitext`; kode baru mengimpor bagian `path` saja, jadi pemanggilannya menjadi `path.splitext`. Hasil dan tugasnya sama.
+- **Pengecekan ekstensi ditulis dengan cara berbeda.** Kode lama bertanya, “Apakah nama ini berakhir dengan salah satu akhiran yang diizinkan?” lewat `endswith`. Kode baru mengambil bagian ekstensi setelah titik lewat `splitext`, lalu bertanya apakah ekstensi itu ada di list. Keduanya mengubah nama menjadi huruf kecil dulu, jadi `.JPG` dan `.jpg` sama-sama diterima. Kode baru membuat daftar ekstensi terlihat sebagai data tersendiri; kode lama menuliskan pilihan langsung di dalam `endswith`.
+- **Pemeriksaan jumlah argumen pada dasarnya tetap sama.** Keduanya menolak jumlah yang terlalu sedikit dengan `len(sys.argv) <= 2` dan terlalu banyak dengan `len(sys.argv) >= 4` atau bentuk setara `> 3`. Ingat bahwa `sys.argv[0]` adalah nama program; dua nama file berarti panjang daftar tepat 3.
+- **Nama variabel gambar berubah.** `before` dan `after` di kode lama sudah menggambarkan urutan sebelum/sesudah, sedangkan `photo` dan `picture_fit` di kode baru lebih langsung menjelaskan bahwa objek pertama adalah foto dan objek kedua adalah foto hasil penyesuaian. Ini membuat argumen untuk `ImageOps.fit`, `paste`, dan `save` lebih mudah ditelusuri.
+- **Pesan error file hilang menjadi lebih umum.** Pesan lama menyebut dua kemungkinan file yang tidak ditemukan: foto input atau `shirt.png`. Pesan baru lebih singkat, tetapi tidak memberi petunjuk file mana yang perlu diperiksa.
+- **Ada komentar yang lebih lengkap pada kode lama.** Komentar seperti “Use lower() only for checking, keep the original name” mengingatkan kenapa nama asli tidak diubah. Kode murojaah lebih ringkas; jika nanti dibaca ulang, komentar pendek tentang alasan itu bisa membantu.
+- **Bagian overlay intinya sama.** Kedua versi mengambil ukuran dari `shirt.size`, mengubah foto dengan `ImageOps.fit`, memakai `shirt` sebagai gambar tempelan sekaligus mask di `paste`, lalu menyimpan hasil ke nama output. Nama variabel hasilnya saja yang berbeda.
+- **Kedua versi membungkus pembukaan foto dengan `with`, tetapi membuka `shirt.png` tanpa `with`.** Ini sama-sama berhasil di soal. Catatan lama sudah menandai bahwa menutup kedua file secara eksplisit akan lebih rapi sebagai kebiasaan.
+
+Perbaikan ekstensi `.jpeg`, huruf besar-kecil, jumlah argumen, dan kecocokan ekstensi sudah ada di kode lama setelah revisi 29 Oktober. Pada murojaah kali ini saya berhasil menulis ulang pengecekan itu dari awal, bukan baru menambahkannya. Error `image: photo` adalah kesalahan ketik sementara saat menyusun kode murojaah; bentuk yang benar adalah `image=photo`, seperti pada kode lama yang terlihat di gambar.
+
+Perbandingan ini sekarang mengacu pada kedua tangkapan layar kode, bukan hanya ringkasan lama di `pset-6.md`.
 ### Error dan pemeriksaan terminal
 
 - Error sintaks `image: photo` hilang setelah saya mengganti titik dua dengan `=`.
