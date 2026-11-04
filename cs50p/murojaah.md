@@ -213,7 +213,7 @@ tidak terasa perlu, tapi tetap harus dibiasakan untuk soal yang panjang.
 
 ## Murojaah 7: CS50 P-Shirt, ditulis ulang dari layar kosong (4 November 2026)
 
-Waktu mengerjakan: tidak dicatat  
+Waktu mengerjakan: 90 menit  
 Hasil: check50 hijau semua (13/13)  
 Aturan: kode lama tidak dibuka, tidak bertanya ke AI, Copilot dimatikan. Saya mengerjakan tanpa CS50 Duck. Yang saya gunakan hanya spesifikasi soal, petunjuk/dokumentasi yang dirujuk soal, catatan Week 6 saya sendiri, dan dokumentasi Python/Pillow.
 
