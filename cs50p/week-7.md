@@ -837,8 +837,197 @@ Dua kata lama yang muncul lagi: **regression** (kemunduran) dan **stipulate**, y
 
 ---
 
+## Hari 6 – 5 November 2026
+
+Tidak ada lecture baru. Pagi: Kuis Harian #9 dan pemanasan murojaah Week 7. Sore sampai malam: membahas ulang kode Problem Set 7 nomor 1, 2, dan 3 bersama Claude, merapikannya, lalu submit ulang. Ngoding 2 jam, bahasa Inggris 10 menit.
+
+### Kuis Harian #9
+
+25 soal, lebih banyak dari biasanya untuk mengejar kuis 2–4 November yang terlewat waktu kena limit. Giliran Hari ke-3: Week 2 dan Week 6. Hasilnya **20/25**.
+
+Yang salah dan koreksinya:
+
+| No | Yang saya jawab | Yang benar |
+|---|---|---|
+| 14 | `list(range(1, 10, 3))` ikut sampai 10 | Isinya 1, 4, 7. Angka 10 itu batas yang **exclusive**, tidak pernah ikut |
+| 15 | Hasilnya 1, 2 | Hasilnya 1, 2, 4. Yang menghasilkan 1, 2 itu `break`, bukan `continue` |
+| 17 | Mencetak nama satu per satu | **NameError.** Di loop versi `range` tidak ada variabel `student`, yang ada cuma `i`. Untuk mengambil isinya harus `students[i]` |
+| 22 | Tanda kutip melindungi komanya | **ValueError.** `split` cuma memotong di tiap koma, dia tidak paham tanda kutip. Yang paham itu `csv.reader` |
+| 23 | Key-nya dari `fieldnames` | Dari **baris pertama file** (header). `fieldnames` itu punya `DictWriter` |
+
+Supaya csv tidak tertukar lagi, saya tulis ulang tabelnya:
+
+```
+csv.reader      → membaca, hasil list, pakai row[0], row[1]
+csv.DictReader  → membaca, hasil dict, key dari header di baris pertama file
+csv.writer      → menulis, urutan ikut list yang saya tulis sendiri
+csv.DictWriter  → menulis, urutan dari fieldnames yang saya tulis
+```
+
+### Pemanasan murojaah
+
+Lima pertanyaan Week 7 dijawab dari ingatan. Nomor 1, 3, 4 benar. Nomor 2 dan 5 saya blank, jadi dibuka lewat percobaan sendiri.
+
+Satu penajaman di nomor 1: kalau pola sudah diberi `^` dan `$`, yang jadi berperilaku sama dengan `fullmatch` itu **ketiganya** — `search`, `match`, dan `fullmatch`.
+
+### Regex memeriksa bentuk, bukan nilai
+
+Ini sudah saya tulis di catatan NUMB3RS, tapi waktu ditanya ternyata saya belum bisa menjelaskannya. Percobaan yang membukanya:
+
+```python
+import re
+re.fullmatch(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", "999.999.999.999")
+re.fullmatch(r"\d{1,2}/\d{1,2}/\d{4}", "99/99/2026")
+```
+
+Dua-duanya **diterima**, padahal dua-duanya mustahil di dunia nyata. Regex cuma melihat "tiga digit, titik, tiga digit". Dia tidak tahu 999 lebih besar dari 255, dan tidak tahu tanggal 99 tidak ada.
+
+Memaksa regex memeriksa nilai sebenarnya bisa, tapi polanya jadi kepanjangan. Untuk **satu** oktet saja sudah sepanjang ini:
+
+```
+(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)
+```
+
+Ini contoh **excessively long** yang disebut David. Cara yang lebih wajar: bagi tugas.
+
+| Yang memeriksa | Tugasnya |
+|---|---|
+| Regex | bentuknya: berapa digit, dipisah apa, urutannya bagaimana |
+| Python | nilainya: apakah angkanya masuk rentang yang sah |
+
+Caranya: kurung di pola menangkap tiap bagian, lalu nilainya diperiksa di Python.
+
+```python
+m = re.fullmatch(r"(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})", "999.999.999.999")
+print(m.groups())
+print(all(int(x) <= 255 for x in m.groups()))
+```
+
+Dan saya salah menebak alasannya: saya kira isi group jadi tulisan **karena raw string**. Ternyata bukan. Raw string cuma soal backslash. Alasan sebenarnya: **regex bekerja pada teks**, jadi apa pun yang ditangkapnya selalu `str`, walaupun isinya angka. Makanya perlu `int()` sebelum dibandingkan.
+
+### group(0), group(n), dan groups()
+
+Saya penasaran kenapa ada `group(0)`, padahal pola tidak punya kurung ke-nol.
+
+```
+group(0)   → seluruh potongan yang cocok dengan pola, kurung atau bukan
+group(1)   → isi kurung pertama
+groups()   → tuple semua kurung sekaligus, TANPA group(0)
+```
+
+Percobaan yang memperjelas:
+
+```python
+m = re.search(r"(\d{4})-(\d{2})", "setoran tanggal 2026-11 sudah masuk")
+print(m.group(0))
+print(m.group(1))
+```
+
+`group(0)` isinya `2026-11` saja, bukan seluruh kalimatnya. Sedangkan kalau pakai `fullmatch`, `group(0)` **pasti** sama dengan seluruh teks, karena syarat `fullmatch` memang seluruh teks harus cocok. Jadi di `fullmatch`, `group(0)` jarang berguna.
+
+### Backreference di re.sub
+
+Yang nomor 5. Saya kira `\2` dan `\1` di bagian pengganti itu pola digit, ternyata bukan.
+
+```python
+re.sub(r"(\w+) (\w+)", r"\2 \1", "Azka Parhan")
+re.sub(r"(\w+), (\w+)", r"\2 \1", "Muzahid, Azka")
+```
+
+Isinya tertukar. Jadi `\1` dan `\2` di pengganti itu merujuk ke **isi capturing group**, bukan angka. Nomornya dihitung dari **urutan kurung buka** di pola.
+
+Satu simbol dua arti lagi, seperti `{}` di Week 2:
+
+```
+\d  di POLA        → satu karakter angka
+\1  di PENGGANTI   → isi capturing group nomor 1
+```
+
+### Kurung itu dua tugas, bukan satu
+
+Ini pelajaran terbesar hari ini, dan baru benar-benar nyambung waktu membahas kode Pset 7.
+
+| Pertanyaan | Jawabannya menentukan |
+|---|---|
+| Perlu dikurung? | kalau butuh dipegang pengulang (`?` `*` `+` `{}`) atau untuk membatasi tanda pilihan |
+| Perlu ditangkap? | kalau nilainya akan dipakai lagi nanti |
+
+Kalau perlu dikurung tapi tidak perlu ditangkap, pakai `(?:...)` — kelompokkan saja, jangan simpan.
+
+Percobaan yang membuktikan kurung memang dibutuhkan:
+
+```python
+re.fullmatch(r"www\.?youtube\.com", "wwwyoutube.com")
+re.fullmatch(r"(?:www\.)?youtube\.com", "wwwyoutube.com")
+```
+
+Tanpa kurung, yang jadi opsional cuma titiknya. Dengan kurung, `www.` seluruhnya yang opsional.
+
+### Raw string itu cuma string biasa
+
+Saya kira pola regex harus langsung dimasukkan ke function `re`, dan raw string cuma bisa jadi argumen function library. Ternyata salah.
+
+```python
+print(type(r"\d{3}"))
+print(len(r"\d"))
+print(len("\n"))
+```
+
+`r"..."` itu fitur Python untuk string apa pun, tidak ada hubungannya dengan `re`. Gunanya cuma membuat backslash dibaca apa adanya. Karena cuma string, pola bisa disimpan ke variabel, disambung, dan dirakit dengan f-string. Yang membutuhkan `re` cuma saat **memakainya** untuk mencocokkan.
+
+Jebakannya waktu merakit dengan f-string: `{3}` harus ditulis **dobel** jadi `{{3}}`. Ini "run out of keys" lagi:
+
+```
+{OKTET}   → f-string: sisipkan isi variabel OKTET
+{{3}}     → f-string: tulis kurung kurawal apa adanya, hasilnya {3} untuk regex
+```
+
+### Urutan alternatif: yang panjang di depan
+
+Temuan yang paling bikin saya kaget, karena kode saya selamat bukan karena benar.
+
+```python
+print(re.match(r"[1-9]|1[0-2]", "12").group())
+print(re.match(r"1[0-2]|[1-9]", "12").group())
+print(re.fullmatch(r"[1-9]|1[0-2]", "12").group())
+```
+
+Yang pertama hasilnya `1`, bukan `12`. Regex mencoba alternatif **dari kiri**, dan `[1-9]` langsung cocok dengan karakter `1`. `re.match` sudah puas lalu berhenti, angka `2`-nya ditinggal.
+
+Yang ketiga hasilnya `12` walaupun polanya sama, karena `fullmatch` mensyaratkan seluruh teks habis. Waktu berhenti di `1` masih ada sisa `2`, jadi gagal, lalu regex **mundur** dan mencoba alternatif berikutnya.
+
+Jadi pola ditulis supaya benar **berdiri sendiri**, tidak menumpang pada kebaikan function yang memanggilnya. Contoh bahayanya kalau polanya disalin ke program lain yang pakai `re.search`:
+
+```python
+JAM = r"[1-9]|1[0-2]"
+re.search(JAM, "halaqah mulai jam 12 siang").group()
+```
+
+Hasilnya `1`, bukan `12`. Tanpa error sama sekali. Ini jenis bug yang paling susah ketahuan, mirip `csv.writer` yang menukar kolom tanpa protes.
+
+Kebiasaannya: **alternatif terpanjang ditaruh paling depan.**
+
+### Kurung siku itu selalu pilih satu
+
+Saya kira `[AP]` artinya harus ada A dan P dua-duanya. Ternyata pilih salah satu.
+
+```python
+re.fullmatch(r"[AP]", "A")    # cocok
+re.fullmatch(r"[AP]", "AP")   # None, cuma boleh satu karakter
+re.fullmatch(r"AP", "AP")     # cocok, harus A lalu P
+```
+
+Patokan: di dalam `[ ]` artinya pilihan, di luar artinya urutan yang wajib. Jadi `[AP]M` hasilnya cuma dua kemungkinan, `AM` atau `PM`. Ini nyambung dengan catatan NUMB3RS saya: kurung siku cuma mengurus **satu karakter**.
+
+### Yang mau dicoba
+- Kuis Harian #10 besok. Soal 14, 15, 17, 22, 23 akan muncul lagi dengan bentuk berbeda.
+- Coba `re.sub` dengan tiga capturing group, lalu susun ulang urutannya jadi `\3 \1 \2`.
+- Mulai **Week 8: Object-Oriented Programming**.
+
+---
+
 ## Yang masih tertunda
 - [x] Murojaah materi Hari 1 dan Hari 2, lalu kuis kosakata: selesai 29 Oktober pagi (Kuis Kosakata #6, 30 soal, 83%).
 - [x] **Perbaiki `shirt.py` (Pset 6)**: selesai 29 Oktober, tidak submit ulang. Pembahasannya di `pset-6.md`.
 - [x] **Lecture 7 selesai** (31 Oktober).
-- [ ] Mulai **Problem Set 7**.
+- [x] Mulai **Problem Set 7**: selesai semua, soal 1 sampai 5 (1–4 November). Dirapikan dan submit ulang untuk soal 1, 2, dan 3 pada 5 November.

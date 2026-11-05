@@ -358,6 +358,133 @@ Saat memasang `validator-collection`, pip juga menampilkan peringatan konflik ve
 - Baca spesifikasi untuk mengetahui batas tugas: di sini cukup memeriksa bentuk email, tidak perlu mengecek keberadaan domain.
 - Mencoba beberapa contoh valid dan invalid membantu memastikan program menghasilkan dua keluaran yang diminta.
 - Untuk soal ini saya belajar dari spesifikasi dan dokumentasi library, kemudian menguji sendiri program di VS Code.
+## Merapikan kode soal 1, 2, dan 3 (5 November 2026)
+
+Setelah semua soal hijau, saya membahas ulang kodenya bersama Claude. Ternyata ketiganya punya penyakit yang sama, dan sebagian sudah saya tulis sendiri di catatan ini tapi belum saya terapkan ke kodenya. Setelah dirapikan, ketiganya check50 hijau lagi dan saya submit ulang.
+
+### Prinsip yang berlaku di ketiga soal
+
+| Prinsip | Maksudnya |
+|---|---|
+| Kurung untuk yang berubah-ubah | Bagian yang isinya selalu sama tidak perlu ditangkap, cukup diketik langsung sebagai teks |
+| Perlu dikelompokkan tapi tidak dipakai | Tulis `(?:...)`, bukan `(...)` |
+| Pola yang berulang | Simpan ke variabel, rakit dengan f-string |
+| Periksa hasil regex langsung | Jangan menunggu kodenya meledak dulu |
+| Alternatif terpanjang di depan | Supaya polanya benar berdiri sendiri |
+
+### 1. NUMB3RS
+
+Yang saya perbaiki:
+
+- Tiga pasang kurung di pola, tidak satu pun isinya saya ambil dengan `group()`. Semuanya jadi `(?:...)`. Kurungnya tetap perlu, karena `{3}` butuh sesuatu untuk dipegang dan tanda pilihan perlu dibatasi — tapi tidak perlu disimpan.
+- Walrus `:=` saya pakai untuk menyimpan hasil pencarian ke variabel `ip`, padahal `ip` itu nama parameter yang isinya alamat IP asli. Alamat aslinya jadi tertimpa objek match. Dan hasilnya tidak saya pakai lagi setelah `if`, jadi walrus-nya tidak menyelesaikan masalah apa pun. Saya kira itu bikin kode lebih ringkas, ternyata cuma bikin bingung.
+- `if ... return True else return False` jadi satu baris dengan `bool(...)`. Ini pelajaran Pythonic Week 1 yang sudah saya catat tapi belum dipakai.
+- `^` dan `$` dengan `re.search` diganti `re.fullmatch`, supaya niatnya langsung terbaca.
+- Pola oktet yang ditulis empat kali disimpan ke satu variabel, lalu dirakit dengan f-string. Jebakannya: `{3}` harus ditulis `{{3}}` di dalam f-string.
+
+#### Kebingungan baru: kenapa 200–255 harus dipecah dua?
+
+Naluri saya bilang cukup ditulis angka 2, lalu dua kurung siku berisi 0 sampai 5. Saya pikir hasilnya sama saja. Ternyata itu **too stringent** — terlalu ketat, istilah yang baru keluar di kuis pagi tadi.
+
+```
+2[0-5][0-5]   → 206, 217, 238 DITOLAK, padahal semuanya oktet yang sah
+2[0-4][0-9]   → 200 sampai 249, satuan bebas
+25[0-5]       → 250 sampai 255, satuan dibatasi
+```
+
+Sebabnya: batas 5 pada satuan **hanya berlaku kalau puluhannya tepat 5**. Selama puluhannya 0–4, satuannya masih aman sampai 9. Regex tidak bisa menyatakan "tergantung", jadi harus dipecah jadi dua jalur terpisah.
+
+Posisi kurung sikunya supaya tidak tertukar:
+
+```
+2  [0-5]  [0-5]
+↑    ↑      ↑
+ratusan  puluhan  satuan
+```
+
+Dan caranya memecah rentang bukan tebak-tebakan. Dua lapis: pecah dulu per **jumlah digit**, lalu untuk yang tiga digit pecah per **digit pertama**, terus sampai tiap kelompok punya batas yang bisa ditulis dengan satu `[ ]`. Bonusnya, `01` dan `007` otomatis ditolak karena kelompok dua digit mewajibkan digit pertama 1–9.
+
+### 2. Watch on YouTube
+
+Bagian ini melengkapi catatan di atas, yang dulu saya susun dari log karena percakapan Duck sudah ter-reset. Empat celah yang baru ketahuan:
+
+| Celah | Akibatnya |
+|---|---|
+| Titik di `www.` tidak di-escape | Titik artinya karakter apa pun, jadi `wwwXyoutube.com` ikut diterima |
+| `.+` di awal terlalu serakah | Bisa menembus tanda lebih-besar dan keluar dari tag iframe, jadi link di elemen lain ikut lolos. Diganti dengan "karakter apa pun kecuali tanda tutup tag" |
+| ID video cuma huruf dan angka | ID asli YouTube bisa mengandung tanda hubung dan garis bawah, jadi ID seperti `dQw4w9-Wg_XcQ` terpotong |
+| Group terakhir ditangkap tapi tidak dipakai | Sifatnya opsional dan isinya tidak pernah diambil, jadi tidak menjaga apa pun. Dihapus |
+
+Yang paling membuka pikiran: saya menangkap bagian `http` dan `youtu` sebagai group, lalu merakit ulang URL-nya dari potongan-potongan itu. Padahal isi kedua group itu **selalu sama**, apa pun inputnya. Jadi tiga baris perakitan itu cuma cara berputar untuk menulis satu teks tetap.
+
+Ada efek sampingnya juga: input `http://` ikut keluar jadi `https://`. Kebetulan itu yang check50 harapkan, tapi kodenya tidak memperlihatkan niat itu — kelihatan seperti mengikuti protokol aslinya, padahal tidak.
+
+Pertanyaan saya waktu itu: kalau tidak di-capture, bagaimana menyambungnya? Jawabannya ternyata **tidak perlu disambung dari input sama sekali**. Teks tetapnya diketik langsung di f-string, yang diambil dari input cuma ID videonya.
+
+Patokan untuk menentukan mana yang perlu ditangkap, tanyakan ini ke tiap bagian:
+
+> Kalau input-nya ganti video lain, bagian ini ikut berubah atau tidak?
+
+Seperti blangko rapor santri: format "Nama: ___, Juz: ___" sudah tercetak di kertasnya, tidak perlu disalin ulang dari data tiap santri. Yang diambil dari data cuma isian titik-titiknya.
+
+Dari empat group tinggal satu, dan yang satu itu memang satu-satunya bagian yang berubah-ubah.
+
+### 3. Working 9 to 5
+
+| Yang saya tulis | Yang diperbaiki |
+|---|---|
+| `import sys` | Tidak dipakai, dihapus |
+| Kurung non-capturing di sekitar satu kelas karakter | Tidak dipegang pengulang dan tidak membatasi pilihan, jadi tidak perlu kurung sama sekali |
+| Penanda AM dan PM dibungkus kurung masing-masing | Cukup satu kurung siku untuk huruf depannya, karena isinya cuma beda satu karakter |
+| Kata penghubung di tengah pola ikut ditangkap | Tidak pernah dipakai, dan membuat nomor group waktu kedua bergeser jadi 5, 6, 7 |
+| Pola waktu ditulis dua kali | Disimpan ke variabel, dirakit dua kali dengan f-string |
+| `matches.group()` dipanggil enam kali di enam baris | Diambil sekaligus dengan `matches.groups()` lalu dibongkar |
+| `try/except AttributeError` | Diganti pemeriksaan langsung terhadap hasil regex |
+| `\s` sebagai pemisah | Soal minta spasi, sedangkan `\s` juga menerima tab dan baris baru |
+| `helper` punya beberapa jalur return | Dirapikan jadi satu `return`, supaya tidak ada jalur yang diam-diam menghasilkan `None` |
+
+#### Kenapa try/except itu kurang tepat
+
+Catatan saya di atas sudah menulis kalimatnya: *"`None` dari regex bukan exception dengan sendirinya. Error muncul saat saya mencoba mengakses group darinya."* Saya paham sebabnya, tapi kodenya belum ikut menyatakan itu.
+
+```
+matches = None        ← ini yang terjadi kalau tidak cocok
+matches.group(1)      ← None tidak punya method group, jadi meledak
+```
+
+`AttributeError` itu cuma **gejala** (symptom, kata dari Week 6). Penyakitnya: input tidak valid. Kode saya berbunyi "coba saja, kalau meledak berarti salah", padahal saya sudah tahu persis kapan tidak cocok — begitu hasil `fullmatch` jadi `None`. Jadi diperiksa langsung saja, jangan menunggu meledak.
+
+Bahayanya kalau pakai `try`: seandainya suatu saat ada `AttributeError` dari sebab **lain** di dalam blok itu, dia ikut tertangkap dan disalahartikan sebagai input tidak valid.
+
+#### Membongkar enam group sekaligus
+
+Ini bukan hal baru, cuma saya belum sadar. Sama persis dengan `name, home = line.rstrip().split(",")` di Week 6.
+
+```python
+m = re.fullmatch(r"(1[0-2]|[1-9])(:[0-5][0-9])? ([AP]M)", "9:30 AM")
+print(m.groups())
+jam, menit, penanda = m.groups()
+```
+
+Jumlah penampung di kiri **wajib** sama dengan jumlah kurung di pola. Karena variabel waktu berisi tiga capture dan dirakit dua kali, totalnya enam. Dan di sinilah kata penghubung tadi harus dibuang: kalau ikut tertangkap, isinya jadi tujuh dan saya harus menyediakan satu penampung untuk sesuatu yang tidak pernah dipakai. Kalau jumlahnya tidak cocok, muncul error yang sudah saya kenal:
+
+```
+ValueError: too many values to unpack
+```
+
+Error yang sama persis dengan alamat Harry berkoma di Week 6.
+
+#### Kode saya selamat bukan karena benar
+
+Alternatif jam saya tulis yang pendek dulu baru yang panjang. Kodenya tetap benar — tapi bukan karena polanya benar, melainkan karena `fullmatch` memaksa regex mundur dan mencoba alternatif berikutnya. Kalau pola itu suatu saat dipakai dengan `re.search` atau `re.match`, jam 12 bisa terbaca jadi 1 tanpa error apa pun. Rinciannya saya tulis di `week-7.md` Hari 6.
+
+### Yang saya pelajari dari merapikan
+
+- Menulis pelajaran di catatan tidak sama dengan menerapkannya ke kode. Tiga hal yang saya perbaiki hari ini sudah tertulis di catatan ini sejak 1 November.
+- check50 hijau tidak berarti kodenya sudah benar. Tema lama yang muncul lagi.
+- Kurung punya dua tugas terpisah, mengelompokkan dan menangkap. Dulu saya kira cuma satu.
+- Kode yang berputar-putar biasanya tanda saya mengambil dari input sesuatu yang sebenarnya tidak pernah berubah.
+
 ## Catatan proses belajar
 
 Pada problem set ini saya menggunakan CS50 Duck untuk petunjuk dan pertanyaan pemandu, sesuai aturan CS50P yang saya ikuti. Saya tetap menulis, mengubah, dan menguji kode sendiri.
