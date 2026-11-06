@@ -358,9 +358,9 @@ Saat memasang `validator-collection`, pip juga menampilkan peringatan konflik ve
 - Baca spesifikasi untuk mengetahui batas tugas: di sini cukup memeriksa bentuk email, tidak perlu mengecek keberadaan domain.
 - Mencoba beberapa contoh valid dan invalid membantu memastikan program menghasilkan dua keluaran yang diminta.
 - Untuk soal ini saya belajar dari spesifikasi dan dokumentasi library, kemudian menguji sendiri program di VS Code.
-## Merapikan kode soal 1, 2, dan 3 (5 November 2026)
+## Merapikan kode seluruh problem set (5–6 November 2026)
 
-Setelah semua soal hijau, saya membahas ulang kodenya bersama Claude. Ternyata ketiganya punya penyakit yang sama, dan sebagian sudah saya tulis sendiri di catatan ini tapi belum saya terapkan ke kodenya. Setelah dirapikan, ketiganya check50 hijau lagi dan saya submit ulang.
+Setelah semua soal hijau, saya membahas ulang kodenya bersama Claude. Soal 1, 2, dan 3 dibahas 5 November; soal 4 dan 5 pada 6 November. Ternyata penyakitnya sama berulang-ulang, dan sebagian sudah saya tulis sendiri di catatan ini tapi belum saya terapkan ke kodenya. Setelah dirapikan, semuanya check50 hijau lagi dan saya submit ulang.
 
 ### Prinsip yang berlaku di ketiga soal
 
@@ -478,9 +478,39 @@ Error yang sama persis dengan alamat Harry berkoma di Week 6.
 
 Alternatif jam saya tulis yang pendek dulu baru yang panjang. Kodenya tetap benar — tapi bukan karena polanya benar, melainkan karena `fullmatch` memaksa regex mundur dan mencoba alternatif berikutnya. Kalau pola itu suatu saat dipakai dengan `re.search` atau `re.match`, jam 12 bisa terbaca jadi 1 tanpa error apa pun. Rinciannya saya tulis di `week-7.md` Hari 6.
 
+### 4. Um
+
+Kodenya pendek, dan dua-duanya pengulangan dari soal sebelumnya.
+
+| Yang saya tulis | Yang diperbaiki |
+|---|---|
+| `import sys` | Tidak dipakai, dihapus. Ini sudah tiga kali dalam satu problem set |
+| Cabang yang mengembalikan panjang daftar kalau ada isinya dan 0 kalau kosong | Cabangnya tidak perlu. Daftar kosong panjangnya memang sudah 0, jadi langsung di-return saja |
+
+Pola yang sama persis dengan NUMB3RS:
+
+```
+if sesuatu: return True / else: return False      →  return bool(sesuatu)
+if matches: return len(matches) / else: return 0  →  return len(matches)
+```
+
+Dua-duanya berangkat dari kebiasaan yang sama: **menulis cabang untuk hal yang Python sudah urus sendiri**. Kalau nilainya sudah berupa jawaban yang diminta, langsung di-return saja.
+
+Dan kalimatnya sudah saya tulis sendiri di catatan Um di atas: *"Kalau daftar kecocokannya kosong, panjangnya memang 0."* Tertulis, tapi tidak diterapkan.
+
+Soal `import sys` yang nganggur: biasanya sisa dari percobaan awal yang lupa dibersihkan. VS Code menandainya dengan warna lebih redup, tinggal diperhatikan.
+
+### 5. Response Validation
+
+Kode ini sudah benar dan soalnya memang tidak menuntut lebih. Dua catatan kecil, bukan perbaikan wajib:
+
+1. **Hasil validasi bukan `False` biasa.** Library `validators` mengembalikan objek `ValidationError` kalau alamatnya tidak sah, dan objek itu **falsy**, jadi tetap jatuh ke `else`. Kodenya tidak salah, tapi menarik untuk tahu: falsy itu bukan cuma `False`. Daftar kosong, string kosong, `0`, dan `None` juga falsy — persis yang baru saja dipakai di Um.
+2. **File ini tidak punya `main()` dan penjaga `__name__`.** Untuk soal ini tidak masalah, karena tidak ada file tes yang meng-import-nya. Patokannya: penjaga `__name__` perlu kalau file itu **mungkin di-import** orang lain, seperti `twttr.py` dan `numb3rs.py` yang dipanggil dari `test_*.py`. Kalau filenya cuma dijalankan langsung, boleh tanpa itu.
+
 ### Yang saya pelajari dari merapikan
 
-- Menulis pelajaran di catatan tidak sama dengan menerapkannya ke kode. Tiga hal yang saya perbaiki hari ini sudah tertulis di catatan ini sejak 1 November.
+- Menulis pelajaran di catatan tidak sama dengan menerapkannya ke kode. Beberapa hal yang saya perbaiki sudah tertulis di catatan ini sejak 1 November.
+- Penyakitnya berulang di hampir semua soal: import yang tidak dipakai, kurung yang tidak perlu, dan cabang `if/else` untuk hal yang Python sudah urus sendiri.
 - check50 hijau tidak berarti kodenya sudah benar. Tema lama yang muncul lagi.
 - Kurung punya dua tugas terpisah, mengelompokkan dan menangkap. Dulu saya kira cuma satu.
 - Kode yang berputar-putar biasanya tanda saya mengambil dari input sesuatu yang sebenarnya tidak pernah berubah.
