@@ -307,3 +307,104 @@ Pasangan yang gampang tertukar dan perlu dikuiskan berpasangan: `at hand` vs `to
 - Coba `shirt.size` di Pset 6 lalu `type()`-kan hasilnya, buktikan itu tuple.
 - Coba `t = ("Harry", ["Gryffindor"])` lalu `t[1][0] = "Ravenclaw"` sekali lagi dari layar kosong.
 - Lanjut lecture dari menit 31, bagian `__init__`. Berhenti dan tanya waktu sampai di **`self`**.
+
+---
+
+## Hari 2 – 7 November 2026
+
+Hari pendek. Kuis Harian #11 dan pemanasan murojaah saja, lecture belum dilanjut. Ngoding 30 menit, bahasa Inggris 10 menit.
+
+### Kuis Harian #11
+
+19 soal, giliran Hari ke-5: Week 4 dan Week 1, plus enam soal kemarin yang diulang dengan bentuk berbeda. Hasilnya **14/19**.
+
+Enam soal ulangan kemarin **benar semua** kali ini, termasuk nomor 2 dan 3 yang dua hari berturut-turut salah. Berarti dugaan kemarin tepat: masalahnya ketelitian membaca, bukan pemahaman.
+
+Yang salah hari ini:
+
+| No | Materi | Koreksinya |
+|---|---|---|
+| 10 | white lie | Penyederhanaan yang tidak sepenuhnya akurat, bukan kebohongan untuk menipu |
+| 13 | consolidate | Menggabungkan jadi satu, memadatkan. Lawannya **decompose** dari Week 2 |
+| 14 | import | `import random` lalu `choice(...)` itu **NameError**. Jawaban saya sudah benar isinya, cuma nama error-nya belum saya sebut |
+| 15 | shuffle | `cards = random.shuffle(cards)` hasilnya **None**, bukan NameError |
+| 17 | if terpisah | Dua `if` yang tumpang tindih mencetak **dua baris**, tidak error |
+
+### shuffle dan None: salah untuk ketiga kalinya
+
+Ini sudah tiga kali meleset: catatan Week 4 Hari 2, murojaah 11 Oktober, dan sekarang kuis #11. Jadi perlu dicatat lebih tegas.
+
+Percobaan yang saya jalankan sendiri:
+
+```python
+import random
+cards = ["jack", "queen", "king"]
+cards = random.shuffle(cards)
+print(cards)
+```
+
+Hasilnya **`None`**, dan **tidak ada error sama sekali**.
+
+Dua hal yang selalu saya campur:
+
+| Yang saya kira | Yang benar |
+|---|---|
+| NameError, karena shuffle tidak boleh disimpan ke variabel | Boleh saja disimpan, tidak ada aturan yang melarang. Nama `cards` juga dikenal sejak baris kedua |
+| Isinya None karena shuffle tidak butuh variabel | Isinya None karena **shuffle tidak punya return** |
+
+Alasannya bukan soal boleh atau tidak boleh, tapi soal **apa yang diserahkan**. Dan ini ternyata bukan materi baru — persis sama dengan soal nomor 16 di kuis kemarin:
+
+```
+def square(x): print(x * x)     → number = square(5)        → number berisi None
+random.shuffle(cards)           → cards = random.shuffle(…) → cards berisi None
+```
+
+Dua-duanya function yang **mengerjakan sesuatu** tanpa **menyerahkan** apa pun. `square` menampilkan ke layar, `shuffle` mengubah list aslinya di tempat. Hasil kerjanya nyata, tapi tangannya kosong waktu pulang.
+
+Rumus yang saya tulis di Week 0 perlu ditambah satu:
+
+```
+print    → showing, menampilkan ke layar
+return   → giving, menyerahkan nilai
+shuffle  → doing, mengubah di tempat
+```
+
+Yang ketiga ini juga tidak memberi apa-apa, jadi hasilnya None kalau dipaksa disimpan.
+
+Catatan kecil: saya juga sempat lupa shuffle itu apa, dan mengira ada hubungannya dengan angka 6. Angka 6 itu dari **permutation** (3 kartu punya 6 kemungkinan urutan), beda hal. shuffle = mengacak urutan list.
+
+### Tema yang muncul lagi: salah tanpa error
+
+Soal nomor 17 menambah satu contoh lagi ke daftar yang sudah panjang minggu ini:
+
+```
+dua if yang tumpang tindih   → mencetak dua baris, tidak error
+csv.writer urutan tertukar   → data tertukar, tidak error
+student[0] urutan tertukar   → nama dan asrama tertukar, tidak error
+[1-9]|1[0-2] dengan search   → jam 12 terbaca 1, tidak error
+cards = random.shuffle(...)  → list hilang jadi None, tidak error
+```
+
+Semuanya program yang tetap jalan mulus padahal hasilnya salah. Jenis bug yang paling susah ketahuan, dan cuma bisa ditangkap kalau hasilnya benar-benar diperiksa.
+
+### Pemanasan murojaah
+
+Empat pertanyaan tentang materi OOP kemarin, dijawab dari ingatan tanpa membuka catatan. Nomor 2, 3, dan 4 benar:
+
+- Atribut tanpa kurung, method pakai kurung. Itu patokan tercepat.
+- Di tuple, slotnya tidak bisa ditukar tapi isi list yang ada di dalam slot tetap bebas diubah.
+- `student["name"]` lebih baik daripada `student[0]` karena semantiknya lebih kuat: tidak perlu mengingat urutan, tidak perlu menggulir ke bawah, dan tidak rawan tertukar.
+
+Nomor 1 (class vs objek) ingatannya kabur dan saya mencampur dua analogi sekaligus. Koreksinya: pilih satu dan konsisten.
+
+```
+class = denah rumah   →  objek = rumah yang dibangun dari denah itu
+class = SOP petugas   →  objek = petugasnya
+```
+
+Yang penting arahnya: **objek dibuat dari class**. Satu denah bisa jadi banyak rumah, dan tiap rumah punya cat dan lampunya sendiri.
+
+### Yang mau dicoba
+
+- Lanjut lecture dari menit 31, bagian `__init__`. Berhenti dan tanya waktu sampai di **`self`**.
+- Ulangi percobaan shuffle dari layar kosong besok, jangan baca catatan ini dulu.
