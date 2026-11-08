@@ -13,6 +13,7 @@ Jadwal: setiap Minggu jam 05.20.
 | 5 | Tip Calculator (Pset 0) | 25 Okt | 60 menit | check50 3/3 |
 | 6 | Indoor Voice (Pset 0) | 1 Nov | 10 menit | check50 4/4 |
 | 7 | CS50 P-Shirt (Pset 6) | 4 Nov | 90 menit | check50 13/13 |
+| 8 | Fuel Gauge (Pset 3) | 8 Nov | 60 menit | check50 15/15 |
 
 ---
 
@@ -270,3 +271,92 @@ Perbandingan ini sekarang mengacu pada kedua tangkapan layar kode, bukan hanya r
 - `ImageOps.fit` membuat hasil gambar baru; simpan hasilnya sebelum memanggil `paste` atau `save`.
 - Saat perintah berhasil menyimpan file, terminal bisa tetap diam. Periksa file output untuk melihat hasilnya.
 - Pengerjaan ulang terasa jauh lebih ringan daripada saat pertama kali. Saya bisa merakit program tanpa bantuan Duck dengan mengandalkan spesifikasi, dokumentasi, dan catatan belajar sendiri.
+
+## Murojaah 8: Fuel Gauge, ditulis ulang dari layar kosong (8 November 2026)
+
+Waktu mengerjakan: 60 menit  
+Aturan: kode lama tidak dibuka, tidak bertanya ke AI, tidak membuka dokumentasi. Saya hanya membaca spesifikasi soal dan mengandalkan pengetahuan yang sudah ada di kepala.
+
+### Cara saya mengerjakan
+
+Kali ini saya benar-benar fokus meneliti spesifikasi soal, lalu menyusun kodenya baris per baris. Hasilnya terasa lebih terstruktur daripada kode lama, karena saya memikirkan urutannya dulu sebelum menulis.
+
+### Perbandingan kode lama dan kode murojaah
+
+| Bagian | Kode lama | Kode murojaah |
+|---|---|---|
+| Konversi ke int | `int(x)` dan `int(y)` ditulis ulang di banyak tempat | Dikonversi sekali di awal, lalu dipakai terus |
+| Validasi | `if not (...)` dengan negasi ganda, di dalam `else` | `raise ValueError` di dalam `try` |
+| Jumlah break | Satu, di dalam blok validasi | Tiga, satu di tiap cabang |
+| Komentar | Tidak ada | Bahasa Inggris, menempel ke spesifikasi soal |
+
+### Yang naik dari kode lama
+
+- **Konversi sekali di awal.** Kode lama memanggil `int()` lima kali untuk nilai yang sama. Versi murojaah mengubahnya sekali, sisanya tinggal pakai.
+- **Validasi pakai `raise`.** Lebih terbaca daripada `if not (A or B or C)` yang bernegasi ganda. Niatnya langsung tertangkap: "ini tidak sah, lempar ke except."
+- **Komentar bahasa Inggris** yang mengutip syarat dari soal.
+
+### Yang masih bisa dirapikan
+
+Saya menemukan sendiri dua hal sebelum dibahas:
+
+1. **Tiga `break` padahal cukup satu.** Semua cabang berakhir dengan break, jadi lebih baik satu break setelah seluruh if/elif/else.
+2. **`percentage` dihitung dua kali.** Yang pertama di dalam `try` tidak pernah dipakai, karena di `else` dihitung ulang dengan `round`.
+
+Yang ketiga baru ketahuan setelah dibahas:
+
+3. **Urutan validasi dan perhitungan terbalik.** `raise ValueError` ditulis **sesudah** `percentage` dihitung. Untuk input seperti `-1/2`, program menghitung dulu baru menolak — pekerjaan yang terbuang. Seharusnya validasi dulu, hitung setelah aman.
+
+### Perbandingan berantai yang terlupa
+
+Di catatan Pset 3 saya tanggal 6 Oktober sudah ada bentuk ringkas `0 <= x <= y`, tapi tidak saya pakai. Waktu diingatkan, saya sempat menulis `0 < x < y` dengan tanda yang ketat. Itu salah:
+
+```python
+x, y = 0, 5
+0 < x < y     # False, padahal "0/5" sah, hasilnya 0% → "E"
+
+x, y = 5, 5
+0 < x < y     # False, padahal "5/5" sah, hasilnya 100% → "F"
+```
+
+Spesifikasi soal bilang *"X is a non-negative integer and X is not greater than Y"*, jadi 0 boleh dan x boleh sama dengan y. Dua ujungnya harus ikut:
+
+```
+0 <= x   →  "0/5" sah, hasilnya "E"
+x <= y   →  "5/5" sah, hasilnya "F"
+```
+
+Dengan tanda yang ketat, dua masukan sah itu malah ditolak dan program diam lalu bertanya lagi. Istilahnya **too stringent**, terlalu ketat — kata yang baru keluar di kuis minggu lalu untuk kasus regex.
+
+### Bentuk terbaik: gabungkan keduanya
+
+Saya sempat mengira harus memilih antara `raise` dan perbandingan berantai. Ternyata bisa dua-duanya:
+
+```python
+if not 0 <= x <= y:
+    raise ValueError
+```
+
+Dapat ketegasan `raise` sekaligus keringkasan perbandingan berantai. Yang dibuang cuma negasi ganda `not (A or B or C)`.
+
+Satu perbandingan berantai memeriksa **tiga hal sekaligus**: x tidak negatif, dan x tidak lebih besar dari y.
+
+Bentuk akhir yang saya tuju:
+
+```
+try:
+    pecah input, ubah ke int
+    kalau tidak 0 <= x <= y  → raise ValueError
+except (ValueError, ZeroDivisionError):
+    pass
+else:
+    hitung percentage, cetak hurufnya, satu break
+```
+
+### Yang saya pelajari
+
+- Menulis dari layar kosong memaksa saya membaca spesifikasi jauh lebih teliti daripada waktu pertama kali.
+- Kode murojaah lebih terstruktur karena saya memikirkan urutannya dulu, bukan menambal sambil jalan.
+- Catatan yang sudah ditulis belum tentu terpakai. Perbandingan berantai sudah ada di catatan sejak 6 Oktober tapi tidak muncul di kepala saat menulis ulang.
+- Tanda `<` dan `<=` harus dicocokkan ke spesifikasi, bukan ditebak. Salah satu tanda saja sudah menolak masukan yang sah.
+- Validasi dulu, hitung belakangan. Jangan mengerjakan sesuatu yang mungkin langsung dibuang.
