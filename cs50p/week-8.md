@@ -408,3 +408,317 @@ Yang penting arahnya: **objek dibuat dari class**. Satu denah bisa jadi banyak r
 
 - Lanjut lecture dari menit 31, bagian `__init__`. Berhenti dan tanya waktu sampai di **`self`**.
 - Ulangi percobaan shuffle dari layar kosong besok, jangan baca catatan ini dulu.
+
+---
+
+## Hari 3 – 8 November 2026
+
+Lanjut Lecture 8 dari menit 31, sampai bagian `__init__` dan `self`. Paginya Kuis Harian #12, pemanasan, dan Murojaah 8 (catatannya di `murojaah.md`). Ngoding 2 jam, bahasa Inggris 10 menit.
+
+### Kuis Harian #12
+
+18 soal, giliran Hari ke-6: Week 5 dan Week 2. Hasilnya **13/18**. Enam soal ulangan benar semua lagi.
+
+Yang salah:
+
+| No | Materi | Koreksinya |
+|---|---|---|
+| 7 | dabble | Menyentuh sedikit-sedikit, memakai tanpa mendalami |
+| 9 | trimming | Memangkas pinggirannya, seperti `.strip()`. Satu keluarga dengan *trailing* |
+| 10 | mold | Cetakan, bukan hasil cetakannya |
+| 16 | for di dict | Yang keluar **key**-nya, bukan isinya. Untuk isinya: `santri[x]` |
+| 18 | abstraksi | Memberi nama pada sekumpulan langkah, pemakainya cukup tahu APA bukan BAGAIMANA |
+
+Pola yang saya sadari: ketiga kosakata yang salah (7, 9, 10) adalah kata yang **dijelaskan ke saya di tengah menonton**, bukan yang saya baca dari catatan. Kata yang masuk sambil nonton ternyata paling cepat menguap.
+
+### Instance, instantiation, instance variable
+
+Tiga istilah yang bentuknya mirip dan sempat saya campur. Peta yang benar:
+
+```python
+student = Student()        # baris INI instantiation
+student.name = "Harry"
+```
+
+```
+Student           → class (blueprint / cetakan)
+Student()         → instantiation, proses pembuatannya
+objek / instance  → benda yang lahir dari baris itu
+student           → variabel, nama panggilan untuk benda itu
+.name .house      → atribut, juga disebut instance variable
+```
+
+Kesalahan saya:
+
+| Yang saya kira | Yang benar |
+|---|---|
+| Variabel itu namanya instance | Variabel cuma nama panggilan. Instance itu bendanya |
+| Hasil cetakan dari class itu atributnya | Yang keluar dari cetakan itu **seluruh bendanya**. Atribut adalah bagian dari benda itu |
+| Instantiation itu baris pengisian atribut | Instantiation itu baris `Student()`. Baris atribut cuma **mengisi** benda yang sudah lahir |
+
+Bukti bahwa variabel bukan instance:
+
+```python
+a = Student()
+b = a
+```
+
+Ada **satu** instance tapi **dua** nama panggilan. Kalau variabel sama dengan instance, harusnya ada dua.
+
+Saya sempat menyimpulkan "objek itu yang dibuat pertama kali, variabel sesudahnya bukan objek". Itu juga salah, karena bukan soal urutan. Patokannya **benda vs nama**: `a` itu variabel pertama, tapi tetap cuma nama. Cara mengenali di kode: lihat sisi **kanan** tanda sama dengan — `Student()` di kanan itu yang melahirkan bendanya.
+
+Istilah lain yang muncul di menit yang sama: **incarnation** (perwujudan, sudah ada di catatan Week 4), dan **boil down to** (intinya adalah, dari catatan Week 3).
+
+Catatan ejaan: istilahnya **instance**, bukan "instansi". Kalau salah tulis, pencarian di dokumentasi jadi meleset.
+
+### Objek lahir dalam keadaan kosong
+
+Ini yang paling lama mengganjal. Kalau class-nya masih `...` alias kosong, apa yang lahir dari `Student()`?
+
+Jawabannya: **benda kosong**. Objek tetap ada walaupun belum punya isi.
+
+```python
+class Student:
+    ...
+
+a = Student()
+print(a)         # <__main__.Student object at 0x0000020458AD86E0>
+print(type(a))   # <class '__main__.Student'>
+```
+
+Bendanya sudah ada, punya jenis, bahkan punya alamat di memori — padahal belum ada satu atribut pun.
+
+Analogi blangko (formulir kosong yang sudah ada kolomnya, seperti kertas rekap nilai tahfidz):
+
+```
+class Student   → rancangan kolomnya
+Student()       → fotokopi SATU lembar baru
+a.name = ...    → menulis di kolom lembar itu saja
+```
+
+Lembar fotokopinya sudah ada wujudnya begitu keluar dari mesin, walaupun semua kolom masih kosong. Keberadaannya tidak bergantung pada terisi atau tidak.
+
+### Atribut yang ada vs yang tidak pernah dibuat
+
+Saya sempat mengira atribut "tidak keluar kalau tidak dipanggil". Perlu dipisah dua keadaan:
+
+| Keadaan | Hasilnya |
+|---|---|
+| Atribut sudah dibuat, cuma tidak di-print | ADA, tersimpan di objeknya, tinggal diambil kapan saja |
+| Atribut tidak pernah dibuat | TIDAK ADA sama sekali, AttributeError |
+
+`print` itu kegiatan **melihat**, bukan yang membuat atributnya ada. Yang membuatnya ada adalah baris `a.cat = "biru"`. Seperti lampu yang sudah terpasang di rumah: tetap ada walaupun sedang tidak dilihat.
+
+Catatan istilah: atribut **diakses**, method **dipanggil**. Kata "memanggil" (*call*) biasanya khusus untuk yang bertanda kurung.
+
+### `__init__`
+
+Yang otomatis dijalankan saat objek lahir. Tidak pernah saya panggil sendiri — begitu `Student(...)` dijalankan, Python langsung menjalankannya.
+
+Namanya dunder, satu keluarga dengan `__name__` dan `__init__.py`. Init = *initialize*, menyiapkan.
+
+Gunanya: memindahkan pengisian atribut dari luar ke **dalam** class, jadi satu paket dengan kelahiran objeknya.
+
+### `self`: dibuktikan, bukan dihafal
+
+Percobaan yang membuka semuanya:
+
+```python
+class Student:
+    def __init__(self, name, house):
+        print("di dalam init:", self)
+        self.name = name
+        self.house = house
+
+
+a = Student("Harry", "Gryffindor")
+print("di luar      :", a)
+```
+
+Hasilnya:
+
+```
+di dalam init: <__main__.Student object at 0x0000020458AD86E0>
+di luar      : <__main__.Student object at 0x0000020458AD86E0>
+```
+
+Alamatnya **sama persis**. Jadi `self` dan `a` itu benda yang sama. `self` = objek yang sedang lahir itu sendiri.
+
+Urutan kejadiannya:
+
+```
+1. Student("Harry", "Gryffindor") dipanggil
+2. Python membuat objek kosong
+3. Python memanggil __init__, objek kosong tadi dimasukkan
+   otomatis ke parameter pertama → self
+4. "Harry" → name, "Gryffindor" → house
+5. self.name = name → mengisi kolom di objek itu
+6. Objek yang sudah terisi diserahkan ke a
+```
+
+Makanya jumlahnya kelihatan tidak cocok:
+
+```
+Student("Harry", "Gryffindor")     → saya kirim 2
+def __init__(self, name, house)    → Python tambahkan 1 di depan, jadi 3
+```
+
+### `self` bukan keyword
+
+Saya buktikan dengan mengganti semua `self` jadi `aku`. Jalan normal. Dan waktu saya baru mengganti sebagian, muncul:
+
+```
+NameError: name 'self' is not defined
+```
+
+Persis seperti salah ketik nama variabel biasa. Kalau `self` itu keyword, error-nya pasti lain.
+
+Tapi tetap ditulis `self`, tiga alasannya:
+
+1. Semua dokumentasi Python memakainya.
+2. Kode dibaca orang lain, termasuk saya sendiri nanti.
+3. Linter dan VS Code memberi peringatan kalau parameter pertama bukan `self`.
+
+Sama seperti huruf besar pada nama class: bukan aturan Python, tapi kesepakatan yang dipatuhi semua orang.
+
+### `self.name = name`: dua `name` yang berbeda
+
+Kata David: *"we are adding the variable to object, aka instance variable to object."* (**aka** = *also known as*, disebut juga.)
+
+```
+name        → parameter, variabel biasa, mati begitu __init__ selesai
+self.name   → atribut, ditanam di dalam objek, ikut umur objeknya
+```
+
+Baris itu **menyalin** isi parameter ke dalam objeknya. Kalau tidak ditulis, `name` tetap diterima tapi hilang begitu `__init__` selesai.
+
+Namanya boleh beda:
+
+```python
+def __init__(self, nama_dari_luar, house):
+    self.name = nama_dari_luar
+```
+
+Yang di kiri titik menentukan nama atributnya, yang di kanan cuma sumber isinya. Programmer biasanya menyamakan supaya mudah dibaca.
+
+Kesadaran baru: **atribut itu memang variabel**, cuma tempat tinggalnya di dalam objek. Jadi satu benda, tiga nama: atribut = instance variable = variabel yang ditanam di objek.
+
+### Di dalam class vs di luar class
+
+Polanya sama, yang berbeda cuma nama pegangannya:
+
+```python
+# DI DALAM class — pegangannya bernama self
+class Student:
+    def __init__(self, name, house):
+        self.name = name
+
+# DI LUAR class — pegangannya variabel saya sendiri
+student = Student("Harry", "Gryffindor")
+student.name = "Ron"
+```
+
+Dua-duanya berbentuk `<pegangan>.name`. Di dalam class saya **belum tahu** objeknya nanti disimpan ke variabel bernama apa, makanya Python menyediakan nama sementara yang selalu sama: `self`.
+
+Kalau di luar class saya menulis `self.name` → NameError, karena di luar sana tidak ada yang bernama `self`.
+
+### Tanpa `__init__` bisa tidak?
+
+Bisa. Versi dua hari lalu jalan tanpa `__init__`. Yang berubah bukan bisa atau tidaknya, tapi **jaminannya**.
+
+Tapi ada satu yang tidak bisa:
+
+```python
+class Student:
+    ...
+
+a = Student("Harry", "Gryffindor")
+```
+
+```
+TypeError: Student() takes no arguments
+```
+
+Jadi aturannya:
+
+```
+Tanpa __init__   →  Student()                      kurungnya harus kosong
+Dengan __init__  →  Student("Harry", "Gryffindor") argumen masuk lewat kurung
+```
+
+`__init__` itu yang **membuka pintu** supaya kurung di `Student(...)` bisa diisi.
+
+Perbandingan dari sisi apa yang bisa salah:
+
+| Tanpa `__init__` | Dengan `__init__` |
+|---|---|
+| Objek lahir kosong, diisi dari luar | Objek tidak bisa lahir tanpa name dan house |
+| Bisa lupa mengisi salah satu | Kurang argument langsung TypeError |
+| Salah ketik `student.nmae` diterima tanpa protes | Semua objek dijamin punya bentuk yang sama |
+| Kesalahan ketahuan jauh belakangan | Ketahuan di detik objeknya dibuat |
+
+Pola yang sudah berkali-kali muncul minggu ini: **lebih baik meledak sejak awal daripada diam-diam salah**.
+
+### Kenapa `print(a)` keluar tulisan aneh
+
+```
+<__main__.Student object at 0x0000015036...>
+```
+
+Bacanya: objek jenis `Student`, dari file utama, tersimpan di alamat memori itu. Python mencetak itu karena **dia tidak tahu saya ingin objek ini ditampilkan seperti apa**.
+
+`print("Harry")` jelas mau menampilkan apa. Tapi objek Student punya dua atribut — mau ditampilkan nama saja? dua-duanya? format apa? Python tidak bisa menebak.
+
+Yang menyelesaikan ini namanya `__str__`, dunder berikutnya di lecture.
+
+### `__new__` membuat, `__init__` mengisi
+
+Tadi saya sempat mengira Python menyimpan `__new__` di objek saat objek dibuat. Lebih tepatnya, Python **memanggil** proses pembuatan itu di balik layar. Saat saya menulis `Student("Harry", "Gryffindor")`, urutannya secara sederhana:
+
+```text
+Student(...) → __new__ membuat instance kosong
+             → __init__ mengisi instance itu dengan name dan house
+             → hasilnya diikat ke variabel student
+```
+
+`__new__` biasanya diwarisi dari `object`, jadi saya tidak perlu menulis atau memanggilnya sendiri. Saya cukup menulis `__init__` untuk mengatur nilai awal objek. Di pelajaran pemula, `__init__` sering disebut constructor, tetapi secara teknis tugas membuat instance ada pada `__new__`; `__init__` menginisialisasinya.
+
+### Banyak siswa: satu objek per siswa, kumpulkan dalam list
+
+Kalau ada banyak siswa, saya tidak membuat `self.name1`, `self.name2`, dan seterusnya. Satu objek `Student` mewakili **satu siswa**, dengan satu `name` dan satu `house`. Buat banyak objek, lalu simpan objek-objek itu di dalam list:
+
+```python
+students = [
+    Student("Harry", "Gryffindor"),
+    Student("Hermione", "Gryffindor"),
+    Student("Draco", "Slytherin"),
+]
+
+for student in students:
+    print(f"{student.name} dari {student.house}")
+```
+
+List bisa menyimpan berbagai nilai, termasuk objek. `students[0]` mengambil objek pertama; lalu `.name` atau `.house` mengambil atribut dari objek itu. Kalau satu orang punya nama depan dan nama belakang, saya bisa membuat atribut `first_name` dan `last_name`. Bentuk data mengikuti hal yang sedang saya wakili: satu siswa per objek, banyak siswa dalam list.
+
+### Kosakata
+
+| Kata | Arti |
+|---|---|
+| instance | objeknya sendiri, wujud nyata dari sebuah class |
+| instantiation | proses membuat objek dari class |
+| instance variable | istilah lebih teknis untuk atribut |
+| blueprint | denah, rancangan bangunan |
+| aka (also known as) | atau disebut juga |
+| lay / set the stage | menyiapkan landasan, membuka jalan |
+| reckless | ceroboh, gegabah tanpa memikirkan risiko |
+| the best of both worlds | dapat kelebihan dua-duanya |
+
+Kata yang terulang dan tetap blank: **laid** (sudah ditanya 6 November sebagai *lay the foundation*).
+
+Pasangan yang gampang tertukar: `reckless` (ceroboh), `careless` (kurang teliti), `regardless` (tanpa peduli).
+
+### Yang mau dicoba
+
+- Ulangi percobaan alamat `self` dan `a` dari layar kosong besok, tanpa membuka catatan ini.
+- Buat dua objek dari class yang sama, isi atribut yang berbeda, lalu cek `a is b`.
+- Lanjut lecture dari bagian `__str__`.
