@@ -768,7 +768,7 @@ Dictionary cukup untuk menyimpan data sederhana. Class memberi tempat untuk meng
 
 Pemahaman saya: dalam OOP, kode yang berhubungan dengan suatu benda dikumpulkan di class benda itu. Untuk `Student`, contohnya atribut `name` dan `house`, serta aturan yang menentukan apakah nama dan house valid.
 
-David menyebut validasi di function terpisah seperti `get_student()` sebagai lebih *decoupled* dari `Student*—artinya, aturan validasi terpisah dari class siswa. Kalau aturan itu berada di class, class bisa menjaga agar object `Student` dibuat dengan data yang sesuai. Mengumpulkan hal yang berkaitan ini disebut *encapsulate* dalam konteks pembahasan video.
+David menyebut validasi di function terpisah seperti `get_student()` sebagai lebih *decoupled* dari `Student`—artinya, aturan validasi terpisah dari class siswa. Kalau aturan itu berada di class, class bisa menjaga agar object `Student` dibuat dengan data yang sesuai. Mengumpulkan hal yang berkaitan ini disebut *encapsulate* dalam konteks pembahasan video.
 
 Fungsi yang bertanya langsung ke pengguna masih bisa terpisah; yang penting, aturan tentang data siswa diletakkan dekat dengan class yang mewakili siswa.
 
