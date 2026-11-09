@@ -722,3 +722,94 @@ Pasangan yang gampang tertukar: `reckless` (ceroboh), `careless` (kurang teliti)
 - Ulangi percobaan alamat `self` dan `a` dari layar kosong besok, tanpa membuka catatan ini.
 - Buat dua objek dari class yang sama, isi atribut yang berbeda, lalu cek `a is b`.
 - Lanjut lecture dari bagian `__str__`.
+
+
+---
+
+## Hari 4 – 9 November 2026
+
+Lanjut Lecture 8 sekitar menit 48:40, membahas class dan object di memori, perbandingan class dengan dictionary, lalu validasi dan encapsulation. Ngoding 30 menit, bahasa Inggris 10 menit.
+
+### Class dan object di memori
+
+Pertanyaan siswa: bagaimana class dan object direpresentasikan di memori?
+
+Penjelasan David: class adalah kode yang mendefinisikan cetakan atau template. Saat kita membuat object, object itu memakai ruang memori berupa sejumlah byte. Python yang mengatur letaknya di RAM; sebagai programmer, saya tidak perlu menentukan alamatnya sendiri.
+
+Gambaran sederhananya:
+
+```
+class Student       → aturan/cetakan untuk membuat siswa
+Student(...)        → Python membuat satu object di memori
+student             → nama variabel yang merujuk ke object itu
+```
+
+Catatan: David menyebut class sebagai kode untuk memudahkan gambaran. Saat program berjalan, Python juga merepresentasikan class itu sendiri sebagai object. Hal penting untuk saya sekarang: Python mengurus detail memori, jadi saya bisa fokus memakai class dan object.
+
+### Dictionary bisa, lalu kenapa pakai class?
+
+Pertanyaan siswa: kalau data siswa bisa disimpan di dictionary, apa gunanya class?
+
+Untuk data sederhana, keduanya memang bisa dipakai:
+
+```python
+student = {"name": "Harry", "house": "Gryffindor"}
+print(student["name"])
+```
+
+```python
+student = Student("Harry", "Gryffindor")
+print(student.name)
+```
+
+Dictionary cukup untuk menyimpan data sederhana. Class memberi tempat untuk mengumpulkan data dan perilaku yang berkaitan, menjaga bentuk object tetap konsisten, dan menaruh aturan validasi bersama tipe data yang sedang diperiksa. Saat program makin besar, susunan ini lebih mudah dipahami dan dikembangkan.
+
+### Encapsulation: kode yang berkaitan dikumpulkan
+
+Pemahaman saya: dalam OOP, kode yang berhubungan dengan suatu benda dikumpulkan di class benda itu. Untuk `Student`, contohnya atribut `name` dan `house`, serta aturan yang menentukan apakah nama dan house valid.
+
+David menyebut validasi di function terpisah seperti `get_student()` sebagai lebih *decoupled* dari `Student*—artinya, aturan validasi terpisah dari class siswa. Kalau aturan itu berada di class, class bisa menjaga agar object `Student` dibuat dengan data yang sesuai. Mengumpulkan hal yang berkaitan ini disebut *encapsulate* dalam konteks pembahasan video.
+
+Fungsi yang bertanya langsung ke pengguna masih bisa terpisah; yang penting, aturan tentang data siswa diletakkan dekat dengan class yang mewakili siswa.
+
+### `if not name` dan `.strip()`
+
+Kalau pengguna menekan Enter tanpa mengetik apa pun, `input()` menghasilkan string kosong `""`. String kosong dianggap *false* di Python, jadi ini sudah cukup untuk menangkap input kosong:
+
+```python
+if not name:
+    raise ValueError("Nama tidak boleh kosong")
+```
+
+Tapi string berisi spasi saja, seperti `"   "`, tidak kosong dan dianggap *true*. `.strip()` menghapus spasi di awal dan akhir **dari hasilnya**, sehingga `"   ".strip()` menjadi `""`. Maka `if not name.strip()` juga menangkap input yang cuma berisi spasi.
+
+```python
+if not name.strip():
+    raise ValueError("Nama tidak boleh kosong")
+```
+
+Kalau nama yang disimpan juga ingin dibersihkan, hasil `.strip()` perlu diberikan kembali ke `name`:
+
+```python
+name = name.strip()
+if not name:
+    raise ValueError("Nama tidak boleh kosong")
+
+self.name = name
+```
+
+`.strip()` tidak mengubah string asli dengan sendirinya. Tanpa menyimpan hasilnya kembali, spasi pada nilai `name` tetap ada.
+
+### Kosakata
+
+| Kata | Arti |
+|---|---|
+| decoupled | terpisah, tidak terikat erat |
+| encapsulate | mengumpulkan atau membungkus hal-hal yang berkaitan di dalam satu class |
+| validation | pemeriksaan apakah data memenuhi aturan |
+| allocate memory | menyediakan/mengalokasikan ruang di memori |
+
+### Yang mau dicoba
+
+- Lanjut Lecture 8 dari sekitar menit 53:04.
+- Coba bedakan input kosong `""`, input spasi `"   "`, dan input nama dengan spasi pinggir `" Harry "` menggunakan `if not name` dan `name.strip()`.
