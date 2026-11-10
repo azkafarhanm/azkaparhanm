@@ -813,3 +813,96 @@ self.name = name
 
 - Lanjut Lecture 8 dari sekitar menit 53:04.
 - Coba bedakan input kosong `""`, input spasi `"   "`, dan input nama dengan spasi pinggir `" Harry "` menggunakan `if not name` dan `name.strip()`.
+
+
+---
+
+## Hari 5 – 10 November 2026
+
+Pemanasan sebelum lanjut Lecture 8: kuis pilihan ganda OOP **9/10**. Yang perlu diluruskan: `Student` adalah class; `student` adalah nama variabel yang merujuk ke object. Lanjut menonton sampai sekitar **1:15**. Ngoding dan bahasa Inggris tidak saya catat durasinya hari ini.
+
+### Alur class, object, dan `__init__`
+
+Hari ini saya merapikan lagi urutan saat program berjalan:
+
+```
+1. Python membaca definisi class dan function.
+   Definisi disiapkan; isi function belum dijalankan.
+2. main() memanggil get_student().
+3. get_student() menerima input, lalu memanggil Student(name, house, patronus).
+4. Python menyediakan object, lalu menjalankan __init__ dengan object itu sebagai self.
+5. __init__ memeriksa nilai. Kalau valid, self.name, self.house,
+   dan self.patronus diisi.
+6. Object kembali dari get_student() dan disimpan dalam variabel student di main().
+```
+
+`student` adalah variabel biasa yang merujuk ke object; ia bukan instance variable. Instance variable-nya adalah atribut seperti `self.name` dan `self.house`.
+
+Parameter tidak otomatis ditempelkan ke object. Baris seperti `self.name = name` yang menyimpan nilai parameter sebagai atribut. Kalau validasi di `__init__` menjalankan `raise ValueError(...)`, proses berhenti sebelum atribut diisi dan pemanggilan `Student(...)` menghasilkan error.
+
+`return None` dari `__init__` tidak membatalkan object yang dibuat dan tidak menjadikan variabel `student` bernilai `None`. Jika `__init__` berhenti lebih awal, atribut yang belum sempat dibuat memang tidak ada; mengaksesnya akan menghasilkan `AttributeError`.
+
+### Membuat exception sendiri
+
+Kalau ingin jenis error khusus, definisikan class yang mewarisi `Exception`:
+
+```python
+class EricError(Exception):
+    pass
+```
+
+`Exception` di dalam kurung adalah **class induk**, bukan argumen biasa. Hubungan inheritance itu membuat `EricError` menjadi jenis exception yang bisa di-`raise` dan ditangkap dengan `except EricError`.
+
+```python
+raise EricError("Missing name")
+```
+
+Di sini tanda kurung setelah `EricError` membuat object error dan memberikan pesan kepadanya. Kalau class itu belum didefinisikan, Python tidak mengenali namanya. Untuk error umum, exception bawaan seperti `ValueError` biasanya sudah cukup.
+
+### Object dicetak sebagai teks: `__str__` dan `__repr__`
+
+Kalau menulis `print(student)` sebelum membuat aturan tampilannya, Python memberikan representasi bawaan, misalnya:
+
+```
+<__main__.Student object at 0x...>
+```
+
+Itu bukan berarti object kosong. Object-nya bisa punya atribut; tampilan bawaan hanya menunjukkan class dan penanda lokasi object di memori, bukan isi atributnya.
+
+`__str__(self)` menentukan teks yang lebih ramah untuk pengguna ketika `print(student)` atau `str(student)` dipakai. Python otomatis memberikan object yang sedang dicetak ke parameter `self`. Dari situ method bisa mengambil atributnya:
+
+```python
+def __str__(self):
+    return f"{self.name} from {self.house}"
+```
+
+`__repr__` biasanya ditujukan untuk programmer dan dapat memberi representasi yang lebih teknis. Keduanya adalah method khusus; kita bisa menentukan tampilannya di class.
+
+### Method buatan sendiri: Patronus dan `charm()`
+
+Setelah nama dan house, class `Student` bisa menyimpan atribut tambahan seperti `patronus`. David lalu menambahkan method `charm()` untuk menggambarkan aksi siswa saat memakai mantra.
+
+```python
+print(student.charm())
+```
+
+Saat `student.charm()` dipanggil, Python otomatis memberikan object `student` sebagai `self`. Method itu bisa membaca `self.patronus` dan memilih hasil yang cocok. Jika patronus tidak dikenal, kode dapat menyediakan hasil cadangan lewat `case _`.
+
+Gagasan yang saya tangkap: class tidak hanya menyimpan data; class juga bisa mengumpulkan perilaku yang sesuai dengan data itu. `name`, `house`, dan `patronus` adalah data; `charm()` adalah perilaku siswa.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| enlightening | memberi wawasan atau membuat lebih paham |
+| there lies the real power | di situlah letak kekuatan sebenarnya |
+| conjure | memunculkan atau menghadirkan, terutama dengan sihir |
+| charm | mantra/sihir tertentu; di kode David dijadikan nama method |
+| tease apart | mengurai bagian-bagian agar lebih mudah dipahami |
+| egotistical | terlalu mengagumi diri sendiri; dipakai bercanda saat membahas nama error sendiri |
+
+### Yang mau dicoba
+
+- Buat class kecil dengan `__str__`, lalu bandingkan hasil `print(object)` dan `repr(object)`.
+- Definisikan exception sendiri dan coba tangkap dengan `try`/`except`.
+- Lanjutkan Lecture 8 dari sekitar menit **1:15** dan lihat bagaimana method `charm()` memakai atribut Patronus.
