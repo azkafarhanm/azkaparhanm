@@ -819,7 +819,7 @@ self.name = name
 
 ## Hari 5 – 10 November 2026
 
-Pemanasan sebelum lanjut Lecture 8: kuis pilihan ganda OOP **9/10**. Yang perlu diluruskan: `Student` adalah class; `student` adalah nama variabel yang merujuk ke object. Lanjut menonton sampai sekitar **1:15**. Ngoding dan bahasa Inggris tidak saya catat durasinya hari ini.
+Pemanasan sebelum lanjut Lecture 8: kuis pilihan ganda OOP **9/10**. Yang perlu diluruskan: `Student` adalah class; `student` adalah nama variabel yang merujuk ke object. Lanjut menonton sampai sekitar **1:15**. Ngoding 2 jam, bahasa Inggris 10 menit.
 
 ### Alur class, object, dan `__init__`
 
