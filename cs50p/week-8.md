@@ -906,3 +906,242 @@ Gagasan yang saya tangkap: class tidak hanya menyimpan data; class juga bisa men
 - Buat class kecil dengan `__str__`, lalu bandingkan hasil `print(object)` dan `repr(object)`.
 - Definisikan exception sendiri dan coba tangkap dengan `try`/`except`.
 - Lanjutkan Lecture 8 dari sekitar menit **1:15** dan lihat bagaimana method `charm()` memakai atribut Patronus.
+
+## Hari 6 – 11 November 2026
+
+Hari ini tidak ada kuis, langsung pemanasan lalu lanjut Lecture 8. Bagian pertama catatan ini (method `charm()`) saya susun sendiri sebelum diskusi, bagian setelahnya hasil diskusi panjang soal `@property`.
+
+### Pemanasan: tiga koreksi istilah
+
+Pemanasan hari ini diambil dari catatan GitHub hari Senin dan Selasa, karena dua hari itu saya belajar sendiri dengan Codex saat limit habis.
+
+| Yang saya jawab | Yang benar |
+|---|---|
+| "Variabelnya namanya instance" | Instance itu **objeknya**, bukan variabelnya. Variabel cuma pegangan ke objek itu. |
+| "Initiation" | **Instantiation** — proses membuat objek dari class. Ini kesalahan kedua kali, harus diulang terus. |
+| "`__init__` yang membuat dan mencetak objek" | Python yang **membuat** objek kosong, `__init__` cuma **mengisinya**. Mencetak itu urusan `__str__`. |
+
+Perumpamaannya seperti santri baru: panitia yang mendaftarkan dan menyediakan kamarnya (Python membuat objek), `__init__` itu acara pengisian biodata — nama, kelas, kamar. Dua pekerjaan berbeda.
+
+### Percobaan: kalau `raise` terjadi di dalam `__init__`
+
+Saya kira kalau `raise` jalan di `__init__`, programnya tetap lanjut dan atributnya jadi `None`. Ternyata salah. Saya coba sendiri:
+
+```python
+class Student:
+    def __init__(self, name):
+        raise ValueError("stop")
+        self.name = name
+
+a = Student("Harry")
+print(a)
+```
+
+Hasilnya `ValueError` lalu program berhenti total. `print(a)` tidak pernah jalan.
+
+Pelajarannya: `raise` itu **menghentikan**, bukan melewati. Dan karena `self.name = name` ada di bawah `raise`, baris itu tidak pernah dieksekusi — jadi atributnya bukan `None`, tapi **tidak pernah ada sama sekali**. Kalau dipaksa diakses hasilnya `AttributeError`, bukan `None`.
+
+Ini bedanya:
+
+```
+None            = kotaknya ada, isinya kosong
+AttributeError  = kotaknya memang tidak pernah dibuat
+```
+
+Dan variabel `a` sendiri tidak pernah terisi, karena `Student("Harry")` tidak pernah selesai mengembalikan objeknya.
+
+### Method dan `charm()` pada class Student
+
+Method adalah function yang didefinisikan di dalam class. Jadi `charm()` menjadi method milik class `Student`.
+
+Method instance biasanya menerima parameter pertama bernama `self`. Python mengisi `self` secara otomatis dengan objek yang sedang memanggil method itu. Dengan `self`, method bisa membaca atribut milik objek tersebut, seperti `self.patronus`.
+
+```python
+class Student:
+    def __init__(self, name, house, patronus):
+        self.name = name
+        self.house = house
+        self.patronus = patronus
+
+    def charm(self):
+        match self.patronus:
+            case "Stag":
+                return "🦌"
+            case "Otter":
+                return "🦦"
+            case "Jack Russell terrier":
+                return "🐶"
+            case _:
+                return "?"
+```
+
+`self.patronus` berisi atribut patronus milik objek. `match` memeriksa nilainya, lalu `return` memberikan hasil yang sesuai. `case _` menjadi pilihan umum kalau nilainya tidak cocok dengan pilihan lain.
+
+Urutan jalannya kalau dipanggil `print(student.charm())`:
+
+1. `Student(...)` membuat objek dan menjalankan `__init__`.
+2. Nilai `"Stag"` disimpan sebagai `student.patronus`.
+3. `student.charm()` memanggil method `charm()` untuk objek `student`.
+4. Python otomatis mengirim objek `student` sebagai `self`.
+5. Method membaca `self.patronus`, mencocokkannya di `match`, lalu mengembalikan emoji.
+6. `print()` menampilkan hasil yang dikembalikan.
+
+Jadi `charm()` **tidak berjalan otomatis** hanya karena objek dibuat. Method itu berjalan saat dipanggil. Hasilnya bergantung pada nilai atribut yang tersimpan di objek tersebut.
+
+Kesimpulan bagian ini: class mengumpulkan data dan perilaku yang berkaitan. `name`, `house`, `patronus` adalah datanya; `charm()` adalah perilakunya. `self` adalah cara method merujuk pada objek yang sedang dipakai.
+
+### `@property` dan `@house.setter` — bagian paling berat hari ini
+
+Bagian ini paling lama saya pahami. Awalnya saya dijelaskan pakai perumpamaan pintu depan dan pintu belakang, tapi saya malah tambah rancu. Akhirnya metafora itu dibuang, diganti percobaan langsung pakai penanda `print`.
+
+```python
+class Student:
+    def __init__(self, house):
+        self.house = house
+
+    @property
+    def house(self):
+        print(">> BACA jalan")
+        return self._house
+
+    @house.setter
+    def house(self, value):
+        print(">> TULIS jalan")
+        if value not in ["Gryffindor", "Slytherin"]:
+            raise ValueError("House tidak sah")
+        self._house = value
+
+s = Student("Gryffindor")
+print(s.house)
+s.house = "Privet Drive"
+```
+
+Outputnya:
+
+```
+>> TULIS jalan
+>> BACA jalan
+Gryffindor
+>> TULIS jalan
+ValueError: House tidak sah
+```
+
+Dari output itu baru kelihatan aturannya, dan ternyata cuma satu hal: **ada tanda sama dengan atau tidak.**
+
+| Yang ditulis | Ada `=`? | Yang jalan |
+|---|---|---|
+| `s.house` | tidak | `@property` (pembaca) |
+| `s.house = "..."` | ya | `@house.setter` (penulis) |
+| `self.house = house` di `__init__` | ya | `@house.setter` juga |
+
+Baris ketiga itu yang penting. `self.house = house` di dalam `__init__` sengaja lewat setter, supaya validasinya **juga berlaku saat objek baru lahir**, bukan cuma saat diubah belakangan. Itu sebabnya penanda `>> TULIS jalan` muncul duluan sebelum apa-apa.
+
+Buktinya atribut yang benar-benar tersimpan bukan `house`:
+
+```python
+print(s.__dict__)
+# {'_house': 'Gryffindor'}
+```
+
+### Dua percobaan yang saya jalankan sendiri
+
+**Percobaan 1 — dekoratornya saja yang dihapus, functionnya tetap ada.**
+
+Saya hapus baris `@house.setter`, tapi `def house(self, value)` dibiarkan. Hasilnya:
+
+```
+Gryffindor
+```
+
+Tidak ada penanda sama sekali. Dua-duanya mati. Sebabnya Python membaca dari atas ke bawah, jadi `def house` yang kedua **menimpa** property yang pertama, persis seperti `x = 5` lalu `x = 10`. Yang tersisa cuma function biasa yang tidak pernah dipanggil siapa pun.
+
+Dan `print(s.__dict__)` berubah jadi `{'house': 'Gryffindor'}` — bukan `_house` lagi, karena penyimpanannya kembali jadi atribut biasa. Validasinya mati total tanpa satu pun error muncul.
+
+Ini masuk daftar **"salah tanpa error"** yang sudah panjang di catatan saya.
+
+**Percobaan 2 — setternya dihapus seluruhnya.**
+
+```
+File "latihan.py", line 43, in <module>
+    s = Student("Gryffindor")
+File "latihan.py", line 33, in __init__
+    self.house = house
+AttributeError: property 'house' of 'Student' object has no setter
+```
+
+Meledak di baris 33, di dalam `__init__`, sebelum sampai ke baris paling bawah.
+
+Perbandingan dua percobaan ini bagus sekali:
+
+| Percobaan | Hasil |
+|---|---|
+| Dekorator saja yang dihapus | Salah tanpa error, validasi mati diam-diam |
+| Setter dihapus total | Meledak lebih awal di `__init__` |
+
+Yang kedua justru lebih baik, karena kesalahannya ketahuan.
+
+Pelajaran dari percobaan kedua: **read-only artinya semua penulisan ditolak, termasuk penulisan oleh `__init__` sendiri.** Python tidak peduli penulisan itu datang dari luar atau dari dalam class. Kalau memang mau read-only, `__init__` harus menyimpan langsung ke gudangnya:
+
+```python
+def __init__(self, house):
+    self._house = house      # langsung, tidak lewat pintu
+```
+
+Dan ternyata ini persis mekanisme `shirt.size` di Pset 6 yang dulu bikin saya bingung kenapa tidak bisa ditimpa.
+
+### Kenapa gudangnya harus bernama lain
+
+Ini pertanyaan terakhir saya hari ini: kenapa tiba-tiba muncul `_house`?
+
+Jawabannya dua lapis:
+
+| | Aturan atau bukan |
+|---|---|
+| Pakai underscore `_house` | **Kesepakatan** antar programmer, bukan aturan Python. Boleh dinamai `gudang`, `rumahnya`, apa saja. |
+| Nama gudang beda dari nama property | **Aturan keras.** Kalau sama, `RecursionError`. |
+
+Yang bekerja itu **bedanya**, bukan underscore-nya.
+
+Saya sudah pernah kena `RecursionError`-nya sendiri waktu menulis `return self.house` di dalam getter — berhenti di ulangan ke-1016 dengan pesan `maximum recursion depth exceeded`.
+
+Alurnya kalau namanya sama:
+
+```
+s.house = "Gryffindor"  -> ada "=" -> ada setter untuk "house"? ADA  -> setter jalan
+   self.house = value   -> ada "=" -> ada setter untuk "house"? ADA  -> setter jalan
+      self.house = value -> ada "=" -> ada setter? ADA -> setter jalan
+         ... sampai Python menyerah
+```
+
+Tidak ada yang pernah sampai ke penyimpanan. Pintu terus menunjuk ke pintu itu sendiri.
+
+Begitu namanya dibedakan:
+
+```
+self._house = value  -> Python tanya: ada setter untuk "_house"? TIDAK ADA
+                     -> ya sudah, simpan sebagai atribut biasa. Rantai berhenti.
+```
+
+Getternya pola yang sama, cuma pemicunya beda — tanpa `=`, yang ditanyakan "ada property bernama ini?".
+
+Satu kalimat yang mau saya ingat:
+
+> Nama gudang harus beda dari nama property, supaya saat Python bertanya "ada property atau setter untuk nama ini?", jawabannya **tidak ada** — dan rantainya berhenti di situ.
+
+Soal underscore sendiri, itu kode isyarat sesama programmer: "ini barang dalam, jangan disentuh dari luar." Python tidak melarang `s._house = "Privet Drive"` dari luar — tembus, validasi terlewat. Tapi underscore itu seperti tulisan "KHUSUS PENGURUS" di pintu gudang pesantren: tidak dikunci, tapi yang paham tidak akan masuk.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| adversarially | dengan niat menyerang atau mencari celah; dipakai saat membahas orang yang sengaja mengakali validasi |
+| circumvent | mengakali, memutar lewat jalan lain supaya tidak kena aturan |
+| in place | di tempatnya, sudah terpasang dan berlaku |
+| term of art | istilah khusus di suatu bidang yang artinya beda dari arti sehari-hari |
+| into the weeds | masuk terlalu dalam ke detail kecil |
+
+### Yang mau dicoba
+
+- Ganti semua `_house` jadi `gudang` di getter dan setter, lalu jalankan — harusnya tetap normal.
+- Ubah `__init__` jadi `self._house = house` dengan setter sudah dihapus, lalu tebak baris mana yang meledak saat `s.house = "Privet Drive"`.
+- Lanjutkan Lecture 8 dari bagian setelah `@property`.
