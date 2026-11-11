@@ -913,7 +913,7 @@ Hari ini tidak ada kuis, langsung pemanasan lalu lanjut Lecture 8. Bagian pertam
 
 ### Pemanasan: tiga koreksi istilah
 
-Pemanasan hari ini diambil dari catatan GitHub hari Senin dan Selasa, karena dua hari itu saya belajar sendiri dengan Codex saat limit habis.
+Pemanasan hari ini diambil dari catatan GitHub hari Senin dan Selasa.
 
 | Yang saya jawab | Yang benar |
 |---|---|
