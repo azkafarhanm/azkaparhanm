@@ -1145,3 +1145,288 @@ Soal underscore sendiri, itu kode isyarat sesama programmer: "ini barang dalam, 
 - Ganti semua `_house` jadi `gudang` di getter dan setter, lalu jalankan — harusnya tetap normal.
 - Ubah `__init__` jadi `self._house = house` dengan setter sudah dihapus, lalu tebak baris mana yang meledak saat `s.house = "Privet Drive"`.
 - Lanjutkan Lecture 8 dari bagian setelah `@property`.
+
+## Hari 7 – 12 November 2026
+
+### Kuis Harian #13 (15 soal, Week 6 + Week 3) — 13/15
+
+Yang salah nomor 8 dan 13.
+
+**Nomor 8, `in place`.** Ini materi `shuffle`/`None` yang keempat kalinya meleset, jadi dikunci pakai percobaan dengan function baru:
+
+```python
+cards = ["A", "B", "C"]
+hasil = cards.sort()
+print(cards)
+print(hasil)
+```
+
+Tebakan saya: `cards` jadi `None`. Ternyata **tertukar**. Yang benar:
+
+```
+['A', 'B', 'C']     <- cards, listnya terurut di tempat
+None                <- hasil, karena sort() tidak menyerahkan apa-apa
+```
+
+Dua hal berbeda terjadi di satu baris `hasil = cards.sort()`:
+
+```
+cards.sort()   -> mengerjakan: list aslinya diurutkan   <- BERHASIL
+hasil = ...    -> menampung: tidak ada yang diserahkan  <- dapat None
+```
+
+Pekerjaannya tetap jalan. Yang kosong itu tangkapannya.
+
+Dan saya sempat bilang lagi "tidak memerlukan variabel" — itu bentuk lama yang sudah dikoreksi 7 November. Menyimpan ke variabel **boleh**, tidak ada yang melarang; isinya saja yang `None`. Beda dengan "tidak boleh disimpan".
+
+**Nomor 13, `csv.reader` vs `csv.DictReader`.**
+
+```
+csv.reader      -> kasih LIST  -> row[0], row[1]
+csv.DictReader  -> kasih DICT  -> row["name"], row["house"]
+```
+
+DictReader memakai baris header sebagai nama kunci. Bedanya bukan soal ukuran file, dua-duanya dibaca baris per baris lewat `for`. Dan `row[0]` tertukar dengan `row[1]` **tidak error sama sekali**, cuma hasilnya salah — alasan yang sama kenapa dictionary menang dari tuple di Week 8.
+
+### Pemanasan: lima soal, lima benar
+
+Semua benar, satu kurang lengkap. Di soal "apa yang dijalankan `self.house = house` di dalam `__init__`", mekanismenya sudah benar (Python bertanya dulu ada setter atau tidak), tapi saya belum menyebut **kenapa itu penting**: karena lewat setter, validasinya berlaku sejak objek lahir.
+
+```python
+s = Student("Privet Drive")    # langsung ValueError, objeknya tidak pernah jadi
+```
+
+Satu kalimat: **objek tidak bisa lahir cacat.** Itu seluruh gunanya `@property`.
+
+Koreksi istilah lagi: instantiation itu **barisnya** (`Student("Harry")`), bukan nama classnya.
+
+### Percobaan besar: apa yang ditulis `__init__` menentukan segalanya
+
+Saya otak-atik nama atribut di dalam `__init__` dan hasilnya membingungkan sampai ketahuan sebabnya. Empat percobaan:
+
+```
+init menulis     getter membaca    hasil
+---------------------------------------------------------------
+self.house       self._house       JALAN. Setter dipanggil, dia yang bikin _house
+self._house      self._house       JALAN, tapi setter DILEWATI saat lahir
+self.gedung      self._gedung      ERROR
+self._gedung     self._gedung      JALAN, tapi setter DILEWATI saat lahir
+```
+
+Awalnya saya kira baris kedua "masih jalan jadi sama saja". Ternyata tidak. Bukti ada di penandanya:
+
+```
+self._house di init:        self.house di init:
+>> BACA jalan               >> SET jalan      <- ini yang hilang
+Gryffindor                  >> BACA jalan
+>> SET jalan                Gryffindor
+                            >> SET jalan
+```
+
+`>> SET jalan` yang pertama **tidak muncul**. Jadi "masih jalan" itu betul, tapi setternya tidak dipanggil saat lahir. Validasinya dilewati, cuma kebetulan tidak meledak.
+
+Akar kebingungan saya: menggabungkan **dua aturan yang terpisah**. Ternyata ada dua, dan keduanya tidak berhubungan:
+
+```
+Aturan 1 - kapan setter dipanggil?
+   Python cuma lihat: nama sesudah self. itu nama property atau bukan.
+   self.house  -> "house" nama property     -> setter dipanggil
+   self._house -> "_house" bukan property   -> simpan langsung
+   self.gedung -> "gedung" bukan property   -> simpan langsung
+
+Aturan 2 - nama gudang harus beda dari nama property.
+   Tujuannya cuma satu: mencegah recursion. Tidak ada hubungannya dengan __init__.
+```
+
+Jadi `_house` dan `house` itu **dua nama yang sama sekali berbeda** bagi Python, sama asingnya seperti `gedung`. Tidak ada istilah "mirip" atau "sinkron" di sini.
+
+Kenapa baris ketiga error? Pesannya jelas:
+
+```
+AttributeError: 'Student' object has no attribute '_gedung'. Did you mean: 'gedung'?
+```
+
+`self.gedung = house` menyimpan atribut bernama `gedung`. Getternya mencari `_gedung`. Beda satu underscore, barangnya memang tidak ada. Python bahkan sudah menebakkan.
+
+Jadi `__init__` punya dua pilihan dan harus dipilih dengan sadar:
+
+```
+self.house  = house    -> lewat pintu, validasi berlaku sejak lahir   <- yang benar
+self._house = house    -> masuk gudang langsung, validasi dilewati
+```
+
+### Kecacatan memang lolos kalau lewat gudang
+
+Pertanyaan saya: kalau `__init__` langsung ke gudang, apakah kecacatannya lolos? Dicoba:
+
+```python
+def __init__(self, house):
+    self._house = house        # langsung ke gudang
+
+s = Student("Privet Drive")
+print(s.house)
+```
+
+Tidak meledak. `Privet Drive` jelas tidak sah menurut setternya, tapi objeknya tetap lahir membawa nilai itu.
+
+Lalu saya tambahkan `s.house = "Privet Drive"` dan sempat salah lapor bahwa tidak error — ternyata saya kurang teliti, baris yang saya ubah bukan yang saya kira. Setelah dicek ulang:
+
+```
+s.house  = "Privet Drive"   -> "house" nama property   -> setter jalan -> ValueError
+s._house = "Privet Drive"   -> "_house" bukan property -> langsung timpa gudang, lolos
+```
+
+Dan `s._house` itu persis kosakata **circumvent** dari kuis tadi pagi: mengakali lewat jalan samping. Python tidak mengunci `_house`, jadi siapa pun yang tahu nama gudangnya bisa menembus validasi. Underscore itu tanda "jangan disentuh", bukan gembok.
+
+```
+melindungi dari kecerobohan  -> ya
+melindungi dari niat jahat   -> tidak
+```
+
+### Decorator itu apa
+
+Decorator adalah **baris `@...` yang ditempel di atas sebuah function, dan mengubah perilaku function itu tanpa menyentuh isinya**.
+
+```python
+def house(self):            # function biasa
+    return self._house
+# dipanggil: s.house()      <- pakai kurung
+
+@property                   # ditempeli decorator
+def house(self):
+    return self._house
+# dipanggil: s.house        <- tanpa kurung, jalan sendiri saat dibaca
+```
+
+Isi functionnya sama persis. Yang berubah cuma cara Python memperlakukannya. Seperti stempel di berkas setoran: isi berkasnya tidak diubah satu huruf pun, tapi begitu distempel "SUDAH DISAHKAN", cara orang memperlakukannya berubah.
+
+Dan tanda `@` di sini tidak ada hubungannya dengan `@` di email atau di regex.
+
+### Yang sebenarnya dilakukan `@property`
+
+Dua baris ini:
+
+```python
+@property
+def house(self):
+    return self._house
+```
+
+sebenarnya cara singkat dari:
+
+```python
+def house(self):
+    return self._house
+
+house = property(house)      # house sekarang jadi OBJEK property
+```
+
+Jadi `@property` **membuat sebuah benda** bernama `house`. Baru setelah itu `@house.setter` bisa menempel padanya, karena `.setter` itu method milik benda tersebut — sama seperti `"azka".lower()`, harus ada bendanya dulu baru methodnya bisa dipakai.
+
+Saya coba hapus function di bawah `@property`, lalu langsung `@house.setter`:
+
+```
+NameError: name 'house' is not defined
+```
+
+Benar, karena tanpa functionnya, baris `house = property(house)` tidak pernah terjadi, jadi tidak ada benda bernama `house` untuk ditempeli.
+
+Urutannya mengikat:
+
+```
+1. def house + @property   -> objek property lahir
+2. @house.setter           -> baru bisa menempel padanya
+```
+
+Ini juga menjawab pertanyaan mahasiswa di lecture: kenapa perlu getter kalau sudah ada setter? Karena setter cuma hidup saat **menulis**. Waktu `print(student)` membaca `{self.house}`, itu membaca — getter yang dipanggil. Tanpa getter, tidak ada yang bisa mengambil nilai dari `_house`, dan dari luar orang cuma tahu nama `house`.
+
+### `property` itu class, bukan function
+
+David bilang *"Property is a function in Python"*, tapi sebenarnya `property` itu **class**. Cara pakainya mirip function karena ada kurungnya, tapi `Student("Harry")` juga ada kurungnya dan itu instantiation, bukan pemanggilan function.
+
+```python
+print(type(Student.house))
+# <class 'property'>
+```
+
+Polanya sama dengan yang sudah saya kenal sejak 6 November:
+
+```
+str      class  ->  "azka"   objek  ->  .lower()  method
+property class  ->  house    objek  ->  .setter   method
+```
+
+### `Student.house` vs `s.house` — siapa yang bertanya
+
+Ini bagian yang paling lama saya cerna hari ini. Percobaannya:
+
+```python
+print(Student.house)
+s = Student("Gryffindor")
+print(s.house)
+```
+
+```
+<property object at 0x000001D6825B6390>
+>> BACA jalan
+Gryffindor
+```
+
+`>> BACA jalan` muncul **sekali saja**. Jadi `print(Student.house)` tidak menjalankan getter sama sekali.
+
+Kuncinya: **getter butuh `self`.** `self` itu objeknya. Tidak ada objek berarti tidak ada `self`, jadi getternya tidak mungkin dijalankan — mau membaca `_house` milik siapa?
+
+```
+Student.house   -> yang bertanya CLASS. Tidak ada objek, tidak ada self.
+                   Python cuma menyerahkan benda property-nya. Tidak ada yang jalan.
+
+s.house         -> yang bertanya OBJEK s. self = s.
+                   Mesinnya dijalankan, keluar isi s._house.
+```
+
+Yang bertanya selalu **di sebelah kiri titik**:
+
+```
+s.house
+│ └─ nama lacinya
+└─── objeknya
+```
+
+Dua kesalahan saya waktu merangkum, dicatat supaya tidak terulang:
+
+```
+salah: "objeknya itu house"          benar: objeknya itu s, house cuma nama laci
+salah: "house milik property"        benar: lacinya milik class Student, ISINYA benda property
+salah: "Student.house hasil cetakan property"   benar: Student.house ADALAH benda property itu
+```
+
+Dan kata "masuk ke" yang saya pakai juga keliru — Python tidak masuk ke mana-mana. Benda property itu sudah dibuat sejak `class Student:` dibaca, sebelum ada satu pun siswa. `Student.house` cuma menyerahkan isi lacinya.
+
+Satu kalimat untuk diingat: **bertanya ke class = diberi mesinnya, bertanya ke objek = mesinnya dijalankan.**
+
+### Bug yang saya temukan duluan sebelum David
+
+Di menit 1:27 David menulis `self.house = house` di dalam setter, lalu bilang *"they're going to collide"*. Saya sempat salah tangkap, saya kira yang bertabrakan itu `name` lawan `house`. Ternyata bukan: yang bertabrakan **`house` lawan `house`** — nama function (property) dan nama tempat penyimpanan.
+
+Solusinya di menit 1:28:06, persis yang sudah saya tabrak sendiri kemarin:
+
+> use an almost identical name, with a little indicator
+
+"Almost identical name with a little indicator" itu `_house`. Jadi `RecursionError` ulangan ke-1016 yang saya kena kemarin, hari ini baru dijelaskan David.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| fancy / fancier | mewah, lebih canggih dari yang biasa; property disebut "a fancier attribute" |
+| graduate from X | naik tingkat dari X, bukan sekadar "lulus" |
+| at your disposal | tersedia siap pakai di tanganmu (idiom; `disposal` sendirian artinya pembuangan) |
+| maliciously | dengan niat jahat |
+| collide | bertabrakan, dua hal berebut tempat yang sama |
+| at will | sesuka hati, kapan pun mau |
+| adversarially | (ulangan) dengan niat mencari celah — benar di kuis pagi, lupa lagi sore harinya |
+
+### Yang mau dicoba
+
+- Jadikan pemanasan besok: `Student.house` vs `s.house`, kenapa getter tidak jalan lewat class, apa yang dibuat `@property`, dan kenapa `property` itu class bukan function.
+- Lanjutkan Lecture 8 dari menit 1:31.
