@@ -1430,3 +1430,216 @@ Solusinya di menit 1:28:06, persis yang sudah saya tabrak sendiri kemarin:
 
 - Jadikan pemanasan besok: `Student.house` vs `s.house`, kenapa getter tidak jalan lewat class, apa yang dibuat `@property`, dan kenapa `property` itu class bukan function.
 - Lanjutkan Lecture 8 dari menit 1:31.
+
+## Hari 8 – 13 November 2026
+
+### Kuis Harian #14 (15 soal, Week 0 + Week 4) — 14/15
+
+Semua kosakata benar, termasuk `in place` dan `adversarially` yang kemarin lepas. Yang salah cuma nomor 10, dan itu kedua kalinya (pernah salah di kuis #11).
+
+Soalnya: file diawali `import random`, lalu di bawahnya ditulis `angka = choice([1, 2, 3])`.
+
+Patokan yang harus saya kunci: **nama yang tepat sesudah `import` itulah satu-satunya yang masuk ke absen filemu.**
+
+```
+import random              -> absenmu berisi: random
+from random import choice  -> absenmu berisi: choice
+```
+
+Jadi `import random` tidak membawa serta isinya ke absen. `choice` tetap ada di dalam `random.py`, cuma namanya tidak terdaftar di file saya, makanya harus lewat pemiliknya: `random.choice(...)`.
+
+Seperti daftar absen kelas: yang didaftarkan nama "Kelompok A", bukan nama tiap santri di dalamnya. Mau memanggil satu santri, sebut dulu kelompoknya.
+
+### Pemanasan: dua dari lima masih kosong
+
+Nomor 1 dan 2 inti jawabannya benar. Tapi di nomor 2 saya menambahkan penjelasan soal `__init__` yang sebenarnya tidak nyambung — alasan getter tidak jalan lewat class itu cuma satu: tidak ada objek, maka tidak ada `self`.
+
+Nomor 3 belum ketemu. Jawabannya satu baris:
+
+```python
+house = property(house)
+```
+
+Nomor 4 terlewat. Jawabannya `NameError: name 'house' is not defined`.
+
+Nomor 5 jawabannya benar (`property` itu class), tapi buktinya saya karang sendiri — bilang "karena punya method". Bukti yang benar itu yang saya jalankan kemarin: `print(type(Student.house))` keluar `<class 'property'>`.
+
+Untuk nomor 3 dibuktikan dengan menulis ulang tanpa satu pun tanda `@`:
+
+```python
+class Student:
+    def __init__(self, house):
+        self._house = house
+
+    def house(self):
+        print(">> BACA jalan")
+        return self._house
+
+    house = property(house)
+```
+
+Tebakan saya jalan, dan memang jalan. `>> BACA jalan` tetap muncul. Jadi `@property` benar-benar cuma cara menulis yang lebih singkat — tidak ada sihir di tanda `@`-nya.
+
+### Lecture 8 dari menit 1:31
+
+**Lubang di `__init__` yang saya temukan duluan.** David menulis `self._house = house` di `__init__` lalu berkata sendiri: *"there's no error checking in init whatsoever."* Itu persis kesimpulan yang saya tulis kemarin — validasinya dilewati, objek bisa lahir cacat.
+
+**Jalan tembus `_house`.** Lalu David menulis `student._house = "Number Four, Privet Drive"` dan berkata *"we slip through"*. Juga persis yang saya buktikan kemarin. Alasannya:
+
+```
+Python tidak punya private yang sungguhan.
+Di bahasa lain seperti Java, private itu dikunci compiler.
+Di Python: you're on the honor system.
+```
+
+`_house` itu rambu, bukan gembok. Sama seperti tulisan "KHUSUS PENGURUS" di pintu gudang pesantren — tidak dikunci, tapi yang paham tidak masuk.
+
+### Semua tipe data ternyata class
+
+Bagian ini yang paling membuka hari ini. Dokumentasi resmi Python menulis:
+
+```
+class int(x, base=10)
+class str(object='')
+list.append(x)
+```
+
+Kata pertamanya **`class`**, bukan `function`. Jadi `int("50")` itu instantiation, bentuknya sama persis dengan `Student("Harry")`.
+
+Artinya sejak Week 0, setiap kali saya menulis `int(input(...))`, saya sudah membuat objek dari sebuah class. Sudah berminggu-minggu memakai OOP tanpa tahu namanya.
+
+Dan ada bentuk singkat yang selama ini saya kira "bukan apa-apa":
+
+```
+nama = []     sama dengan    nama = list()
+teks = ""     sama dengan    teks = str()
+d    = {}     sama dengan    d    = dict()
+angka = 0     sama dengan    angka = int()
+```
+
+Yang kanan itu instantiation yang terang-terangan. Yang kiri cuma jalan pintas karena terlalu sering dipakai.
+
+Pemetaannya satu lawan satu dengan class buatan sendiri:
+
+```
+                  class buatan Python        class buatan saya
+cetakan           dict                       Student
+instantiation     dict() atau {}             Student("Harry")
+objek             {"a": 1}                   s
+method            .keys()  .get()            .charm()
+self              dictnya sendiri            s
+```
+
+Satu-satunya yang beda: siapa yang menulis classnya.
+
+**Method milik satu class tidak bisa dipakai class lain.** `append` punya `list`, `lower` punya `str`. Dan isi sebuah class bukan rahasia — bisa dibuka pakai `dir(str)` dan `help(str.strip)`, alat yang sudah saya pakai waktu mengerjakan Figlet tanggal 13 Oktober.
+
+**`self` berlaku untuk semua, bukan cuma class buatan sendiri.** Waktu menulis `nama.append("Ron")`, Python mengirim `nama` sebagai `self` dan `"Ron"` sebagai `x`. Aturannya satu: **apa pun yang ada di sebelah kiri titik, itulah yang dikirim sebagai `self`.** Jadi setiap `.method()` yang pernah saya tulis sejak Week 0 — `.strip()`, `.split()`, `.append()`, `.lower()` — semuanya mengirim objeknya sebagai `self` di balik layar.
+
+### `base` — ditandai, bukan materi inti
+
+Saya sempat mengira `base=10` itu "angka 1 sampai 10". Ternyata `base` itu basis bilangan: sistem hitung apa yang dipakai teksnya.
+
+```python
+print(int("1010"))          # 1010
+print(int("1010", base=2))  # 10
+print(int("ff", base=16))   # 255
+```
+
+Teksnya sama, yang berubah cara membacanya. Hitungannya belum saya pahami betul, dan setelah dibahas disepakati ini **bukan materi CS50P** — tidak ada satu pun problem set yang memakainya. Dijadwalkan jadi sesi tersendiri nanti, karena biner dan heksadesimal memang akan ketemu lagi di warna `#FF0000`, satuan byte, dan UTF-8.
+
+### Class method — baru mulai, belum paham betul
+
+Selama ini semua yang saya pakai itu **instance method**: butuh objek, parameter pertamanya `self`.
+
+```
+instance method  ->  butuh OBJEK, ada self
+class method     ->  tidak butuh objek, cukup classnya
+```
+
+Patokannya satu pertanyaan: **apakah jawabannya berubah tergantung objek yang mana?**
+
+```
+berubah tiap objek   ->  instance method
+sama untuk semua     ->  class method
+```
+
+`charm()` berubah — Harry patronusnya rusa, Ron anjing. Tapi "house apa saja yang ada" jawabannya sama untuk semua siswa.
+
+Percobaan yang saya jalankan:
+
+```python
+class Student:
+    def __init__(self, name, house):
+        self.name = name
+        self.house = house
+
+    def charm(self):
+        return f"{self.name} dari {self.house}"
+
+    def daftar_house():
+        return ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
+
+
+s = Student("Harry", "Gryffindor")
+
+print(s.charm())                  # baris A
+print(Student.daftar_house())     # baris B
+print(s.daftar_house())           # baris C
+```
+
+Hasilnya:
+
+```
+Harry dari Gryffindor
+['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin']
+TypeError: Student.daftar_house() takes 0 positional arguments but 1 was given
+```
+
+Angka di pesan errornya yang menjelaskan semuanya:
+
+```
+0 = tempat yang disediakan daftar_house()
+1 = yang dikirim Python, yaitu s
+```
+
+Python tetap mengirim objeknya walaupun tidak ada tempat untuk menerimanya. Koreksi untuk saya: masalahnya **bukan** objeknya kosong — `s` isinya lengkap. Masalahnya tidak ada kursi untuk menampungnya.
+
+Saya sempat bertanya apakah bisa ditaruh di luar class saja. Jawabannya **bisa**, jalan tanpa masalah. Jadi class tidak wajib secara teknis. Alasan menaruhnya di dalam class itu **kerapian**:
+
+```
+daftar_house()           <- milik siapa? harus dibaca isinya dulu
+Student.daftar_house()   <- jelas, ini urusan Student
+```
+
+Ini alasan yang sama dengan `student[0]` lawan `student["name"]` tanggal 6 November: dua-duanya jalan, yang satu memberi tahu maksudnya. Istilahnya semantics.
+
+Kegunaan class method yang paling sering: **membuat objeknya sendiri**. Function yang bertanya nama ke pengguna lalu menghasilkan Student baru itu dipanggil sebelum ada siswa sama sekali, jadi tidak mungkin jadi instance method.
+
+Bagian ini berhenti di sini dan saya minta diulang besok, karena sudah mulai lemas dan belum paham betul.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| burst someone's bubble | merusak ilusi orang, menyampaikan kenyataan yang mengecewakan |
+| slip through | lolos, menyelinap lewat celah |
+| under the hood | di balik kap mesin, bagian dalam yang tidak terlihat |
+| honor system | sistem kejujuran, tidak ada pengawas |
+| visibility | siapa yang boleh melihat atau mengakses |
+| private / public / protected | tingkatan akses: tertutup, terbuka, setengah |
+| signify | menandakan, memberi isyarat |
+| dig into | menggali, menelusuri sampai dalam (lawan dari dabble) |
+| expressiveness | daya ungkap, seberapa luas gagasan bisa dinyatakan |
+| sensible | masuk akal, bijak — BUKAN sensitif, ini jebakan |
+| incarnation | wujud nyata, penjelmaan |
+| a.k.a. | also known as, alias |
+| baked into | sudah tertanam menyatu dari sananya (ketemu lagi, pertama 16 Oktober) |
+| convention | kesepakatan bersama, bukan aturan paksa (ketemu lagi, pertama 21 Oktober) |
+| from the get-go | sejak awal mula (ketemu lagi, pertama 11 Oktober) |
+
+### Yang mau dicoba
+
+- Jadikan pemanasan besok: class method lawan instance method, kenapa `s.daftar_house()` meledak, dan apa guna `@classmethod`.
+- Ulang juga: `house = property(house)` dan bukti `type(Student.house)`.
+- Lanjutkan Lecture 8 dari menit 1:48, bagian `@classmethod`.
