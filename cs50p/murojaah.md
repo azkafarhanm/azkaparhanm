@@ -360,3 +360,104 @@ else:
 - Catatan yang sudah ditulis belum tentu terpakai. Perbandingan berantai sudah ada di catatan sejak 6 Oktober tapi tidak muncul di kepala saat menulis ulang.
 - Tanda `<` dan `<=` harus dicocokkan ke spesifikasi, bukan ditebak. Salah satu tanda saja sudah menolak masukan yang sah.
 - Validasi dulu, hitung belakangan. Jangan mengerjakan sesuatu yang mungkin langsung dibuang.
+
+## Murojaah 9: Einstein, ditulis ulang dari layar kosong (15 November 2026)
+
+Soal dari Problem Set 0, ditulis ulang tanpa membuka kode lama. check50 4/4 hijau.
+
+### Yang menghambat ternyata bukan kodenya
+
+Logika dan struktur kodenya aman. Yang bikin lama justru **saya tidak tahu rumus fisikanya**. Soalnya menyebut E = mc², tapi saya tidak paham bagian "ekuivalen" itu maksudnya bagaimana — apa yang dikali apa.
+
+Jadi saya tanya CS50 Duck, dan dijelaskan:
+
+```
+E = energi (Joule)              <- yang dicari
+m = massa (kilogram)            <- masukan dari pengguna
+c = kecepatan cahaya            <- 300000000 meter per detik
+c kuadrat berarti c dikali c
+```
+
+Langkahnya: ambil massa, kuadratkan kecepatan cahaya, lalu kalikan keduanya.
+
+Catatan untuk diri sendiri: yang saya tanyakan ke Duck itu **rumus fisikanya**, bukan kodenya. Begitu rumusnya jelas, kodenya langsung jadi.
+
+### Tebak-tebakan sebelum rumusnya jelas
+
+Sebelum bertanya, saya coba berbagai susunan dan hasilnya berantakan. Ini jejaknya di terminal:
+
+```
+m: 50  ->  TypeError: unsupported operand type(s) for ** or pow(): 'str' and 'int'
+m: 50  ->  120000.0
+m: 50  ->  1800000000000000.0
+m: 50  ->  12000000.0
+m: 50  ->  7178979876918525887702490000000...  (ratusan digit)
+m: 50  ->  OverflowError: integer division result too large for a float
+m: 50  ->  90000000000000050
+m: 50  ->  4.500000000000005e+16
+m: 50  ->  4.5e+16
+m: 50  ->  45000000000000000
+m: 50  ->  1800000000000000
+m: 50  ->  4500000000000000000   <- akhirnya benar
+```
+
+Tiga pelajaran dari daftar itu:
+
+**Satu — `**` tidak mau menerima string.** Error pertama muncul karena `m` masih berupa teks waktu dipangkatkan. Pesannya jelas menyebut `'str' and 'int'`.
+
+**Dua — tanda bagi `/` menghasilkan float.** Dan float yang besar dicetak dalam notasi ilmiah:
+
+```
+4.5e+16        <- hasil lewat pembagian, bentuknya float
+45000000000000000   <- hasil lewat perkalian, bentuknya int
+```
+
+check50 membandingkan huruf per huruf, jadi `4.5e+16` pasti ditolak walaupun nilainya sama. Soal ini cukup perkalian saja, tidak ada pembagian sama sekali.
+
+**Tiga — float punya batas, int tidak.** Waktu saya menulis `c ** m / 2`, hasilnya terlalu besar untuk ditampung float:
+
+```
+OverflowError: integer division result too large for a float
+```
+
+Kalau tetap int, Python sanggup menampung angka seberapa pun panjangnya — terbukti dari hasil 400-an digit tadi yang tidak error sama sekali.
+
+### Beda versi lama dan versi murojaah
+
+Ini yang paling saya perhatikan sendiri. Versi lama menggabungkan semuanya sekaligus, versi sekarang bertahap dan tersusun.
+
+```
+VERSI LAMA
+m = int(input("m: "))
+c = 300000000 ** 2 * m
+print(f"E: {c}")
+```
+
+```
+VERSI MUROJAAH
+m = int(input("m: "))
+c = 300000000
+e = m * (c ** 2)
+print(f"E: {e}")
+```
+
+Hasilnya sama, tapi versi lama ada masalah yang baru saya sadari sekarang: **variabel `c` isinya bukan kecepatan cahaya, tapi jawabannya.** Namanya `c` padahal isinya `E`. Siapa pun yang membaca kode itu akan salah mengira.
+
+Di versi murojaah tiap nama berisi apa yang namanya sebut:
+
+```
+c  ->  kecepatan cahaya
+e  ->  energi, hasil akhirnya
+```
+
+Dan rumusnya ditulis mirip rumus aslinya, `m * (c ** 2)`, jadi tinggal dicocokkan dengan soal.
+
+Ini tema yang sama yang terus muncul sejak Week 6: **semantics**. `student[0]` lawan `student["name"]`, `get_student()` lawan `Student.get()`, dan sekarang `c` yang isinya bukan c. Dua-duanya jalan, yang satu memberi tahu maksudnya.
+
+### Yang saya pelajari
+
+- Yang menghambat belum tentu kodenya. Kali ini yang kurang itu pemahaman soalnya, bukan Pythonnya.
+- Duck berguna untuk memahami SOAL, bukan cuma untuk kode.
+- `/` mengubah hasil jadi float, dan float besar dicetak sebagai notasi ilmiah yang pasti ditolak check50. Kalau soalnya cuma butuh perkalian, jangan pakai pembagian.
+- int di Python tidak punya batas panjang, float punya. Itu sebabnya OverflowError muncul di pembagian, bukan di perkalian.
+- Memecah jadi beberapa baris bukan sekadar lebih panjang — tiap variabel jadi bisa diberi nama yang jujur.
