@@ -1643,3 +1643,228 @@ Bagian ini berhenti di sini dan saya minta diulang besok, karena sudah mulai lem
 - Jadikan pemanasan besok: class method lawan instance method, kenapa `s.daftar_house()` meledak, dan apa guna `@classmethod`.
 - Ulang juga: `house = property(house)` dan bukti `type(Student.house)`.
 - Lanjutkan Lecture 8 dari menit 1:48, bagian `@classmethod`.
+
+## Hari 9 – 14 November 2026
+
+### Kuis Harian #15 (15 soal, Week 1 + Week 5) — 15/15
+
+Sempurna, pertama kalinya sejak kuis #8 tanggal 31 Oktober. Semua kosakata kemarin benar, termasuk `sensible` yang jebakannya mirip `sensitive`.
+
+Dan `import random` akhirnya nempel di percobaan ketiga. Bentuk soalnya dibalik: dari hasil yang diinginkan ke cara menulisnya.
+
+```
+mau menulis choice([1,2,3]) telanjang  ->  from random import choice
+mau menulis random.choice([1,2,3])     ->  import random
+```
+
+Patokannya tetap: nama yang tepat sesudah `import` itulah yang masuk ke absen filemu.
+
+### Pemanasan: class method, dengan tes yang bisa dicek
+
+Kemarin saya minta materi ini diulang karena belum paham betul. Kali ini dipakai tes mekanis, bukan dikira-kira:
+
+> Buka functionnya. Ada kata `self` di dalamnya atau tidak?
+
+```
+self dipakai di dalamnya      ->  instance method (butuh objek)
+self tidak muncul sekali pun  ->  class method    (tidak butuh objek)
+```
+
+Alasannya: isi `self` itu objeknya. Kalau function butuh `self`, berarti dia butuh tahu "siswa yang mana", karena jawabannya diambil dari data siswa itu. `charm()` membaca `self.patronus` — patronus milik siapa? Harus ada siswanya dulu. `daftar_house()` tidak membaca apa pun dari siswa, jawabannya sama untuk semua.
+
+Cara saya sendiri merumuskannya, dan ini yang paling nempel buat saya:
+
+```
+butuh "ini milik siapa?"     ->  instance method
+tidak ada "milik siapa"-nya  ->  class method
+```
+
+Patronus, rumah, nama — menempel pada seseorang. Jadwal setoran, daftar house, jumlah asrama — tidak menempel pada siapa pun.
+
+Analogi pesantren: "siapa namamu?" harus ditanyakan ke satu santri, jawabannya beda-beda. "Jam berapa setoran mulai?" ditanyakan ke pesantrennya, siapa pun yang ditanya jawabannya sama. Pertanyaan kedua kalau dipaksa ke satu santri bukannya salah, cuma **aneh** — seolah jadwal setoran itu milik pribadi dia. Itu yang David sebut *not sensible*.
+
+### Latihan class method
+
+Tiga soal, dua benar penuh dan satu benar tempatnya.
+
+**Soal 1 — menandai jenis method.** Benar semua: `__init__`, `deposit`, `__str__` instance method; `kapasitas_maksimal` class method.
+
+**Soal 2 — menebak di mana meledak.** Benar tempatnya (baris `print(jar.kapasitas_maksimal())`) dan benar sebabnya: tidak ada penampung. Pesan errornya:
+
+```
+TypeError: Jar.kapasitas_maksimal() takes 0 positional arguments but 1 was given
+```
+
+Satu kalimat saya perlu dirapikan. Saya sempat bilang *"objek jar menyimpan sebuah argumen yang akan dikirim ke objek"* — itu tidak nyambung. Yang dikirim bukan ISI `jar`, tapi **`jar` itu sendiri**. Aturannya tetap: apa pun di sebelah kiri titik, itulah yang dikirim sebagai parameter pertama.
+
+**Soal 3 — melengkapi class method.** Benar dua-duanya: `@classmethod` dan `cls`.
+
+Lalu saya bertanya apakah `cls` boleh tidak ditulis. **Tidak boleh.** Begitu ada `@classmethod`, Python SELALU mengirim classnya sebagai parameter pertama, jadi tempatnya wajib ada. Kalau dikosongkan, errornya sama persis dengan soal 2.
+
+```
+tempat parameter pertama  ->  WAJIB ada
+namanya cls               ->  kesepakatan, boleh diganti
+```
+
+Persis seperti `self` yang saya buktikan tanggal 8 November waktu menggantinya jadi `aku`.
+
+### `cls` dan `self` — bedanya apa
+
+```
+self  ->  isinya OBJEKNYA   ->  dipakai instance method
+cls   ->  isinya CLASSNYA   ->  dipakai class method
+```
+
+Jadi di dalam class method, menulis `cls(12)` itu sama saja dengan menulis `Jar(12)`.
+
+Kenapa pakai `cls` kalau dua-duanya jalan? Keuntungannya baru terasa kalau ada class lain yang mewarisi, dan itu materi yang belum dibahas — namanya **inheritance**. Ditandai untuk nanti.
+
+### Kegunaan class method yang paling sering: pabrik objek
+
+Ini bagian yang kemarin saya minta dijelaskan ulang dengan kode lengkap.
+
+Masalahnya: function `get_student()` tugasnya MEMBUAT seorang Student baru. Kalau dipaksa jadi instance method, jadinya konyol:
+
+```python
+s = Student("Harry", "Gryffindor")   # bikin siswa dulu...
+student = s.get_student()            # ...supaya bisa bikin siswa?
+```
+
+Telur dan ayam. Untuk memanggil instance method butuh objek, padahal objek itulah yang sedang mau dibuat.
+
+Makanya harus bisa dipanggil tanpa objek sama sekali:
+
+```python
+student = Student.get()
+```
+
+Analogi pesantrennya: mendaftarkan santri baru itu lapor ke **kantor pendaftaran**, bukan minta tolong ke santri lain yang sudah masuk duluan. Dan kalau belum ada satu santri pun, pendaftaran tetap harus bisa jalan.
+
+Dua versi lengkap yang saya jalankan, hasilnya identik:
+
+```python
+# VERSI A - function menggantung di luar class
+class Student:
+    def __init__(self, name, house):
+        self.name = name
+        self.house = house
+
+    def __str__(self):
+        return f"{self.name} dari {self.house}"
+
+
+def get_student():
+    name = input("Name: ")
+    house = input("House: ")
+    return Student(name, house)
+
+
+def main():
+    student = get_student()
+    print(student)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+```python
+# VERSI B - dipindah ke dalam class
+class Student:
+    def __init__(self, name, house):
+        self.name = name
+        self.house = house
+
+    def __str__(self):
+        return f"{self.name} dari {self.house}"
+
+    @classmethod
+    def get(cls):
+        name = input("Name: ")
+        house = input("House: ")
+        return cls(name, house)
+
+
+def main():
+    student = Student.get()
+    print(student)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Kenapa versi B lebih baik padahal hasilnya sama? Satu alasan saja: **kejelasan.**
+
+```
+get_student()    <- milik siapa? harus dibaca isinya dulu
+Student.get()    <- jelas sejak dibaca, ini pabriknya Student
+```
+
+Alasan yang sama dengan `student[0]` lawan `student["name"]` tanggal 6 November: dua-duanya jalan, yang satu memberi tahu maksudnya. Istilahnya semantics.
+
+### Lecture 8 dari menit 1:48 — Sorting Hat
+
+**Analogi rumah.** David bilang instance itu *a very specific incarnation* dari classnya, lalu memakai analogi kompleks perumahan: semua rumah dari denah yang sama, tapi tiap rumah agak beda karena catnya beda.
+
+```
+denah yang sama     ->  class Student
+rumah yang berdiri  ->  objek s, objek b
+catnya beda         ->  nilai atributnya beda
+```
+
+**Contoh baru: Sorting Hat.** Di cerita Harry Potter ada topi runcing yang dipakaikan ke murid baru, lalu topi itu menyebutkan murid tersebut masuk asrama mana.
+
+Kodenya nanti dipakai begini:
+
+```python
+Hat.sort("Harry")      # keluar: Harry is in Gryffindor
+```
+
+Sebelah kiri titiknya **`Hat`**, classnya, bukan objek. Dan itu pas untuk class method karena di seluruh Hogwarts topinya **cuma ada satu** — tidak masuk akal membuat banyak objek topi lalu bertanya "topi yang mana?". Padanan pesantrennya: panitia penempatan kamar itu satu, bukan tiap santri punya panitia sendiri.
+
+**Jebakan kata `sort`.** Saya kira ini function bawaan Python. Ternyata bukan — itu nama karangan David, sama seperti `charm()`. Yang bikin bingung, kata `sort` dalam bahasa Inggris punya dua arti:
+
+```
+sort = mengurutkan            ->  ini yang dipakai cards.sort()
+sort = memilah, menggolongkan ->  ini yang dipakai Sorting Hat
+```
+
+Dua hari lalu saya menjalankan `cards.sort()` yang mengurutkan A, B, C — itu arti pertama, dan memang method bawaan milik class `list`. Yang di `hat.py` ini arti kedua: memilah murid ke golongannya. Padanannya di pesantren: **penjurusan** atau pembagian halaqah.
+
+**Dichotomy.** David menunjukkan selisih antara cara menulis dan cara memanggil:
+
+```
+def sort(self, name):     <- waktu dibuat: DUA parameter
+hat.sort("Harry")         <- waktu dipanggil: SATU argumen
+```
+
+Rumusnya:
+
+```
+jumlah parameter saat didefinisikan = jumlah argumen yang diketik + 1
+```
+
+`+1` itu `self`, selalu dikirim otomatis dan selalu di urutan pertama. Dan ini sudah saya lihat sebelumnya: `nama.append("Ron")` satu argumen diketik, padahal di dalam class `list` parameternya dua. Soal nomor 2 di latihan tadi pagi juga persis ini.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| incarnation | wujud nyata, penjelmaan dari sesuatu yang abstrak |
+| thereof | dari hal tersebut |
+| paint and such | cat dan sebagainya |
+| pointy | runcing |
+| sorting hat | topi penyortir yang membagi murid ke asrama |
+| so to speak | begitulah istilahnya, boleh dibilang begitu |
+| unfamiliar | belum kenal, belum akrab |
+| dichotomy | pembagian dua, dua sisi yang berbeda dan berpasangan |
+| encapsulate | membungkus, menyembunyikan di dalam |
+| tuck away | menyelipkan ke dalam supaya tidak berserakan |
+| requisite | yang diperlukan, yang disyaratkan |
+
+### Yang mau dicoba
+
+- Jadikan pemanasan besok: `cls` lawan `self`, kenapa tempat parameter pertama wajib ada, dan kenapa pabrik objek harus class method.
+- Simpan pertanyaan kenapa `cls(12)` lebih baik dari `Jar(12)` sampai bagian inheritance.
+- Lanjutkan Lecture 8 dari menit 1:52.
