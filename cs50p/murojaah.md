@@ -14,6 +14,7 @@ Jadwal: setiap Minggu jam 05.20.
 | 6 | Indoor Voice (Pset 0) | 1 Nov | 10 menit | check50 4/4 |
 | 7 | CS50 P-Shirt (Pset 6) | 4 Nov | 90 menit | check50 13/13 |
 | 8 | Fuel Gauge (Pset 3) | 8 Nov | 60 menit | check50 15/15 |
+| 9 | Einstein (Pset 0) | 15 Nov | 60 menit | check50 4/4 |
 
 ---
 
@@ -363,7 +364,10 @@ else:
 
 ## Murojaah 9: Einstein, ditulis ulang dari layar kosong (15 November 2026)
 
-Soal dari Problem Set 0, ditulis ulang tanpa membuka kode lama. check50 4/4 hijau.
+Waktu mengerjakan: 60 menit
+Hasil: check50 hijau semua (4/4)
+
+Soal dari Problem Set 0, ditulis ulang tanpa membuka kode lama.
 
 ### Yang menghambat ternyata bukan kodenya
 
