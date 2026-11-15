@@ -1898,3 +1898,306 @@ jumlah parameter saat didefinisikan = jumlah argumen yang diketik + 1
 - Jadikan pemanasan besok: `cls` lawan `self`, kenapa tempat parameter pertama wajib ada, dan kenapa pabrik objek harus class method.
 - Simpan pertanyaan kenapa `cls(12)` lebih baik dari `Jar(12)` sampai bagian inheritance.
 - Lanjutkan Lecture 8 dari menit 1:52.
+
+## Hari 10 – 15 November 2026
+
+Hari Minggu, jadi diawali murojaah mingguan (Murojaah 9: Einstein, dicatat terpisah di `murojaah.md`). Lalu diskusi panjang soal class method sebelum kuis, baru lanjut lecture.
+
+### Kuis Harian #16 (15 soal, Week 2 + Week 6) — 13/15
+
+Yang salah nomor 2 dan 10.
+
+**Nomor 2, `thereof`.** Pecah katanya: `there` + `of` = dari hal tersebut. Jadi *"incarnation thereof"* artinya wujud nyata DARI CLASSNYA. Jangan tertukar dengan `therefore` yang artinya oleh karena itu.
+
+**Nomor 10, nested loop.** Saya salah hitung jumlah barisnya. Dibuktikan dengan penanda:
+
+```python
+for i in range(3):
+    for j in range(2):
+        print(f"i={i}  j={j}")
+```
+
+```
+i=0  j=0
+i=0  j=1     <- i masih 0, j sudah selesai satu putaran PENUH
+i=1  j=0
+i=1  j=1
+i=2  j=0
+i=2  j=1
+```
+
+Enam baris. Setiap kali loop luar berganti sekali, loop dalam berputar penuh dari awal lagi. Jadi **3 × 2 = 6, bukan 3 + 2**. Seperti 3 kelompok santri yang masing-masing setoran 2 kali: totalnya 6 setoran.
+
+### Diskusi pagi: kursi dan penumpang
+
+Sebelum lecture saya bongkar ulang soal `self`, karena kemarin belum tuntas.
+
+**Ke mana setiap nilai pergi.**
+
+```
+hat.sort("Harry")
+ │          │
+ │          └───────────────┐
+ └──────────────┐           │
+                ▼           ▼
+        def sort(self,    name):
+```
+
+`hat` masuk ke `self`, `"Harry"` masuk ke `name`. Saya mengetik SATU argumen, tapi yang sampai ke dalam function DUA nilai. Itu yang David sebut `dichotomy`.
+
+**Tiga kasus yang saya buktikan sendiri:**
+
+```
+hat.sort("Harry")      tanpa @classmethod   hat -> self, "Harry" -> name      BENAR
+Hat.sort("Harry")      tanpa @classmethod   "Harry" -> self, name kosong      ERROR
+Hat.sort("Harry")      dengan @classmethod  Hat -> cls, "Harry" -> name       BENAR
+```
+
+Jadi yang menentukan bukan cuma apa yang di kiri titik, tapi **ada tidaknya decorator**. Dua-duanya harus cocok.
+
+Tebakan saya untuk kasus kedua: `self = "Harry"` dan `name = None`. Yang pertama benar, yang kedua **salah**. Python tidak pernah mengisi parameter kosong dengan `None` — dia langsung meledak:
+
+```
+TypeError: Hat.sort() missing 1 required positional argument: 'name'
+```
+
+Parameter tanpa nilai bawaan itu **wajib**. `None` baru muncul kalau diberi default sendiri, seperti `def sort(self, name=None)`. Itu konsep default value dari Week 0.
+
+Dan errornya ini kebalikan dari soal latihan kemarin:
+
+```
+kemarin  ->  takes 0 positional arguments but 1 was given   (kursi kurang)
+hari ini ->  missing 1 required positional argument          (penumpang kurang)
+```
+
+### Koreksi catatan kemarin: bukan buntu, tapi sia-sia
+
+Saya minta bagian "pabrik objek" di catatan Hari 9 ditulis ulang, karena metafora telur-ayam yang dipakai kemarin terlalu kuat dan malah bikin saya berputar. Koreksinya sudah saya masukkan langsung ke bagian itu.
+
+Ringkasnya: di Python **tidak ada kebuntuan** — `Student("Harry", "Gryffindor")` jalan sendiri tanpa butuh `get_student()`. Yang salah itu sia-sia, bukan buntu.
+
+Dan pertanyaan saya sendiri terjawab di situ juga: kalau `Student(...)` sudah bisa, buat apa `Student.get()`? Karena `get()` membungkusnya plus pekerjaan bertanya lewat `input()`.
+
+### Variabel biasa vs instance variable
+
+Saya sempat lupa bedanya. Pembedanya satu: **ada `self.` di depannya atau tidak.**
+
+```python
+def __init__(self, house):
+    x = 5                  # variabel biasa
+    self.house = house     # instance variable
+```
+
+```
+variabel biasa     ->  hidup di dalam function saja, mati begitu functionnya selesai
+instance variable  ->  menempel ke objeknya, hidup selama objeknya hidup
+```
+
+Dibuktikan: `print(s.x)` meledak dengan `AttributeError: 'Student' object has no attribute 'x'`. Objeknya memang tidak pernah punya `x` — `x` lahir dan mati di dalam `__init__`.
+
+Ini konsep **scope** dari Week 0. Variabel di dalam function hilang waktu functionnya selesai, kecuali ditempelkan ke sesuatu yang bertahan — dan yang bertahan itu objeknya.
+
+Saya juga baru sadar satu hal dari kode David: **`__init__` tidak harus cuma menyalin parameter.** Dia boleh memasang nilai tetap juga.
+
+```python
+def __init__(self):                     # tidak ada parameter selain self
+    self.houses = ["Gryffindor", ...]   # nilainya diketik langsung
+```
+
+Masuk akal untuk topi: daftar asrama Hogwarts memang tetap, tidak perlu ditanyakan ke pengguna.
+
+### Kenapa daftarnya ditaruh di self.houses, bukan di dalam sort
+
+David membandingkan dua pilihan:
+
+```python
+# A - ditaruh di dalam sort
+def sort(self, name):
+    houses = [...]                       # variabel biasa, cuma sort yang bisa pakai
+    print(name, "is in", random.choice(houses))
+```
+
+```python
+# B - ditaruh di __init__ sebagai instance variable
+def __init__(self):
+    self.houses = [...]                  # semua method bisa menjangkaunya
+
+def sort(self, name):
+    print(name, "is in", random.choice(self.houses))
+```
+
+Dua-duanya jalan. Bedanya **siapa yang bisa memakainya**. Kalau nanti ditambah method lain yang juga butuh daftar itu, pilihan A memaksa menulis ulang daftarnya — dua salinan, dan kalau satu diubah yang lain ketinggalan.
+
+### Banyak Student wajar, banyak Hat janggal
+
+Saya minta dibuatkan kodenya supaya terasa bedanya, dan ini yang paling membuka hari ini.
+
+```python
+harry = Student("Harry", "Gryffindor")
+ron   = Student("Ron", "Gryffindor")
+draco = Student("Draco", "Slytherin")
+```
+
+Tiga objek, **tiga isi berbeda**. Objeknya berguna karena masing-masing menyimpan data yang lain.
+
+```python
+hat1 = Hat()
+hat2 = Hat()
+hat3 = Hat()
+
+print(hat1.houses)
+print(hat2.houses)
+print(hat3.houses)
+```
+
+```
+['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin']
+['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin']
+['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin']
+```
+
+Tiga objek, **isinya sama persis**. Tidak ada satu pun yang membedakan `hat1` dari `hat2`.
+
+```
+tiga Student  ->  tiga isi berbeda  ->  objeknya ada gunanya
+tiga Hat      ->  tiga isi identik  ->  objeknya tidak menambah apa-apa
+```
+
+Programnya tidak error. Python tidak melarang. Yang salah cuma cara memodelkannya — membuat tiga benda padahal yang diwakili cuma satu. Itu yang David sebut `weird` dan `inconsistent` dengan dunia ceritanya, karena di Hogwarts topi penyortirnya memang cuma ada satu.
+
+Padanan pesantren: tiga objek Santri masuk akal karena orangnya memang beda. Tiga objek KantorPendaftaran aneh — kantornya cuma satu.
+
+### Bentuk akhir hat.py
+
+Tebakan saya benar: daftar housenya pindah **langsung ke dalam class**, bukan di `__init__`. Dan `__init__` malah dihapus, karena objeknya tidak pernah dibuat sama sekali.
+
+```python
+import random
+
+
+class Hat:
+    houses = ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
+
+    @classmethod
+    def sort(cls, name):
+        print(name, "is in", random.choice(cls.houses))
+
+
+Hat.sort("Harry")
+```
+
+Perhatikan `cls.houses`, bukan `self.houses`. Konsisten: tidak ada objek, jadi tidak ada `self`.
+
+Istilah barunya **class variable**:
+
+```
+self.houses   ->  instance variable, menempel ke OBJEK
+houses        ->  class variable, menempel ke CLASS
+```
+
+Syaratnya: harus bisa dijangkau **tanpa objek sama sekali**, karena `Hat.sort()` dipanggil tanpa objek.
+
+### Kenapa cls, bukan class
+
+Karena `class` itu **keyword** — kata yang sudah dipesan Python. Buktikan:
+
+```python
+class = 5
+```
+
+Langsung `SyntaxError`, bahkan sebelum programnya jalan. Makanya dipendekkan jadi `cls`.
+
+Saya sempat mencampur ini dengan aturan `_house`. Ternyata **masalah yang berbeda**. Sekarang sudah ketemu tiga jenis tabrakan nama, dan akibatnya beda-beda:
+
+```
+1. bertabrakan dengan KEYWORD
+   class = 5               ->  SyntaxError, ditolak langsung
+
+2. nama property sama dengan nama gudang
+   def house + self.house  ->  RecursionError di ulangan ke-1016
+
+3. menimpa nama bawaan Python
+   print = 5               ->  TIDAK error, tapi print jadi rusak
+```
+
+Yang ketiga paling berbahaya karena tidak ada error sama sekali — masuk daftar "salah tanpa error".
+
+### Kegunaan kedua dari class: wadah
+
+Ini gagasan baru buat saya. Selama ini class saya kenal cuma sebagai **cetakan**. Ternyata ada kegunaan lain.
+
+```
+1. class sebagai CETAKAN  ->  Student, dicetak berkali-kali jadi objek
+2. class sebagai WADAH    ->  Hat, tidak pernah jadi objek, cuma mengelompokkan
+```
+
+Kata David: *"you can use a class really as a container for data and/or functionality that is just somehow conceptually related."*
+
+Jadi class `Hat` isinya cuma dua hal yang saling berkaitan — daftar house, dan cara menyortir. Tidak ada topi yang pernah dibuat.
+
+Dan tes yang saya rumuskan sendiri tetap berlaku: `sort` itu `not specific to any one specific hat`. Tidak ada "cara menyortir versi topi A" dan "versi topi B". Tidak ada pertanyaan milik siapa, jadi class method.
+
+### Class bukan satu-satunya alat
+
+David lalu menunjukkan versi `hat.py` **tanpa class sama sekali** — cuma `houses` sebagai variabel biasa dan `def sort(name)` sebagai function lepas. Jalan, hasilnya sama.
+
+Jadi dia jujur: untuk program sekecil ini, class memang tidak perlu. Masalahnya baru muncul kalau programnya tumbuh — satu file berisi puluhan function campur aduk, sebagian soal siswa, sebagian soal topi, tidak ada yang menandai mana milik mana.
+
+Alat untuk merapikan ada beberapa, dan kegunaannya **tumpang tindih**:
+
+```
+class            ->  wadah pengelompok
+module           ->  satu file .py        (Week 4)
+package          ->  folder berisi module (Week 5)
+satu file biasa  ->  tanpa apa-apa
+```
+
+Analogi diagram Venn: kalau empat alat itu digambar sebagai lingkaran, bagian tengahnya bertindihan — ada kasus di mana dua atau tiga alat sama-sama cocok. Tidak ada aturan kaku.
+
+Kalimat penutup David yang menenangkan: *"Over time, you'll develop an instinct and maybe even a personal preference for which tool to use."* Rasa itu tumbuh dari sering menulis kode, bukan dari menghafal aturan.
+
+### Bentuk akhir student.py
+
+Dan benar seperti dugaan kemarin, `get_student()` yang menggantung di luar akhirnya dipindahkan masuk:
+
+```python
+    @classmethod
+    def get(cls):
+        name = input("Name: ")
+        house = input("House: ")
+        return cls(name, house)
+
+
+def main():
+    student = Student.get()
+    print(student)
+```
+
+Kata David: *"I don't need a separate function written by me called get_student in the file itself. The get functionality is built into the class. All my student-related code now is together."*
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| frankly | terus terang, sejujurnya |
+| heuristic | patokan praktis, ancang-ancang yang biasanya benar walau tidak selalu |
+| mental model | gambaran di kepala untuk memahami sesuatu |
+| weird | aneh, janggal |
+| inconsistent | tidak konsisten, tidak sesuai |
+| container | wadah |
+| conceptually related | berkaitan secara gagasan |
+| it suffices | cukup, sudah memadai |
+| bundle up | mengikat jadi satu bendel, mengumpulkan |
+| huge | sangat besar; a huge number of = sangat banyak |
+| messy | berantakan |
+| sophisticated | rumit, canggih |
+| overlapping region | bagian yang bertumpang tindih |
+| instinct | naluri, rasa yang terbentuk dari pengalaman |
+| personal preference | selera pribadi |
+| acquire a taste | lama-lama jadi suka, terbiasa menyukainya |
+
+### Yang mau dicoba
+
+- Jadikan pemanasan besok: class variable lawan instance variable, kenapa `__init__` dihapus dari `Hat`, dan dua kegunaan class (cetakan lawan wadah).
+- Ulang juga tiga jenis tabrakan nama, karena tadi sempat tercampur.
+- Lanjutkan Lecture 8 dari menit 2:15.
