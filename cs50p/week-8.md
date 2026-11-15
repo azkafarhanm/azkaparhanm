@@ -1723,22 +1723,52 @@ Kenapa pakai `cls` kalau dua-duanya jalan? Keuntungannya baru terasa kalau ada c
 
 Ini bagian yang kemarin saya minta dijelaskan ulang dengan kode lengkap.
 
-Masalahnya: function `get_student()` tugasnya MEMBUAT seorang Student baru. Kalau dipaksa jadi instance method, jadinya konyol:
+Masalahnya: function `get_student()` tugasnya MEMBUAT seorang Student baru. Kalau dipaksa jadi instance method, urutannya jadi begini:
 
 ```python
-s = Student("Harry", "Gryffindor")   # bikin siswa dulu...
-student = s.get_student()            # ...supaya bisa bikin siswa?
+s = Student("Harry", "Gryffindor")   # langkah 1: satu Student SUDAH JADI di sini
+student = s.get_student()            # langkah 2: baru boleh memesan Student
 ```
 
-Telur dan ayam. Untuk memanggil instance method butuh objek, padahal objek itulah yang sedang mau dibuat.
+**Catatan koreksi (15 November).** Waktu pertama kali dijelaskan ke saya, ini disebut "telur dan ayam". Setelah saya bolak-balik, ternyata istilah itu terlalu kuat dan justru bikin saya makin bingung — jadi saya catat ulang dengan benar.
 
-Makanya harus bisa dipanggil tanpa objek sama sekali:
+Di Python **tidak ada kebuntuan**. Baris `Student("Harry", "Gryffindor")` jalan sendiri tanpa butuh `get_student()` sama sekali. Programnya tidak macet.
+
+Yang salah bukan buntu, tapi **sia-sia**: di langkah 1 Studentnya sudah terlanjur jadi, pabriknya baru boleh dipakai di langkah 2. Seperti mesin fotokopi yang baru mau menyala kalau kamu sudah membawa fotokopiannya. Tidak error, cuma tidak ada gunanya.
+
+Yang benar-benar buntu itu versi pesantrennya, dan itu sebabnya analogi ini lebih tegas: bayangkan aturan "yang boleh mendaftarkan santri baru hanya santri yang sudah terdaftar". Di hari pertama belum ada satu santri pun, jadi selamanya tidak akan pernah ada santri. Makanya pendaftaran dipegang **kantor**, bukan santri — kantor sudah ada sejak awal, tidak menunggu siapa-siapa.
+
+Jadi intinya satu, dan ini rumusan saya sendiri: **kalau yang kita mau tidak membutuhkan objek, tidak usah dibuat instance method. Panggil classnya langsung.**
 
 ```python
 student = Student.get()
 ```
 
-Analogi pesantrennya: mendaftarkan santri baru itu lapor ke **kantor pendaftaran**, bukan minta tolong ke santri lain yang sudah masuk duluan. Dan kalau belum ada satu santri pun, pendaftaran tetap harus bisa jalan.
+### Kalau Student(...) sudah bisa, buat apa Student.get()
+
+Pertanyaan saya sendiri waktu itu. Jawabannya: isinya beda.
+
+```python
+Student("Harry", "Gryffindor")    # saya HARUS sudah tahu namanya
+Student.get()                     # dia yang bertanya ke pengguna
+```
+
+```python
+@classmethod
+def get(cls):
+    name = input("Name: ")        # ini yang tidak ada di Student(...)
+    house = input("House: ")
+    return cls(name, house)
+```
+
+Jadi `get()` bukan pengganti `Student(...)`, tapi **membungkusnya** plus pekerjaan bertanya.
+
+```
+Student(...)     ->  bahan sudah di tangan, tinggal dirakit
+Student.get()    ->  cari bahannya dulu lewat input, baru dirakit
+```
+
+Dan baris terakhirnya tetap `cls(name, house)`, yang artinya `Student(name, house)`. Pabriknya tetap pintu yang sama, cuma ada langkah tambahan sebelumnya.
 
 Dua versi lengkap yang saya jalankan, hasilnya identik:
 
