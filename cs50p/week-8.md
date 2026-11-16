@@ -2201,3 +2201,264 @@ Kata David: *"I don't need a separate function written by me called get_student 
 - Jadikan pemanasan besok: class variable lawan instance variable, kenapa `__init__` dihapus dari `Hat`, dan dua kegunaan class (cetakan lawan wadah).
 - Ulang juga tiga jenis tabrakan nama, karena tadi sempat tercampur.
 - Lanjutkan Lecture 8 dari menit 2:15.
+
+---
+
+## Hari 11 – 16 November 2026
+
+Hari ini Lecture 8 tamat. Materinya tiga besar: **inheritance**, **exception sebagai keluarga**, dan **operator overloading**.
+
+### Kuis #17
+
+Benar 13 dari 15. Yang salah nomor 11 dan 13: `except` yang disangka menghentikan loop, dan beda parameter dengan argumen. Dua-duanya dijadwalkan muncul lagi di kuis berikutnya.
+
+### Pemanasan
+
+Empat pertanyaan, tiga benar. Dua yang perlu saya catat karena salahnya halus:
+
+```
+Yang saya jawab          : "nama gudang persis dengan nama PARAMETER"
+Yang benar               : nama gudang persis dengan nama PROPERTY
+Kenapa penting           : parameter itu cuma nama titipan di dalam kurung,
+                           yang memicu setter adalah nama property
+```
+
+```
+Yang saya jawab          : "instance variable itu yang mencetak menjadi objek"
+Yang benar               : instance variable tidak mencetak apa-apa.
+                           Yang mencetak objek itu Student(...)
+```
+
+Instance variable itu **isi** objek, bukan **pembuat** objek. Seperti nilai hafalan di buku santri: nilainya tidak membuat santrinya ada, santrinya sudah ada duluan.
+
+### Instance method tidak punya penanda sendiri
+
+Saya sempat bertanya kenapa class method ada `@classmethod` tapi instance method tidak ada `@instancemethod`. Jawabannya karena **instance method itu keadaan bawaan**. Yang perlu ditandai itu yang menyimpang, bukan yang normal.
+
+```
+def biasa(self)      -> tanpa penanda, instance method (bawaan)
+@classmethod         -> penanda, karena menyimpang dari bawaan
+@staticmethod        -> penanda juga, tidak dapat self maupun cls
+```
+
+`@staticmethod` saya tandai sebagai *rabbit hole* dulu, belum dipakai di CS50P.
+
+### Pertanyaan mahasiswa soal mendeklarasikan atribut
+
+Ada yang bertanya kenapa di Python atribut tidak perlu dideklarasikan dulu di atas seperti di Java. Jawabannya: di Python atribut **lahir saat pertama kali ditulis**, biasanya di dalam `__init__`. Tidak ada daftar di depan.
+
+Enaknya: lebih ringkas. Tidak enaknya: kalau salah ketik nama atribut, Python tidak protes, dia malah bikin atribut baru. Ini masuk daftar lama saya: **salah tanpa error**.
+
+### Inheritance
+
+Masalah yang mau dipecahkan: kode yang sama ditulis berulang-ulang di banyak class.
+
+```python
+class Wizard:
+    def __init__(self, name):
+        self.name = name
+
+
+class Student(Wizard):
+    def __init__(self, name, house):
+        super().__init__(name)
+        self.house = house
+```
+
+Yang saya tanyakan tadi: kenapa harus pakai `super()`, kenapa harus ada `__init__`, kenapa harus ada `name`. Tiga-tiganya ada alasannya sendiri:
+
+```
+super()        -> naik ke induknya, TEPAT SATU tingkat
+.__init__      -> yang dipanggil itu init milik induk, bukan method lain
+(name)         -> induknya minta name, jadi harus dikirim
+```
+
+Kenapa harus dipanggil manual: karena begitu anak punya `__init__` sendiri, punya induk **ditimpa**. Kalau anak tidak punya `__init__` sama sekali, punya induk jalan otomatis.
+
+Cara membacanya supaya tidak terbalik:
+
+```
+class Student(Wizard)   dibaca: Student adalah sejenis Wizard
+Yang di dalam kurung    = induk
+Yang di depan           = anak
+```
+
+Saya sempat salah kira bahwa yang diwariskan itu **nilainya**. Bukan. Yang diwariskan itu **kodenya**, yaitu baris `self.name = name`. Nilainya tetap beda: Harry tetap Harry, Dumbledore tetap Dumbledore.
+
+Kalau bertingkat tiga, `super()` tetap naik satu tingkat saja, tapi efeknya **trickle down**, menetes turun sampai ke bawah.
+
+### Exception itu juga keluarga
+
+Ini yang bikin saya paham kenapa inheritance berguna. Semua exception di Python itu satu pohon keluarga:
+
+```
+BaseException
+  └── Exception
+        ├── ValueError
+        ├── KeyError
+        ├── TypeError
+        └── EricError   (buatan sendiri)
+```
+
+Bikin exception sendiri cuma begini:
+
+```python
+class EricError(Exception):
+    ...
+```
+
+Karena dia anak `Exception`, dia langsung dapat semua kelakuan induknya tanpa saya tulis ulang. Dan `except Exception` menangkap **semua anaknya**, bukan cuma `Exception` persis.
+
+Jadi waktu saya menulis `raise ValueError(...)` selama ini, sebenarnya saya sedang memakai warisan perilaku dari induknya.
+
+### Operator overloading
+
+Pertanyaan Eric: kalau `Vault` ditambah `str`, apa yang terjadi? David mencobanya langsung dan keluar `AttributeError: 'str' object has no attribute 'galleons'`.
+
+Kode yang saya pakai untuk membuktikan, pakai penanda seperti waktu belajar property:
+
+```python
+class Vault:
+    def __init__(self, galleons=0, sickles=0, knuts=0):
+        print(">> INIT jalan, galleons =", galleons)
+        self.galleons = galleons
+        self.sickles = sickles
+        self.knuts = knuts
+
+    def __str__(self):
+        print(">> STR jalan")
+        return f"{self.galleons} Galleons, {self.sickles} Sickles, {self.knuts} Knuts"
+
+    def __add__(self, other):
+        print(">> ADD jalan")
+        galleons = self.galleons + other.galleons
+        sickles = self.sickles + other.sickles
+        knuts = self.knuts + other.knuts
+        return Vault(galleons, sickles, knuts)
+
+
+class Dompet:
+    def __init__(self, galleons, sickles, knuts):
+        self.galleons = galleons
+        self.sickles = sickles
+        self.knuts = knuts
+
+
+potter = Vault(100, 50, 25)
+dompet = Dompet(5, 5, 5)
+aneh = Vault("satu", "dua", "tiga")
+```
+
+#### Dua lapis, ini kesimpulan terpenting hari ini
+
+```
+Lapis 1  siapa yang dipanggil  -> ditentukan SEBELAH KIRI
+         Python lihat tipe di kiri +, cari __add__ di class itu.
+         Tipe sebelah kanan sama sekali tidak dilihat di tahap ini.
+
+Lapis 2  berhasil atau meledak -> ditentukan ISI sebelah kanan
+         Badan __add__ menyentuh .galleons .sickles .knuts.
+         Yang diperiksa bukan tipenya, tapi punya atribut itu atau tidak.
+```
+
+Jadi "jalan" dan "berhasil" itu dua hal berbeda. `__add__` bisa tetap dipanggil lalu meledak di tengah jalan.
+
+#### Tiga lokasi ledakan yang berbeda
+
+Penandanya yang memberi tahu sejauh mana Python sempat berjalan:
+
+```
+dompet + potter    tidak ada penanda sama sekali
+                   gagal di tanda +, belum masuk badan
+                   kirinya Dompet, Dompet tidak punya __add__
+
+potter + "Harry"   >> ADD jalan tercetak, lalu AttributeError
+                   gagal saat MENGAMBIL other.galleons
+                   str tidak punya atribut bernama galleons
+
+potter + aneh      >> ADD jalan tercetak, lalu TypeError
+                   gagal saat MENJUMLAHKAN 100 + "satu"
+```
+
+Waktu `dompet + potter` dijalankan, `>> INIT jalan` muncul **dua kali**, dari `potter` dan `aneh` yang lahir di atas. `dompet` tidak ikut karena dia bukan Vault. Dan `>> ADD jalan` tidak muncul sama sekali.
+
+Saya sempat bilang meledaknya "di print". Ternyata bukan. Python harus menyelesaikan `dompet + potter` dulu baru hasilnya diserahkan ke `print`. Buktinya `>> STR jalan` juga tidak pernah muncul.
+
+#### Beda class pun bisa
+
+Ini yang mengagetkan saya:
+
+```python
+print(potter + dompet)
+```
+
+Berhasil. Padahal `Dompet` class yang sama sekali lain, bukan turunan `Vault`, tidak ada hubungan apa-apa. Yang dipakai tetap `Vault.__add__`, karena yang di kiri itu Vault. `Dompet` cuma jadi penumpang.
+
+Syaratnya bukan satu class, bukan juga sejenis. Syaratnya cuma: **sebelah kanan punya apa yang disentuh badan `__add__`**. Kalau badannya menyentuh tiga atribut, ya harus ada tiga. Kurang satu, meledak di baris yang menyentuh yang kurang itu.
+
+#### Nilai default bukan pengumuman tipe
+
+Saya sempat mengira karena `galleons=0` itu angka, berarti isinya wajib angka. **Salah.**
+
+```
+def __init__(self, galleons=0, ...)
+
+= 0 artinya  : kalau tidak dikirim argumen, pakai 0
+= 0 TIDAK artinya : isinya wajib integer
+```
+
+Python tidak pernah memeriksa tipe di parameter. Jadi `Vault("satu", "dua", "tiga")` sah-sah saja. Bahkan `aneh + aneh` juga jalan, hasilnya `"satusatu"`, karena `str + str` memang menyambung teks.
+
+Yang meledak justru campurannya: `100 + "satu"`.
+
+#### Urutan dan hitungan
+
+```
+a + b + c    dikerjakan  (a + b) lalu hasilnya + c
+             jadi ADD jalan 2 kali untuk 3 vault
+```
+
+Rumus yang saya dapat setelah bolak-balik salah tebak:
+
+```
+n vault dijumlahkan ->  ADD  jalan  n - 1 kali
+                        INIT jalan  n + (n - 1) kali
+```
+
+INIT kena dua kali hitung karena selain vault aslinya, setiap `return Vault(...)` juga melahirkan vault baru. Ini yang berkali-kali saya lewatkan waktu menebak.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| odd | aneh, janggal |
+| declare | mendeklarasikan, mengumumkan di depan |
+| approach | pendekatan, cara menanganinya |
+| syntax | tata tulis bahasa pemrograman |
+| vary | berbeda-beda, bervariasi |
+| takeaway | inti yang dibawa pulang |
+| to be fair | sejujurnya, kalau mau adil |
+| rabbit hole | lubang kelinci, bahasan yang menyeret makin jauh dari tujuan |
+| reluctant | enggan, setengah hati |
+| redundancy | pengulangan yang tidak perlu |
+| exacerbated | diperparah, makin menjadi |
+| get rid of | menyingkirkan, membuang |
+| link | mengaitkan, menghubungkan |
+| nesting | menyusun bersarang, satu di dalam yang lain |
+| hierarchy | susunan bertingkat |
+| one up | naik satu tingkat |
+| trickle down | menetes turun ke bawah |
+| leverage | memanfaatkan sesuatu yang sudah ada |
+| notion | gagasan, pengertian |
+| interpretation | penafsiran |
+| denomination | pecahan nilai mata uang |
+| tucked away | terselip, tersimpan rapi di dalam |
+| offhand | begitu saja tanpa mikir lama |
+| theoretically | secara teori |
+| figure out | mencari tahu sampai paham |
+
+### Yang mau dicoba
+
+- Jadikan pemanasan besok: dua lapis penentuan `__add__`, tiga lokasi ledakan, dan kenapa nilai default bukan pengumuman tipe.
+- Ulang juga `super().__init__(name)`, kenapa tiga bagiannya ada.
+- Week 8 lecture sudah tamat, berikutnya masuk problem set Week 8.
