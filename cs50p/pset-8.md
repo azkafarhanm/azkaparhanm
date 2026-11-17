@@ -199,5 +199,4 @@ Minus. Programnya tidak error sama sekali, cuma jawabannya tidak masuk akal buat
 
 ### Yang mau dicoba
 
-- Perbaiki `date(2026-11-17)` jadi `date(2026, 11, 17)` di tes kasus nol, lalu `pytest`, `check50`, dan submit ulang.
 - Lanjut ke soal berikutnya di Problem Set 8.
