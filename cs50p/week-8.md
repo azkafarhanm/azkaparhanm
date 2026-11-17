@@ -2462,3 +2462,91 @@ INIT kena dua kali hitung karena selain vault aslinya, setiap `return Vault(...)
 - Jadikan pemanasan besok: dua lapis penentuan `__add__`, tiga lokasi ledakan, dan kenapa nilai default bukan pengumuman tipe.
 - Ulang juga `super().__init__(name)`, kenapa tiga bagiannya ada.
 - Week 8 lecture sudah tamat, berikutnya masuk problem set Week 8.
+
+---
+
+## Hari 12 – 17 November 2026
+
+Lecture sudah tamat, jadi hari ini isinya kuis, pemanasan, lalu masuk Problem Set 8. Catatan pengerjaan Seasons ada di `pset-8.md`.
+
+### Kuis #18
+
+Benar 12 dari 15. Yang salah nomor 3, 10, dan 13.
+
+```
+nomor 3   exacerbated
+          artinya diperparah, makin menjadi.
+          Patokan supaya nempel: akarnya sama dengan acerb (tajam, pedih),
+          jadi exacerbate = bikin makin pedih.
+
+nomor 10  randint(1, 6)
+          tebakan saya 1 sampai 5. Salah.
+          randint itu inclusive, ujungnya IKUT.
+          Yang ujungnya tidak ikut itu range.
+          Dibuktikan sendiri: angka 6 memang muncul.
+
+nomor 13  __name__ saat di-import
+          tebakan saya terbalik total.
+```
+
+Yang nomor 13 ini perlu saya catat lengkap karena salahnya satu sebab: saya memberi nama file pada file yang dijalankan **langsung**.
+
+```
+File yang DIJALANKAN langsung   -> __name__ isinya __main__ (selalu)
+File yang DI-IMPORT             -> __name__ isinya nama filenya
+```
+
+Percobaan yang saya jalankan sendiri:
+
+```
+python saya.py
+  -> __name__ di saya.py isinya: __main__
+
+python utama.py       (isinya import saya)
+  -> __name__ di saya.py isinya: saya          <- dia yang DIPINJAM
+  -> __name__ di utama.py isinya: __main__     <- dia yang DIJALANKAN
+```
+
+Dua baris keluar dari satu perintah, karena `import` menjalankan isi file yang dipinjam dari atas. Namanya sendiri muncul cuma kalau dia jadi yang dipinjam.
+
+Dan dua soal ulangan dari kuis kemarin, `except` lawan `break` dan parameter lawan argumen, **benar dua-duanya**.
+
+### Pemanasan
+
+Empat soal, dua benar, dua perlu dibetulkan.
+
+**Nomor 1 benar**, tapi kalimat pertama saya sempat terbalik: saya bilang "yang di dalam kurung itu yang akan mewarisi". Yang mewarisi itu yang **di luar** kurung. Yang di dalam kurung itu yang **diwarisi dari**. Kesimpulan saya sendiri sudah benar, cuma urutan kalimatnya tertukar. Tiga bagian `super().__init__(name)` benar semua.
+
+**Nomor 2 salah arahnya.** Saya jawab "akan menimpa". Menimpa itu yang terjadi kalau anak **punya** `__init__` sendiri. Kalau anak **tidak punya** sama sekali, tidak ada yang menimpa — `__init__` milik induk justru **jalan otomatis**, dan pintunya pun ikut diwarisi.
+
+**Nomor 3 ada satu kata yang harus diganti: "jumlahnya".** Saya bilang sebelah kanan harus punya penumpang yang jumlahnya sesuai. Bukan jumlahnya, tapi **namanya**.
+
+Percobaan yang membuktikannya: saya buat class `Dompet2` dengan **tiga** atribut, jumlahnya pas, tapi namanya `emas`, `perak`, `tembaga`. Hasilnya:
+
+```
+AttributeError: 'Dompet2' object has no attribute 'galleons'
+```
+
+Meledak. Sebabnya badan `__add__` tidak menghitung, dia **menyebut nama**. Python tidak pernah berpikir "oh, emas itu mirip galleons, pakai saja". Aturan yang sama persis dengan `_house` lawan `house` tanggal 12 November: dua nama yang beda itu sama asingnya.
+
+Jadi rumus yang benar:
+
+```
+Syaratnya bukan satu class, bukan sejenis, bukan juga jumlahnya pas.
+Syaratnya: sebelah kanan punya atribut dengan NAMA YANG SAMA PERSIS
+           dengan yang disebut di badan __add__.
+```
+
+**Nomor 4 benar.** Nilai default itu cuma cadangan kalau argumennya tidak dikirim, bukan pengumuman tipe.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| inclusive | ujungnya ikut terhitung |
+| acerb | tajam, pedih (akar kata exacerbate) |
+
+### Yang mau dicoba
+
+- Jadikan pemanasan besok: aturan `__name__` dijalankan lawan di-import, dan kenapa syarat `__add__` itu nama atribut bukan jumlahnya.
+- Lanjutkan Problem Set 8 ke soal berikutnya.
