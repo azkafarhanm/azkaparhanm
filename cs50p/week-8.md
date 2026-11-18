@@ -2550,3 +2550,67 @@ Syaratnya: sebelah kanan punya atribut dengan NAMA YANG SAMA PERSIS
 
 - Jadikan pemanasan besok: aturan `__name__` dijalankan lawan di-import, dan kenapa syarat `__add__` itu nama atribut bukan jumlahnya.
 - Lanjutkan Problem Set 8 ke soal berikutnya.
+
+---
+
+## Hari 13 – 18 November 2026
+
+Isinya kuis, pemanasan, lalu lanjut Problem Set 8. Catatan Cookie Jar ada di `pset-8.md`.
+
+### Kuis #19
+
+**15 dari 15, sempurna.** Yang kedua kalinya. Dan tiga soal ulangan dari kemarin — `exacerbated`, `randint`, dan `__name__` — semuanya nempel setelah sekali diulang.
+
+### Pemanasan
+
+Empat soal. Nomor 1 benar, nomor 2 hampir, nomor 3 dan 4 perlu dibetulkan.
+
+**Nomor 1 benar.** `date` punya `__sub__`, `str` tidak punya — dan saya sudah membuktikannya sendiri lewat `dir(str)` yang keluar `False`.
+
+**Nomor 2 benar isinya tapi nama errornya belum tersebut.** Namanya `SystemExit`, dan sebabnya `sys.exit` itu sendiri yang melemparnya:
+
+```
+input buruk -> ValueError muncul di dalam convert
+            -> except menangkapnya
+            -> sys.exit melempar SystemExit
+            -> yang sampai ke pytest SystemExit, bukan ValueError
+```
+
+ValueErrornya ditelan di tengah jalan.
+
+**Nomor 3 masih berantakan.** Saya menyebut hardcode dan argumen, tapi sebab-akibatnya belum tersusun. Yang benar: sebabnya `date.today()` dikeluarkan dari `convert`, dan hardcode itu **akibatnya**, bukan sebabnya.
+
+**Nomor 4 salah nama errornya.** Bagian "dibaca sebagai pengurangan" benar, 2026 − 11 − 17 = 1998. Tapi saya jawab ValueError, padahal `TypeError`.
+
+Patokan yang layak dikunci, karena dua error ini sering tertukar:
+
+```
+TypeError   -> salah JENIS atau salah JUMLAH
+               date(1998)         kurang dua argumen
+               "halo" - "dunia"   str tidak punya __sub__
+               100 + "satu"       int dan str tidak bisa dijumlah
+
+ValueError  -> jenisnya SUDAH BENAR, isinya yang tidak masuk akal
+               int("cat")         str memang benar jenisnya, isinya bukan angka
+               date(2000, 20, 20) tiga angka sudah benar, bulan 20 yang tidak ada
+```
+
+Ini juga menjelaskan kenapa tes `pytest.raises(ValueError)` di Seasons pakai `"cat"` dan `"2000-20-20"` — dua-duanya lolos jumlah, yang salah nilainya. Kalau argumennya yang kurang, yang keluar TypeError dan tesnya justru merah.
+
+### Riwayat obrolan CS50 Duck hilang
+
+Codespace saya ter-reload karena internetnya putus, dan seluruh percakapan dengan Duck hilang. Panel ddb memulai percakapan baru setiap kali halamannya dimuat ulang, dan tidak ada tombol riwayat di situ. Percakapannya memang dicatat di sisi CS50 (sapaannya sendiri bilang *conversations are logged*), tapi itu untuk mereka, bukan untuk saya buka kembali.
+
+Pelajarannya: yang perlu diselamatkan bukan obrolannya, tapi **temuannya**. Obrolan Duck itu panjang dan kebanyakan isinya pertanyaan balik; yang bernilai cuma beberapa kalimat. Catatan di GitHub ini yang jadi ingatan permanen saya, bukan panel Duck.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| callable | bisa dipanggil seperti function, yaitu bisa diberi tanda kurung |
+
+### Yang mau dicoba
+
+- Jadikan pemanasan besok: beda TypeError dan ValueError, dan kenapa tes tidak boleh bergantung pada tes lain.
+- Jalankan ulang `pytest test_seasons.py` dengan nama file yang benar, lalu `check50` Seasons sampai hijau lagi.
+- Sisa satu soal di Pset 8: CS50 Shirtificate.

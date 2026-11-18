@@ -200,3 +200,171 @@ Minus. Programnya tidak error sama sekali, cuma jawabannya tidak masuk akal buat
 ### Yang mau dicoba
 
 - Lanjut ke soal berikutnya di Problem Set 8.
+
+---
+
+## 2. Cookie Jar — selesai, check50 hijau 12/12 (18 November 2026)
+
+Soalnya: membuat class `Jar` dengan `__init__`, `__str__`, `deposit`, `withdraw`, dan dua property `capacity` dan `size`. Ditambah `test_jar.py` berisi **empat atau lebih** function tes.
+
+Ini soal pertama yang memakai semua yang saya pelajari di Lecture 8 sekaligus.
+
+### Atribut tidak bisa disimpan ke nama property
+
+Percobaan pertama saya menulis `self.capacity = capacity` di dalam `__init__`, dan langsung meledak:
+
+```
+AttributeError: property 'capacity' of 'Jar' object has no setter
+```
+
+Jadi gudangnya harus bernama lain, `self._capacity`. Alasannya: `@property` **tanpa** `@capacity.setter` itu read-only, dan read-only menolak **semua** penulisan, termasuk penulisan oleh `__init__` sendiri.
+
+Ini persis yang saya temukan tanggal 11 November waktu `house`, dan persis mekanisme `shirt.size` di Pset 6 yang dulu bikin bingung kenapa tidak bisa ditimpa.
+
+Yang saya tanyakan: kalau ada setter, apakah `self.capacity = capacity` jadi boleh? Jawabannya **boleh**. Tapi itu memunculkan aturan kedua yang dulu saya campur jadi satu:
+
+```
+Aturan 1  ada setter atau tidak  ->  menentukan BOLEH menulis atau tidak
+Aturan 2  nama gudang harus beda ->  menentukan RECURSION atau tidak
+```
+
+Di soal ini setter tidak dibutuhkan sama sekali, karena spesifikasinya cuma minta `capacity` bisa **dibaca**.
+
+### isinstance
+
+Istilah baru buat saya, dipakai untuk memeriksa apakah capacity itu benar-benar `int`.
+
+```python
+isinstance(8, int)     # True
+isinstance(8, list)    # False
+isinstance(8)          # TypeError: isinstance expected 2 arguments, got 1
+```
+
+Butuh **dua** argumen, bendanya dan classnya. Logis, karena pertanyaannya memang "benda ini jenisnya itu bukan" — dua hal.
+
+Jebakan yang perlu diingat walaupun tidak diuji di soal ini:
+
+```python
+isinstance(True, int)    # True
+```
+
+Karena `bool` itu **anak** dari `int`. Inheritance lagi, persis pohon keluarga exception yang saya pelajari tanggal 16 November. `isinstance` menerima anaknya juga, bukan cuma yang persis.
+
+### Validasi deposit: yang dibandingkan isi SETELAH ditambah
+
+Versi pertama saya menulis `if n > self._capacity`. Kelihatannya benar, tapi salah.
+
+```
+kapasitas 12, isi 10, lalu deposit 5
+  n > capacity     ->  5 > 12  ->  False  ->  LOLOS, isinya jadi 15
+  n + size > cap   ->  15 > 12 ->  True   ->  ValueError, benar
+```
+
+Yang dibandingkan itu **isi sesudah ditambah**, bukan jumlah yang ditambahkan. Ini satu-satunya baris di `jar.py` yang pantas diberi komentar alasan, karena kodenya sendiri tidak menjelaskan kenapa ada `+ self._size` di situ.
+
+### Menghitung bukan menyimpan
+
+Saya sempat menulis penjumlahannya tanpa tanda sama dengan. Hasilnya dihitung lalu dibuang.
+
+Pelajaran lama tanggal 6 Oktober: `int(x)` tidak mengubah `x`. Beda dengan `cards.sort()` yang memang mengubah di tempat; penjumlahan tidak.
+
+### Property dipanggil tanpa kurung
+
+Di tes pertama saya menulis `jar.capacity(12)`, hasilnya:
+
+```
+TypeError: 'int' object is not callable
+```
+
+Bacanya: `jar.capacity` **sudah selesai** dan menghasilkan `12`. Lalu `(12)` di belakangnya mencoba memanggil angka 12 seperti function. Angka tidak bisa dipanggil.
+
+Jadi yang meledak bukan propertynya, tapi kurung yang menempel sesudahnya. Kembaran dari `print = 5` lalu `print("halo")` yang errornya sama persis.
+
+Dan saya sempat menulis `Jar.capacity` dengan J besar. Itu bertanya ke **class**, bukan ke objek — aturan kiri titik yang saya pelajari tanggal 12 November.
+
+### Import class berarti mengimpor cetakannya, bukan hasil cetakannya
+
+```
+from jar import Jar     ->  yang masuk ke absen cuma NAMA CLASSNYA
+jar = Jar()             ->  objeknya saya bikin sendiri di file tes
+```
+
+Sama persis dengan `import random` yang cuma mendaftarkan nama `random`, bukan isinya. Cetakan tidak berguna sampai dipakai mencetak.
+
+### Kode di dasar file ikut jalan saat file dipinjam
+
+Waktu masih ada baris percobaan di dasar `jar.py`, tesnya belum sempat jalan sama sekali:
+
+```
+ERROR collecting test_jar.py
+test_jar.py:1: from jar import Jar
+jar.py:43:     jar.deposit(1)
+ValueError: exceed capacity
+```
+
+Yang meledak bukan tesnya, tapi baris percobaan di dasar `jar.py` yang ikut dijalankan oleh `import`.
+
+Lalu saya perhatikan sesuatu: kalau yang ditinggal cuma `jar = Jar()` saja, `pytest` **tidak error**. Jadi aturannya perlu saya tulis lebih tepat:
+
+```
+Yang TERJADI  : SEMUA baris di dasar file ikut jalan saat dipinjam. Tanpa kecuali.
+Yang TERLIHAT : cuma yang bikin keributan.
+                raise -> error, print -> nyetak, input -> pytest menggantung
+```
+
+`jar = Jar()` tetap dijalankan, cuma dia diam. Masuk daftar lama saya: **jalan tanpa error, tapi tetap salah tempat.** Patokan yang lebih aman daripada "errornya muncul atau tidak": file yang dibuat untuk dipinjam tidak menaruh apa-apa di dasarnya, kecuali yang dibungkus penjaga `if __name__ == "__main__":`.
+
+### Tes yang saling bergantung
+
+Versi pertama `test_jar.py` saya membuat toplesnya **sekali di atas**, lalu semua tes memakai toples yang sama. Akibatnya tiap tes bergantung pada baris di atasnya dan pada urutan tes.
+
+Buktinya saya kena sendiri:
+
+```
+FAILED test_jar.py::test_invalid - Failed: DID NOT RAISE ValueError
+```
+
+Hitungannya begini:
+
+```
+kapasitas 12, isi 2 (karena ada deposit di atas)
+  deposit(12)  ->  2 + 12 = 14  ->  lebih dari 12  ->  ValueError  ->  tes lolos
+
+kalau deposit di atas dihapus, isi 0
+  deposit(12)  ->  0 + 12 = 12  ->  TIDAK lebih dari 12  ->  tidak ada ValueError
+               ->  DID NOT RAISE
+```
+
+Waktu itu saya memperbaikinya dengan menyesuaikan angkanya. Jalan, tapi itu menambal gejalanya.
+
+Perbaikan yang benar: tiap tes membuat toplesnya **sendiri di dalam functionnya**, jadi toplesnya jadi **local variable** yang lahir dan mati di dalam tes itu. Setelah dirapikan, `test_invalid` tidak perlu hitung-hitungan lagi — toplesnya kosong, jadi `deposit(13)` jelas lewat kapasitas dan `withdraw(13)` jelas lebih banyak dari nol.
+
+Dan pengulangan `jar = Jar()` di lima tempat itu **bukan** pengulangan yang perlu dibuang. Di kode biasa pengulangan itu masalah; di tes justru kemandirian.
+
+Pelajarannya sama dengan Seasons kemarin: tes yang baik tidak bergantung pada apa pun di luar dirinya. Kemarin yang di luar dirinya itu tanggal hari ini, hari ini yang di luar dirinya itu tes sebelahnya.
+
+### Soal komentar
+
+Komentar di `jar.py` saya isi dengan salinan spesifikasi soal, supaya tidak bolak-balik ganti tab waktu ngoding. Itu sah selama mengerjakan. Tapi dua catatan untuk nanti:
+
+```
+Komentar di ujung kanan baris  ->  barisnya jadi sangat panjang
+                                   lebih enak ditaruh di ATAS methodnya
+
+Komentar salinan soal          ->  menjawab "apa yang diminta"
+Komentar yang paling berguna   ->  menjawab "KENAPA kodenya begini"
+                                   yaitu hal yang tidak terbaca dari kodenya
+```
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| non-negative | tidak negatif, jadi nol ikut termasuk |
+| exceed | melebihi, melampaui |
+| collectively | secara bersama-sama, kalau digabung |
+| thoroughly | sampai tuntas, menyeluruh |
+| state | keadaan yang tersimpan di dalam objek |
+| mock | mensimulasikan, memalsukan keadaan untuk keperluan tes |
+| underlying | yang ada di bawahnya, yang mendasari |
+| rubberducking | menjelaskan masalah ke benda mati sampai salahnya kelihatan sendiri |
