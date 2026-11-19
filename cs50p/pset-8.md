@@ -197,9 +197,6 @@ Minus. Programnya tidak error sama sekali, cuma jawabannya tidak masuk akal buat
 | edge case | kasus pinggiran, kasus paling ujung yang biasanya terlupakan |
 | overloading | memberi arti baru pada tanda operator lewat dunder method |
 
-### Yang mau dicoba
-
-- Lanjut ke soal berikutnya di Problem Set 8.
 
 ---
 
@@ -368,3 +365,198 @@ Komentar yang paling berguna   ->  menjawab "KENAPA kodenya begini"
 | mock | mensimulasikan, memalsukan keadaan untuk keperluan tes |
 | underlying | yang ada di bawahnya, yang mendasari |
 | rubberducking | menjelaskan masalah ke benda mati sampai salahnya kelihatan sendiri |
+
+---
+
+## 3. CS50 Shirtificate — selesai, check50 hijau, sudah submit (19 November 2026)
+
+Soalnya: meminta nama, lalu menghasilkan **PDF** berisi gambar kaos CS50 dengan tulisan "nama took CS50" di dadanya. Pakai library `fpdf2`.
+
+**Dengan selesainya soal ini, SEMUA problem set CS50P tuntas.** Pset 0 sampai 8, sembilan problem set. Sisanya tinggal Week 9 (Et Cetera, tidak ada psetnya) dan final project.
+
+### Error pertama: font harus dipasang sebelum menulis
+
+```
+fpdf.errors.FPDFException: No font set, you need to call set_font() beforehand
+```
+
+Jelas sekali pesannya, dan ini mengajarkan satu hal soal urutan: `pdf.cell(...)` itu **menggambar**, dan menggambar butuh tahu fontnya apa. Jadi `set_font` harus dipanggil lebih dulu.
+
+Pola yang sama berlaku untuk `set_text_color`: pengaturannya berlaku untuk **semua yang digambar sesudahnya**, sampai diubah lagi. Jadi kalau judul hitam dan nama putih, `set_text_color` harus dipanggil **dua kali**, masing-masing sebelum cellnya.
+
+### Pena yang tak terlihat
+
+Ini yang paling lama bikin saya berputar. Teks keduanya tidak muncul, padahal kodenya ada.
+
+Sebabnya: `fpdf` punya semacam **pena** yang posisinya berpindah sendiri setiap kali satu cell selesai digambar. Jadi cell kedua tidak mulai dari atas halaman, tapi dari tempat pena berhenti.
+
+```
+cell pertama h=210  ->  pena turun sejauh 210 mm
+cell kedua          ->  mulai dari situ, sudah hampir di dasar halaman
+                        teksnya ada, tapi di luar area yang terlihat
+```
+
+Pengaturnya `new_y`, nilainya `"TOP"`, `"LAST"`, atau `"NEXT"`.
+
+Tapi yang akhirnya menyelesaikan masalah saya bukan itu, melainkan **mengambil alih kendalinya**:
+
+```python
+pdf.set_y(y=30)
+pdf.cell(...)      # cell ini pasti mulai di 30 mm dari atas
+```
+
+Dengan `set_y`, tiap teks punya posisi yang pasti dan tidak saling memengaruhi. Tidak perlu lagi menghitung "kalau yang di atas tingginya sekian, yang ini jatuhnya di mana".
+
+### Satuannya milimeter, bukan piksel
+
+```
+Halaman A4 = 210 mm lebar, 297 mm tinggi
+Angka Y besar  ->  lebih ke BAWAH
+Angka Y kecil  ->  lebih ke ATAS
+```
+
+Saya sempat mengira ini "rumus matematika" yang rumit. Ternyata cuma dua angka itu, sisanya coba-amati-sesuaikan.
+
+### Menengahkan itu ada rumusnya, bukan tebak-tebakan
+
+Waktu mengecilkan gambar kaos, saya menulis `x=15, w=180` dan kebetulan pas di tengah. Ternyata itu memang hitungan yang benar:
+
+```
+x = (lebar halaman − lebar gambar) ÷ 2
+x = (210 − 180) ÷ 2 = 15
+```
+
+Untuk arah tegak rumusnya sama, tinggal ganti angka halamannya:
+
+```
+y = (297 − tinggi gambar) ÷ 2
+```
+
+Tapi di kasus saya ada ganjalan: saya cuma menulis `w=180`, tingginya tidak saya sebut. Jadi tinggi gambar di kertas belum saya ketahui.
+
+### Tinggi gambar dihitung dari perbandingan aslinya
+
+Percobaan yang saya jalankan:
+
+```
+python -c "from PIL import Image; print(Image.open('shirtificate.png').size)"
+(593, 592)
+```
+
+Hampir persegi, bedanya satu piksel. Lalu hitungannya:
+
+```
+perbandingan  = tinggi_px ÷ lebar_px = 592 ÷ 593 = 0,9983
+tinggi gambar = 180 × 0,9983 = 179,70 mm
+
+y tengah = (297 − 179,70) ÷ 2 = 58,65 mm
+```
+
+Punya saya `y=70`, jadi bajunya memang sedikit di bawah titik tengah — dan itu benar, karena di atasnya ada judul yang butuh ruang.
+
+Itu sebabnya `pdf.image` cukup diberi `w` saja: dia menghitung barisnya sendiri di balik layar supaya gambarnya tidak gepeng.
+
+### Kenapa bajunya mepet waktu `w` belum ditulis
+
+Di awal saya menulis `pdf.image("shirtificate.png", x=1, y=45)` tanpa `w`, dan bajunya mepet ke garis kiri kanan. Ternyata ada sebabnya:
+
+```
+fpdf menganggap 72 piksel = 1 inci = 25,4 mm
+jadi 1 piksel = 25,4 ÷ 72 = 0,353 mm
+
+593 piksel × 0,353 = 209 mm
+```
+
+**209 dari 210 mm.** Hampir selebar kertasnya. Jadi tanpa `w`, fpdf memakai lebar aslinya, dan lebar aslinya memang hampir selebar A4.
+
+Dan yang harus saya ingat: kalau `w=593` ditulis, itu jadi 593 **milimeter**, hampir tiga kali lebar kertas. Angka di `w` itu milimeter, bukan piksel.
+
+### size itu atribut, isinya milik objeknya
+
+Saya sempat mengira `.size` itu angka tetap bawaan librarynya. Bukan. Yang tetap itu **bentuknya** — selalu tuple berisi dua angka. Isinya dibaca dari file gambarnya masing-masing.
+
+```
+jar.size      ->  jumlah cookie di toples ITU
+gambar.size   ->  ukuran gambar ITU
+```
+
+Dua-duanya bernama `size`, dua-duanya atribut, dan dua-duanya bergantung pada objek yang ditanya. Pelajaran 6 November: atribut menempel ke objek, bukan ke class.
+
+Dan `.size` **tidak mengukur** saat dipanggil. Ukurannya sudah dibaca waktu `Image.open(...)` dijalankan lalu disimpan di dalam objeknya. Itu sebabnya dia tanpa kurung.
+
+```
+tanpa kurung  (atribut)  ->  mengambil data yang SUDAH ada
+pakai kurung  (method)   ->  menyuruh mengerjakan sesuatu SEKARANG
+```
+
+### Pelajaran terbesar hari ini: cara mencari di dokumentasi
+
+Yang bikin saya lama bukan matematikanya, tapi **cara mencari**. Saya tahu mau "mengatur posisi vertikal", tapi yang saya buka malah `set_char_spacing` dan `set_stretching`. Lalu saya menyerah karena daftarnya terlalu panjang. Baru setelah disuruh `Ctrl+F` dengan huruf sumbu vertikal, `set_y` ketemu dalam hitungan detik.
+
+Patokannya satu kalimat: **cari berdasarkan apa yang mau dilakukan, bukan dengan membaca daftarnya dari atas.**
+
+Dan ada cara yang lebih cepat lagi daripada membuka situsnya, pakai alat yang sudah saya kenal sejak Figlet tanggal 13 Oktober:
+
+```python
+from fpdf import FPDF
+pdf = FPDF()
+
+for nama in dir(pdf):
+    if nama.startswith("set_"):
+        print(nama)
+```
+
+Keluar semua yang diawali `set_`, dan `set_y` menonjol sendiri. Kalau yang diingat cuma potongan katanya, saring dengan `in`:
+
+```python
+for nama in dir(pdf):
+    if "font" in nama:
+        print(nama)
+```
+
+Lalu setelah namanya ketemu, `help(pdf.set_y)` untuk melihat parameternya.
+
+```
+dir   ->  APA SAJA yang ada         (untuk MENCARI)
+help  ->  cara pakai yang satu itu  (untuk SESUDAH ketemu)
+dok.  ->  KENAPA dipakai, contoh, jebakannya
+```
+
+Urutan yang paling hemat: `dir` dulu untuk dapat namanya, `help` untuk parameternya, baru dokumentasi kalau masih ada yang janggal. Karena mencari `set_y` di dokumentasi itu satu kali lompat, sementara mencari "cara mengatur posisi vertikal" itu menyapu puluhan hasil.
+
+`dir` sendiri artinya **directory** dalam arti daftar isi — seperti papan direktori di lobi gedung, bukan folder.
+
+### Core fonts
+
+Font bawaan `fpdf` yang bisa langsung dipakai tanpa menambah file:
+
+```
+helvetica
+times
+courier
+symbol
+zapfdingbats
+```
+
+Di luar itu harus ditambahkan sendiri dengan `add_font()` beserta file fontnya. Saya pakai `courier` untuk judul dan `helvetica` untuk nama.
+
+### Import nganggur, kelima kalinya
+
+```python
+from PIL import Image, ImageOps
+```
+
+Tidak dipakai satu pun di versi akhir. Ini kali kelima pola yang sama: `import sys` nganggur tiga kali di Pset 7, `...` menggantung di Seasons, `jar = Jar()` di dasar `jar.py`, sekarang ini. Selalu sisa percobaan awal yang tidak ikut dibersihkan waktu arah kodenya berubah.
+
+### Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| explicit | disebutkan terang-terangan, tidak dibiarkan ditebak |
+| orientation | arah kertas, portrait (tegak) atau landscape (mendatar) |
+| portrait | kertas tegak, lebih tinggi daripada lebar |
+| align | perataan teks secara mendatar di dalam cell |
+| core fonts | font bawaan yang sudah tersedia tanpa perlu ditambahkan |
+| aspect ratio | perbandingan lebar dan tinggi gambar |
+| DPI | dots per inch, berapa piksel dianggap satu inci |
+| directory | daftar isi (arti `dir`), bukan folder |

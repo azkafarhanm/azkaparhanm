@@ -2614,3 +2614,69 @@ Pelajarannya: yang perlu diselamatkan bukan obrolannya, tapi **temuannya**. Obro
 - Jadikan pemanasan besok: beda TypeError dan ValueError, dan kenapa tes tidak boleh bergantung pada tes lain.
 - Jalankan ulang `pytest test_seasons.py` dengan nama file yang benar, lalu `check50` Seasons sampai hijau lagi.
 - Sisa satu soal di Pset 8: CS50 Shirtificate.
+
+---
+
+## Hari 14 – 19 November 2026
+
+Hari penutup Problem Set 8, dan sekaligus penutup seluruh problem set CS50P. Catatan Shirtificate ada di `pset-8.md`.
+
+### Kuis #20
+
+**15 dari 15, sempurna.** Dua kuis sempurna berturut-turut. Dan dua soal yang kemarin masih lepas di pemanasan — `TypeError` lawan `ValueError`, dan nama `SystemExit` — sekarang nempel.
+
+### Pemanasan
+
+Empat soal, tiga sepenuhnya benar.
+
+Nomor 1 benar soal `_capacity`, dan setelah ditanyakan lagi saya bisa menjelaskan sisanya: kalau setter ditambahkan, `self.capacity = capacity` jadi boleh dan tulisannya lewat setter, tapi nama gudangnya tetap harus beda supaya tidak recursion.
+
+Nomor 2 benar dengan angkanya sendiri. `n > capacity` itu salah karena dengan `n=5`, `size=10`, `capacity=10`, hasilnya `5 > 10` yaitu False, jadi lolos dan isinya diam-diam jadi 15.
+
+Nomor 3 benar: baris nganggur, tidak error tapi tetap tidak pantas di situ.
+
+**Nomor 4 istilahnya tertukar.** Saya menyebut masalah tes yang saling bergantung itu "deterministik". Padahal:
+
+```
+deterministik    ->  SIFAT yang diinginkan dari tes yang baik
+                     input sama, hasil selalu sama
+
+local variable   ->  NAMA mekanismenya
+                     nama yang lahir dan mati di dalam satu function
+```
+
+Jadi deterministik itu tujuannya, local variable itu caranya. Dan local variable bukan barang baru — saya sudah membuktikannya 15 November waktu `print(s.x)` meledak `AttributeError`.
+
+### Soal sertifikat
+
+Sertifikat CS50P ada dua macam, dan yang gratis itu dari CS50 sendiri, bukan dari edX. Yang edX itu *verified certificate* dan berbayar, sifatnya pilihan. Syarat yang gratis: semua problem set selesai ditambah final project.
+
+### Rencana latihan ke depan
+
+Sempat saya tanyakan apakah murojaah sebaiknya tiap hari. Kesimpulannya:
+
+```
+Tiap hari     kuis + pemanasan (ini SUDAH murojaah harian, cuma ringan)
+              + final project, walau cuma 20 menit
+
+Tiap Minggu   murojaah penuh satu pset lama
+
+Sesekali      tulis program KECIL yang belum pernah dibuat,
+              bukan mengulang yang sudah ada
+```
+
+Alasan yang membuat saya berubah pikiran soal murojaah penuh tiap hari: mengulang soal yang sudah pernah dipecahkan hasilnya menurun. Menulis ulang Fuel Gauge untuk ketiga kalinya melatih mengetiknya, bukan berpikirnya. Yang belum terlatih justru "mulai dari mana kalau tidak ada yang menuntun" — dan itu cuma terlatih lewat program baru dan final project.
+
+### Posisi sekarang
+
+```
+Pset 0 sampai 8   ->  TUNTAS semua, sembilan problem set
+Week 9 Et Cetera  ->  lecture saja, tidak ada problem setnya
+Final project     ->  tinggal ini
+```
+
+### Yang mau dicoba
+
+- Jadikan pemanasan besok: rumus menengahkan gambar, dan beda atribut lawan method pada `.size`.
+- Tonton Week 9 Et Cetera.
+- Mulai final project: jurnal olahraga di terminal, versi terkecil dulu — tanya satu baris catatan, simpan ke file, selesai.
