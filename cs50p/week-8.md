@@ -2675,8 +2675,71 @@ Week 9 Et Cetera  ->  lecture saja, tidak ada problem setnya
 Final project     ->  tinggal ini
 ```
 
+
+---
+
+## Hari 15 – 20 November 2026
+
+Hari pendek. Banyak tugas kuliah, jadi tidak ada lecture sama sekali — cuma kuis dan pemanasan.
+
+### Kuis #21
+
+Putaran minggu lama kembali ke awal, Week 0 + Week 4. Salah satu nomor: **nomor 6, soal `align`**.
+
+Yang saya tertukar: `align` itu perataan **mendatar DI DALAM cell**, bukan posisi cell di halaman.
+
+```
+align="C"      ->  teks rata tengah di dalam cellnya (mendatar)
+set_y(y=30)    ->  cellnya ditaruh 30 mm dari atas (tegak)
+```
+
+Ini memang dua hal yang sempat saya campur kemarin, waktu saya bertanya ke Duck "eksplisitnya ini apa, apakah center atau top".
+
+### Pemanasan
+
+Empat soal dari materi Shirtificate kemarin. Nomor 1 dan 5 benar, tiga lainnya ada yang perlu dibetulkan — dan dua di antaranya kesalahan hitung, bukan kesalahan paham.
+
+**Nomor 2 — rumusnya benar, kurungnya hilang.** Ini bukan soal sepele karena akan saya ketik jadi kode:
+
+```
+yang saya tulis   lebar halaman - lebar gambar / 2
+yang Python baca  lebar halaman - (lebar gambar / 2)
+                  210 - 90 = 120        SALAH
+
+yang benar        (lebar halaman - lebar gambar) / 2
+                  (210 - 180) / 2 = 15  BENAR
+```
+
+Bagi dan kali dikerjakan lebih dulu daripada tambah dan kurang, jadi kurungnya wajib.
+
+**Nomor 3 — satu kata yang mengubah hasilnya total.** Saya bilang "tinggi piksel **dikurang** lebar piksel". Bukan dikurang, tapi **dibagi**:
+
+```
+yang saya sebut   592 - 593 = -1       lalu x 180 = -180
+yang benar        592 / 593 = 0,9983   lalu x 180 = 179,70
+```
+
+Pembagian yang menghasilkan **perbandingan**. Pengurangan cuma menghasilkan selisih, dan selisih tidak berguna di sini.
+
+Dan satu bagian yang belum saya jawab: kenapa perlu `.size` untuk arah tegak tapi tidak untuk mendatar. Jawabannya karena **lebar gambar saya yang tentukan sendiri** lewat `w=180`, jadi angkanya sudah di tangan. Tingginya tidak saya tentukan — fpdf yang menghitungnya diam-diam — jadi saya harus menghitung ulang angka itu kalau mau dipakai.
+
+**Nomor 4 — asal isinya salah, dan satu istilah tertukar.**
+
+Saya bilang isi `.size` itu "sudah tercetak dari dalam classnya, dipaku di dalam objeknya". Yang benar: isinya **dibaca dari filenya** waktu `Image.open(...)` dijalankan, lalu disimpan di objek itu. Kalau datangnya dari class, semua gambar akan punya angka yang sama.
+
+```
+Image.open("shirtificate.png").size   ->  (593, 592)
+Image.open("fotoku.jpg").size         ->  angka lain
+```
+
+Satu class, dua objek, dua isi berbeda.
+
+Dan saya menyebutnya **special method** — itu salah. Special method itu yang namanya berpagar dunder seperti `__init__`, `__str__`, `__add__`. `.size` bukan itu, dia **property**, persis seperti `capacity` dan `size` di `Jar`. Dugaan saya bahwa dia property sudah tepat, cuma namanya yang tertukar.
+
+**Nomor 5 benar seluruhnya**, termasuk pembagian tugas `dir` untuk tahu namanya, `help` untuk tahu gunanya, dan dokumentasi untuk celah serta jebakannya.
+
 ### Yang mau dicoba
 
-- Jadikan pemanasan besok: rumus menengahkan gambar, dan beda atribut lawan method pada `.size`.
-- Tonton Week 9 Et Cetera.
+- Jadikan pemanasan besok: urutan operasi hitung (kurung wajib di rumus menengahkan), dan beda special method lawan property.
+- Tonton Week 9 Et Cetera, 10–15 menit lalu langsung latihan kecil.
 - Mulai final project: jurnal olahraga di terminal, versi terkecil dulu — tanya satu baris catatan, simpan ke file, selesai.
