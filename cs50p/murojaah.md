@@ -15,6 +15,7 @@ Jadwal: setiap Minggu jam 05.20.
 | 7 | CS50 P-Shirt (Pset 6) | 4 Nov | 90 menit | check50 13/13 |
 | 8 | Fuel Gauge (Pset 3) | 8 Nov | 60 menit | check50 15/15 |
 | 9 | Einstein (Pset 0) | 15 Nov | 60 menit | check50 4/4 |
+| 10 | File Extensions (Pset 1) | 22 Nov | 90 menit | check50 14/14 |
 
 ---
 
@@ -465,3 +466,146 @@ Ini tema yang sama yang terus muncul sejak Week 6: **semantics**. `student[0]` l
 - `/` mengubah hasil jadi float, dan float besar dicetak sebagai notasi ilmiah yang pasti ditolak check50. Kalau soalnya cuma butuh perkalian, jangan pakai pembagian.
 - int di Python tidak punya batas panjang, float punya. Itu sebabnya OverflowError muncul di pembagian, bukan di perkalian.
 - Memecah jadi beberapa baris bukan sekadar lebih panjang — tiap variabel jadi bisa diberi nama yang jujur.
+
+---
+
+## Murojaah 10: File Extensions, ditulis ulang dari layar kosong (22 November 2026)
+
+Waktu mengerjakan: 90 menit
+Hasil: check50 hijau semua (14/14)
+Aturan: tidak membuka kode lama, Copilot dimatikan. Boleh buka dokumentasi. Di akhir saya bertanya ke CS50 Duck waktu dua tes tetap merah.
+
+Soal ini pertama kali saya kerjakan 23 September, dan belum pernah dimurojaah.
+
+### Pemanasan sebelum mulai
+
+Tiga pertanyaan konsep, dan dua di antaranya meleset:
+
+| Yang ditanya | Jawaban saya | Koreksinya |
+|---|---|---|
+| Aturan desimal `:.1f` | benar, di dalam curly braces | Nama errornya lupa. Ada dua kasus: di dalam f-string tapi di luar braces tidak error, cuma ikut tercetak jadi tulisan; di luar f-string sama sekali baru SyntaxError: invalid decimal literal |
+| `c.isupper` tanpa kurung | sempat mengira isupper MENGUBAH jadi huruf besar | isupper cuma BERTANYA, hasilnya True atau False. Yang mengubah itu upper |
+| Urutan if/elif di Bank | benar, yang spesifik dicek dulu | Tapi alasannya keliru: saya kira beda if dan elif itu soal satu atau banyak perbandingan. Yang benar, deretan if/elif berhenti di syarat PERTAMA yang True, jadi urutan berpengaruh cuma kalau satu input memenuhi lebih dari satu syarat |
+
+Untuk `c.isupper` tebakan saya dengan `c = "a"`:
+
+```
+c.isupper()        ->  False
+c.isupper          ->  keterangan method dan alamat memori
+bool(c.isupper)    ->  True
+```
+
+Ketiganya benar. Kesimpulannya: tanpa kurung, method cuma disebut dan selalu dianggap True, jadi semua huruf kena garis bawah (name jadi _n_a_m_e).
+
+### Awalnya murni dari ingatan
+
+Bagian awal saya kerjakan tanpa bertanya apa pun, dan yang paling melelahkan justru membaca error satu per satu. Tapi dari situ perbaikannya datang. Urutan error yang saya tabrak di `endswith` saja ada empat:
+
+```
+AttributeError: 'list' object has no attribute 'endswith'
+TypeError: endswith expected at least 1 argument, got 0
+TypeError: endswith first arg must be str or a tuple of str, not list
+NameError: name 'i' is not defined
+```
+
+Yang pertama karena saya menaruh daftar ekstensi di variabel yang sama dengan nama filenya. Yang terakhir karena saya menulis `exstension[i]` padahal tidak ada loop, jadi `i` tidak pernah ada.
+
+### Kesalahan terbesar: mengira split butuh lebih dari satu penampung
+
+Ini yang paling membuka. Selama ini kalau ada `split` saya otomatis menulis dua variabel di sebelah kiri:
+
+```python
+command, name = file_name.split(".")
+```
+
+Ternyata itu **kebetulan**, bukan aturan. Di soal-soal lama potongannya memang selalu pas dua. Begitu masuk `test.txt.pdf` potongannya jadi tiga, dan langsung meledak:
+
+```
+ValueError: too many values to unpack (expected 2, got 3)
+```
+
+Dan sebaliknya, `cat` tanpa titik cuma menghasilkan satu potongan:
+
+```
+ValueError: not enough values to unpack (expected 2, got 1)
+```
+
+Jadi aturan sebenarnya: jumlah penampung harus **sama persis** dengan jumlah potongan. Satu penampung sudah cukup, dan isinya jadi list utuh. Saya buktikan sendiri di REPL:
+
+```
+>>> file = "azka.parhan"
+>>> file.split(".")
+['azka', 'parhan']
+>>> file = file.split(".")
+>>> file[1]
+'parhan'
+```
+
+Dan `split` tidak mengubah string aslinya, karena string itu immutable. Dia menghasilkan list BARU, jadi kalau tidak ditampung hasilnya hilang. Ini pelajaran lama yang bentuknya beda: sama dengan `int(x)` yang tidak mengubah `x`, dan `sorted` yang hasilnya harus dipakai.
+
+Untuk mengambil ekstensi terakhir, indeks negatif `[-1]` yang dipakai, bukan `[1]` — karena jumlah potongannya tidak pasti.
+
+### Dua tes merah dan sebabnya
+
+| Tes | Hasil saya | Sebabnya |
+|---|---|---|
+| plain.txt | application/txt | Saya gabungkan .txt dengan .pdf dan .zip, padahal .txt itu text/plain, bukan keluarga application |
+| test.txt.pdf | Traceback | split menghasilkan tiga potongan, penampungnya dua |
+
+Kesalahan yang pertama bukan kesalahan Python, tapi kesalahan membaca soal: saya menebak polanya sendiri padahal tipe MIME itu daftar yang sudah ditentukan.
+
+### Kurung tidak membuat tuple, komanya yang membuat
+
+Setelah hijau, baru ketahuan dua baris saya menyesatkan:
+
+```python
+elif file_name.endswith((".zip")):
+elif file_name.endswith(".txt",):
+```
+
+Yang pertama kelihatan seperti tuple padahal isinya string biasa, karena tidak ada koma. Yang kedua komanya berada di panggilan function, bukan di dalam tuple, jadi itu cuma pemisah argumen yang kebetulan boleh menggantung — hasilnya tetap satu string.
+
+```
+type((".zip"))     ->  str
+type((".zip",))    ->  tuple
+```
+
+Ini catatan saya sendiri dari Murojaah 1 yang muncul lagi di soal yang sama sekali lain: yang membuat tuple itu KOMANYA, bukan kurungnya. Kurung jadi dua cuma kalau memang butuh tuple di dalam panggilan function — satu kurung untuk functionnya, satu untuk tuplenya.
+
+### Membandingkan versi lama dan versi murojaah
+
+Kesimpulan yang tidak saya duga: **versi lama lebih baik strukturnya.** Versi murojaah menambah pekerjaan yang tidak perlu.
+
+| | Versi lama (23 Sep) | Versi murojaah (22 Nov) |
+|---|---|---|
+| Nama variabel | `extensions` padahal isinya nama file utuh | `file_name`, jujur |
+| jpg dan jpeg | dua kali endswith disambung or | satu tuple, lebih ringkas |
+| Cabang lain | langsung mencetak jawabannya | split lalu ambil [-1] |
+| Risiko error | tidak ada unpack sama sekali | kena ValueError dua kali |
+
+Jadi yang saya menangkan di versi baru itu penamaannya, yang saya kalahkan strukturnya.
+
+Sebabnya saya paham sekarang: pengetahuan baru saya (tuple, split, indeks negatif) **terpakai di tempat yang tidak membutuhkannya**. Begitu `endswith(".png")` sudah benar, saya SUDAH TAHU jawabannya `image/png` — tidak perlu memotong string untuk mencari tahu sesuatu yang sudah diketahui. Pertanyaan yang menyelamatkan: apa yang sudah saya ketahui di titik ini.
+
+Dan satu aturan baru yang saya dapat waktu mau menyatukan cabang:
+
+```
+Boleh disatukan    kalau HASILNYA sama        .jpg dan .jpeg -> image/jpeg
+Tidak boleh        kalau hasilnya beda        .pdf dan .zip, .gif dan .png
+```
+
+Saya sempat mau menggabungkan zip dengan pdf karena kodenya kelihatan identik. Ternyata kodenya identik justru karena saya menyuruh program menghitung ulang jawaban yang sudah diketahui. Begitu jawabannya dicetak langsung, kemiripan itu hilang sendiri dan tidak ada yang redundant. Redundant itu kalau hasilnya sama, bukan kalau kodenya mirip.
+
+### Versi akhir setelah dirapikan
+
+Tiga perbaikan: cabang gif dan png dipecah jadi dua (hasilnya memang beda) sehingga split tidak terpakai sama sekali, koma menggantung di .txt dihapus, dan spasi di ujung "application/octet-stream " dibuang. Sesudah itu semua cabang berbentuk sama: periksa lalu cetak, tidak ada satu pun yang bekerja dengan cara berbeda dari tetangganya.
+
+### Yang saya pelajari
+
+- Jumlah penampung harus sama persis dengan jumlah potongan `split`. Satu penampung sah, isinya list.
+- `split` menghasilkan list baru dan tidak menyentuh string aslinya.
+- `[-1]` dipakai kalau jumlah potongannya tidak pasti.
+- Kurung tidak membuat tuple, komanya yang membuat.
+- Menyatukan cabang dinilai dari HASILNYA, bukan dari kemiripan kodenya.
+- Memakai nama yang sama untuk string lalu untuk list (`file_name = file_name.split(".")`) bikin pembaca harus menelusuri ke atas untuk tahu isinya apa sekarang. Lebih baik nama baru.
+- Murojaah tidak selalu menghasilkan versi yang lebih baik. Alat baru bikin gatal ingin dipakai, dan kali ini terpakai di tempat yang tidak membutuhkannya. Tapi sekarang saya tahu KENAPA bentuk yang lama itu yang dipilih.
