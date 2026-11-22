@@ -457,3 +457,59 @@ Satu jebakan kata: David bilang "a set of students", padahal di kodenya `student
 
 - Lanjut Lecture 9 dari menit 16, materi berikutnya konstanta.
 - Jalankan ulang percobaan `set` dan `global` besok pagi dari ingatan, tanpa membuka catatan ini.
+
+---
+
+## Hari 2 – 22 November 2026
+
+Hari Minggu dan banyak kerjaan, jadi **lecture tidak dilanjut sama sekali**. Masih berhenti di menit 16. Yang jalan hari ini: Murojaah 10 (dicatat terpisah di `murojaah.md`), pemanasan, dan Kuis Harian #23.
+
+### Pemanasan murojaah: set dan global
+
+Lima pertanyaan dari materi kemarin, dijawab dari ingatan tanpa buka catatan. **Dua benar, tiga meleset.**
+
+| No | Yang ditanya | Hasil |
+|---|---|---|
+| 1 | Kenapa `s[0]` error tapi `for` jalan | Salah. Saya malah menjawab soal nomor 2, bicara soal membandingkan |
+| 2 | Kenapa `{1, 1.0, True}` jadi satu | Benar, patokannya hasil `==` |
+| 3 | Sebab `UnboundLocalError` dan letaknya | Lupa total |
+| 4 | Beda `NameError` dan `UnboundLocalError` | Separuh. NameError benar, yang satunya belum kena intinya |
+| 5 | Dua alasan `global` dihindari | Satu dari dua. Yang susah dilacak benar, yang susah dites lupa |
+
+Koreksi nomor 1: set **tidak menyimpan urutan**, jadi tidak ada "yang ke-0" untuk ditunjuk. Tapi untuk melewati semuanya satu per satu tidak perlu tahu siapa duluan, makanya `for` tetap jalan. Dua kemampuan yang berbeda:
+
+```
+iterable        bisa dilewati satu per satu pakai for    set: BISA
+subscriptable   bisa ditunjuk posisinya pakai [0]        set: TIDAK
+```
+
+Koreksi nomor 3 dan 4, dan ini yang paling perlu diulang: yang bikin error itu **tanda sama dengannya sendiri**, bukan "mengakses variabel luar". Begitu ada `=`, Python memutuskan nama itu lokal untuk seluruh isi function, jadi yang dibaca di sebelah kanan itu kotak lokal yang masih kosong. Patokan menebak errornya:
+
+```
+ada  =  di function    ->  UnboundLocalError (namanya ADA sebagai lokal, belum diisi)
+tidak ada  =           ->  NameError (namanya tidak ada di mana pun)
+```
+
+Koreksi nomor 5: alasan kedua **susah dites**, dan itu percobaan yang kemarin saya jalankan sampai tiga tahap. `test_dua` keluar 150 padahal menyetor 50, lalu tiba-tiba benar begitu `test_satu` dihapus.
+
+Dua kata saya yang diperbaiki:
+
+- "per huruf dibandingkan" — bukan. Python membandingkan string **utuh**, hasilnya satu True atau False. Ini jawaban David ke mahasiswa kemarin, *it would compare the strings*. Kalau saya yang memaksa per huruf hasilnya bisa menyesatkan: `"Slytherin" == "Slytheron"` False, tapi `"Slytherin"[0] == "Slytheron"[0]` True.
+- "membandingkan variabel saldo" di nomor 3 — bukan membandingkan tapi **membaca**. Tidak ada perbandingan di `saldo + 50`, yang gagal itu pengambilan nilainya.
+
+### Kuis Harian #23
+
+17 soal, lebih banyak dari biasa karena antrean ulangannya menumpuk: tiga dari kuis #22, tiga dari pemanasan tadi, dan dua dari murojaah pagi. Giliran Hari ke-3: Week 2 dan Week 6.
+
+Hasilnya **15/17**, dan yang salah dua-duanya kosakata — **konsepnya bersih semua**, termasuk enam soal ulangan yang kemarin lepas.
+
+| No | Kata | Koreksinya |
+|---|---|---|
+| 2 | whet your appetite | Soal kebalikan. whet = mengasah (selera), whip up = mengocok, bikin cepat-cepat. Sama-sama diawali wh dan sama-sama dari dapur, makanya tertukar |
+| 4 | exhaustive | Lengkap sampai tuntas, bukan melelahkan. Akarnya memang sama dengan exhausted (exhaust = menguras habis), tapi arahnya beda: exhausted itu ORANGNYA yang terkuras, exhaustive itu BAHASANNYA yang dikuras habis |
+
+Yang nempel setelah diulang: `if` terpisah lawan `elif`, `match` yang tidak bisa `>` dan `<`, "diam artinya lulus" termasuk jebakan `n + n` yang lolos di angka 2, iterable lawan subscriptable, sebab `UnboundLocalError`, `isupper()` lawan `upper()`, dan koma yang membuat tuple.
+
+### Yang mau dicoba
+
+- Lanjut Lecture 9 dari **menit 16**, materi berikutnya konstanta.
