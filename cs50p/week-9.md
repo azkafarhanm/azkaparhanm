@@ -513,3 +513,254 @@ Yang nempel setelah diulang: `if` terpisah lawan `elif`, `match` yang tidak bisa
 ### Yang mau dicoba
 
 - Lanjut Lecture 9 dari **menit 16**, materi berikutnya konstanta.
+
+---
+
+## Hari 3 – 23 November 2026
+
+Lanjut Lecture 9 dari menit 16 sampai sekitar **menit 26**. Selesai bagian `global` dan masuk **konstanta**. Pagi: Kuis Harian #24 dan pemanasan dari Murojaah 10.
+
+### Kuis Harian #24
+
+17 soal, giliran Hari ke-4: Week 3 dan Week 0, plus ulangan dari #22, #23, dan pemanasan kemarin. Hasilnya **15/17**.
+
+Yang salah **dua-duanya ulangan dari kemarin**, jadi salah dua kali berturut-turut: `whet your appetite` dan `exhaustive`. Semua soal konsep benar, termasuk enam soal ulangan.
+
+Karena penjelasan arti saja jelas tidak cukup, patokannya diganti jadi yang mekanis:
+
+```
+exhausted    akhiran -ed   kena pada ORANGNYA   -> saya kelelahan
+exhaustive   akhiran -ive  sifat BENDANYA       -> daftarnya lengkap
+```
+
+Pola yang sama dengan `bored` (saya bosan) lawan `boring` (filmnya membosankan). Pertanyaan pengujinya: **siapa yang terkuras?**
+
+```
+whet   ada h    mengasah   (whetstone = batu asah)
+wet    tanpa h  basah
+```
+
+Jadi yang dibayangkan **pisau diasah**, bukan air.
+
+### Pemanasan murojaah: File Extensions
+
+Lima pertanyaan dari Murojaah 10, dijawab dari ingatan. **Lima-limanya benar**, termasuk nomor 5 yang paling panjang (perbandingan versi lama dan versi murojaah, lengkap sampai dua hal yang bisa diambil dari versi baru).
+
+Dua tambahan kecil:
+
+- `os.path.splitext("test.txt.pdf")` menghasilkan `('test.txt', '.pdf')` — ekstensinya **sudah termasuk titiknya**, beda dengan `split(".")[-1]` yang menghasilkan `pdf` tanpa titik.
+- Untuk nomor 3, kalimat penguncinya: `file` tetap **string**, dan list hasil `split` langsung hilang karena tidak ada yang memegangnya. Sebabnya string itu immutable, jadi `split` tidak punya cara mengubahnya di tempat.
+
+---
+
+## Shadowing
+
+Pertanyaan mahasiswa: kalau ada variabel global, lalu di dalam function ada variabel **bernama sama**, apa yang terjadi?
+
+Jawab David: `the latter will shadow the former` — yang belakangan (di dalam function) **menutupi** yang duluan (yang global).
+
+```
+shadow        menutupi sampai yang di bawahnya tidak terlihat
+the former    yang disebut duluan    -> global
+the latter    yang disebut belakang  -> yang di dalam function
+```
+
+Ini persis percobaan yang saya jalankan sendiri kemarin:
+
+```python
+saldo = 100
+
+def tambah():
+    saldo = 50
+    print(saldo)   # 50
+
+tambah()
+print(saldo)       # 100
+```
+
+Jadi istilah resmi dari yang kemarin saya sebut "kotak baru terpisah" itu **shadowing**, dan istilah ini dipakai di banyak bahasa lain juga. Yang global **tertutupi, bukan terhapus dan bukan berubah** — begitu keluar dari function, bayangannya hilang.
+
+Yang perlu diwaspadai: shadowing **tidak error dan tidak ada peringatan**. Kalau saya sebenarnya bermaksud mengubah yang global tapi lupa menulis `global`, programnya jalan mulus dan diam-diam tidak terjadi apa-apa. Daftar "salah tanpa error" lagi.
+
+Patokan David: `the rule of thumb is, just don't do that` — jangan memberi nama yang sama. Bukan karena salah, tapi karena nanti saya sendiri yang bingung membaca kode saya.
+
+## global sebenarnya lokal terhadap FILE
+
+Ini yang paling membuka hari ini. David bilang variabel global di Python itu `technically local` juga — lokal terhadap **filenya** (module), bukan terhadap seluruh program.
+
+Percobaan dua file:
+
+```python
+# bank.py
+balance = 100
+```
+
+```python
+# utama.py
+import bank
+print(balance)      # NameError: name 'balance' is not defined
+print(bank.balance) # 100, ini yang benar
+```
+
+Ini **aturan absen** yang saya rumuskan sendiri di Week 4: nama yang tepat sesudah `import` itulah satu-satunya yang masuk ke absen file saya. `import bank` cuma mendaftarkan nama `bank`, tidak membawa isinya.
+
+Tingkatannya:
+
+```
+lokal terhadap function    hilang begitu function selesai
+"global" (file/module)     terlihat semua function DI FILE ITU
+benar-benar global         TIDAK ADA di Python
+```
+
+Jadi kata `global` itu agak menipu namanya. Yang lebih tepat: **module-level variable**.
+
+### Titik bukan cuma untuk class
+
+Pertanyaan saya: `bank.balance` itu kan bentuk pemanggilan class, kenapa variabel biasa juga begitu?
+
+Ternyata titik artinya cuma satu: **ambil yang ada di dalamnya**. Yang di sebelah kiri bisa apa saja. Dan saya sudah memakainya untuk variabel sejak Week 4 tanpa sadar — `sys.argv` itu variabel (list), bukan method, makanya tanpa kurung.
+
+| Bentuk | Isinya | Kurung |
+|---|---|---|
+| `random.choice()` | method milik module | pakai |
+| `sys.argv` | variabel milik module | tanpa |
+| `math.pi` | konstanta milik module | tanpa |
+| `jar.deposit()` | method milik objek | pakai |
+| `jar.size` | property milik objek | tanpa |
+
+Aturan lama tetap berlaku: **kurung berarti dipanggil, tanpa kurung berarti diambil isinya.**
+
+Yang baru saya tahu: yang di-import itu bukan cuma function. Satu file bisa berisi variabel, function, dan class sekaligus, dan ketiganya bisa diambil dari luar. `from datetime import date` itu contohnya — `date` itu **class**, makanya `date(1998)` bentuknya sama dengan `Student("Harry")`.
+
+Koreksi kecil: "langsung dieksekusi" itu kurang tepat. Yang dieksekusi itu **filenya**, dan cuma **sekali**, saat `import` dijalankan. Setelah itu `bank.balance` cuma membaca. Ini yang saya buktikan 17 November waktu `python utama.py` mencetak dua baris.
+
+## Kenapa global dihindari, versi David
+
+Alasannya sama persis dengan yang saya simpulkan sendiri kemarin **sebelum menontonnya**:
+
+- `things can get messy quickly` — cepat berantakan.
+- `less obvious quickly exactly where your information is stored` — jadi tidak jelas lagi di mana datanya sebenarnya disimpan, sebagian di atas file, sebagian di dalam function.
+- Patokannya: `use global variables sparingly`, pakai seperlunya saja.
+
+Dan jalan keluar yang dia tunjukkan ternyata **class** — `self._balance` menggantikan variabel global. Bagian ini bukan materi baru buat saya, isinya persis Cookie Jar:
+
+```python
+class Account:
+    def __init__(self):
+        self._balance = 0
+
+    @property
+    def balance(self):
+        return self._balance
+
+    def deposit(self, n):
+        self._balance += n
+
+    def withdraw(self, n):
+        self._balance -= n
+```
+
+Yang baru cuma **konteksnya**: class dipakai untuk menggantikan global.
+
+Alasan `_balance` juga diulang David dengan kalimat yang pas: `to indicate that it's private, even though that's not enforced by Python`, dan `just a visual clue to myself`. Itu yang saya catat 13 November dengan kalimat saya sendiri — **`_house` itu rambu, bukan gembok**.
+
+Sempat ada momen menebak: di transkrip menit 19.43 tertulis `self.balance minus equals n` tanpa garis bawah. Tebakan saya kalau benar begitu errornya `AttributeError: property 'balance' has no setter`, karena penulisan ke nama property selalu lewat setter — persis yang saya tabrak di `__init__` Cookie Jar. Ternyata di kodenya tetap `self._balance`, jadi transkrip YouTube-nya yang salah dengar.
+
+```
+self._balance -= n    langsung ke gudang, AMAN
+self.balance  -= n    lewat property, butuh setter, MELEDAK kalau tidak ada
+```
+
+## Konstanta
+
+Konstanta = variabel yang **nilainya tidak dimaksudkan untuk diubah**.
+
+```
+variabel     isinya berubah-ubah selama program jalan
+konstanta    ditetapkan sekali, tidak diubah
+```
+
+Di Python ditulis **HURUF BESAR SEMUA**, tapi Python **tidak memaksakannya**:
+
+```python
+JUZ = 30
+JUZ = 31
+print(JUZ)   # 31, tanpa peringatan apa pun
+```
+
+Jadi huruf besar itu rambu, bukan gembok — pola yang sama dengan `_balance`:
+
+```
+_balance    garis bawah  ->  "jangan disentuh dari luar"
+JUZ         huruf besar  ->  "jangan diubah"
+_           garis bawah  ->  "isinya tidak saya pakai"
+```
+
+Ketiganya `you're on the honor system`.
+
+### Bandingkan dengan const di JavaScript
+
+Saya pernah belajar JavaScript dan di sana `const` benar-benar tidak bisa diubah. Jadi bedanya:
+
+```
+JavaScript   const JUZ = 30; lalu JUZ = 31;   ->  TypeError, DITOLAK
+Python       JUZ = 30        lalu JUZ = 31;   ->  jalan, tanpa peringatan
+```
+
+Tapi ada jebakan di `const` JavaScript yang bentuknya **persis temuan tuple saya 6 November**:
+
+```javascript
+const daftar = [1, 2, 3];
+daftar = [4, 5, 6];      // DITOLAK
+daftar.push(4);          // BOLEH
+```
+
+Yang dikunci itu **slot namanya**, bukan isi barangnya. Sama dengan list di dalam tuple yang tetap bisa diubah. Satu pola, dua bahasa.
+
+### Kenapa konstanta dianggap bagus
+
+`it allows you to program defensively` — menulis kode dengan berjaga-jaga, mengantisipasi kecerobohan sejak awal. Supaya kalau suatu saat saya atau orang lain tidak sengaja mengubah nilainya, ketahuan.
+
+Dan praktiknya: angka yang dipakai di tengah kode dinaikkan ke atas file.
+
+```python
+MEOWS = 3
+
+for _ in range(MEOWS):
+    print("meow")
+```
+
+Istilahnya `bubble up` dan `surface it` — naik seperti gelembung, dimunculkan ke permukaan. Gambaran yang sama dengan **propagate** waktu error merambat naik mencari `except`.
+
+Alasan David yang paling jujur: `clearer to colleagues, and frankly, me tomorrow after I've forgotten what I did today`. Alasan yang sama dengan kenapa catatan ini saya tulis.
+
+Dan `_` pada `for _ in range(3)` itu nama variabel biasa, tapi kesepakatannya berarti "isinya tidak saya pakai". Rambu lagi.
+
+## Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| shadow | menutupi sampai yang di bawahnya tidak terlihat |
+| the former / the latter | yang disebut duluan / yang disebut belakangan |
+| rule of thumb | patokan praktis dari pengalaman, bukan aturan baku |
+| frowned upon | tidak disukai, dipandang kurang pantas (frown = mengerutkan dahi) |
+| messy | berantakan, semrawut |
+| sparingly | secukupnya saja, sehemat mungkin |
+| enforced | dipaksakan, ditegakkan |
+| clue | petunjuk |
+| confines | batas, lingkup (`in the confines of this class`) |
+| manipulate | mengotak-atik, mengubah nilainya. Bukan menipu |
+| encapsulate | membungkus jadi satu kemasan sekaligus menyembunyikan isinya (dari capsule) |
+| fine-grained | butirannya halus, kendali sampai ke detail kecil (grain = butir) |
+| coarse-grained | butirannya kasar, kendali garis besar saja |
+| tend to | cenderung |
+| program defensively | menulis kode dengan berjaga-jaga |
+| bubble up / surface it | naikkan ke atas, munculkan ke permukaan |
+
+Catatan: `abstraction` dan `encapsulation` bedanya tipis dan sering dipakai bergantian. Patokan saya: **abstraction** fokus ke yang tidak perlu dilihat, **encapsulation** fokus ke yang dijadikan satu paket.
+
+Dan satu keluarga kata pelunak yang dipakai David terus: `tend to`, `generally speaking`, `rule of thumb`, `to some extent`. Semuanya cara bilang "biasanya begini, tapi ada pengecualian". Berguna untuk komentar kode bahasa Inggris — jangan menulis lebih mutlak daripada yang diyakini.
+
+## Yang mau dicoba
+
+- Lanjut Lecture 9 dari **menit 26**. Materi berikutnya kemungkinan type hints dan docstring.
