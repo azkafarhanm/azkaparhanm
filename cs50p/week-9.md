@@ -764,3 +764,237 @@ Dan satu keluarga kata pelunak yang dipakai David terus: `tend to`, `generally s
 ## Yang mau dicoba
 
 - Lanjut Lecture 9 dari **menit 26**. Materi berikutnya kemungkinan type hints dan docstring.
+
+---
+
+## Hari 4 – 24 November 2026
+
+Lanjut Lecture 9 dari menit 26 sampai sekitar **menit 37**. Selesai konstanta, masuk **class variable**, lalu **type hints** dan **mypy**. Pagi: Kuis Harian #25 dan pemanasan.
+
+### Kuis Harian #25
+
+16 soal, giliran Hari ke-5: Week 4 dan Week 1. Hasilnya **14/16**.
+
+Kabar bagusnya: `whet your appetite` dan `exhaustive` yang dua kali berturut-turut salah **akhirnya nempel**. Patokan mekanis yang dipakai:
+
+```
+-ed   kena pada ORANGNYA      exhausted  -> saya kelelahan
+-ive  sifat BENDANYA          exhaustive -> daftarnya lengkap
+whet  ada h, dari whetstone (batu asah)  -> mengasah
+wet   tanpa h                            -> basah
+```
+
+Yang salah dua, dan dua-duanya konsep:
+
+| No | Materi | Koreksinya |
+|---|---|---|
+| 9 | randint inclusive | Saya SUDAH tahu ujung belakangnya ikut, yang saya kira tidak ikut malah ujung DEPANnya |
+| 12 | Pythonic is_even | Yang benar `return n % 2 == 0` saja |
+
+Untuk nomor 9 koreksinya jadi lebih tajam dari yang saya kira:
+
+```
+randint(1, 5)   DUA ujungnya ikut: 1 sampai 5
+range(1, 5)     awalnya ikut, akhirnya TIDAK: 1, 2, 3, 4
+```
+
+Jadi yang pernah dibuang itu **selalu yang belakang**, tidak pernah yang depan. Tidak ada bentuk yang membuang angka depan.
+
+Untuk nomor 12, kuncinya satu pertanyaan: `n % 2 == 0` itu sudah menghasilkan apa? Dibuktikan:
+
+```python
+print(n % 2 == 0)         # True
+print(type(n % 2 == 0))   # <class 'bool'>
+```
+
+Hasilnya **sudah** boolean. Menulis `if ...: return True else: return False` sama dengan bertanya "kalau True, kembalikan True". Ini pola yang sudah saya pakai sendiri waktu merapikan NUMB3RS jadi `return bool(...)`.
+
+### Pemanasan murojaah
+
+Lima pertanyaan dari materi kemarin (shadowing, global module-level, titik, konstanta, dua alasan global dihindari). **Lima-limanya benar.**
+
+---
+
+## Class variable
+
+`MEOWS = 3` ditulis di dalam class, di luar method. Saya sempat menyebutnya "global variable di dalam class" — **salah istilah**, ini **class variable**, dan nama itu sudah saya pelajari 15 November di `hat.py`.
+
+```python
+class Cat:
+    MEOWS = 3
+
+    def meow(self):
+        for _ in range(Cat.MEOWS):
+            print("meow")
+```
+
+Tiga tingkat yang sekarang lengkap:
+
+| Ditulis di mana | Namanya | Dipanggil |
+|---|---|---|
+| Di dalam function | variabel lokal | langsung |
+| Di dalam class, di luar `__init__` | class variable | `Cat.MEOWS` |
+| Di dalam `__init__` pakai `self.` | instance variable | `cat.nama` |
+| Di luar semua, tingkat file | "global" (module-level) | `bank.balance` |
+
+### self.MEOWS juga jalan, tapi David memilih Cat.MEOWS
+
+Percobaan saya, mengganti `Cat.MEOWS` jadi `self.MEOWS`:
+
+```python
+def meow(self):
+    for _ in range(self.MEOWS):
+        print("meow")
+```
+
+**Jalan.** Kalau Python tidak menemukan nama itu di objeknya, dia naik mencari ke classnya.
+
+Saya langsung menghubungkannya dengan error yang merambat naik mencari `except`, dan itu memang pola yang sama — "cari ke atas sampai ketemu". Bedanya apa yang dicari:
+
+```
+error     mencari PENANGKAP (except), lewat rantai pemanggilan
+atribut   mencari NAMA, dari objek naik ke class
+super()   mencari kode INDUK, naik satu tingkat
+```
+
+Lalu kenapa David tetap menulis yang lebih panjang? Ada dua alasan.
+
+**1. Kejelasan.** `Cat.MEOWS` mengatakan "ini milik class, sama untuk semua kucing". `self.MEOWS` kelihatan seperti milik kucing ini saja, padahal bukan. Tema semantics lagi, sama dengan `student["name"]` menang dari `student[0]`.
+
+**2. Kepastian.** Percobaan yang membuktikannya:
+
+```python
+a = Cat()
+b = Cat()
+b.MEOWS = 10
+
+print(a.MEOWS)      # 3   <- naik ke class, karena a tidak punya sendiri
+print(b.MEOWS)      # 10  <- punya sendiri
+print(Cat.MEOWS)    # 3   <- yang asli, TIDAK berubah
+```
+
+`b.MEOWS = 10` itu **membuat atribut baru di objek b**, bukan mengubah yang di class. Jadi `a` tidak tersentuh sama sekali — ini persis temuan saya 6 November bahwa atribut menempel ke OBJEK bukan ke class, waktu itu dibuktikan dengan `a.cat` yang tidak menyentuh `b`.
+
+Dan kata yang tepat bukan "menimpa" tapi **menutupi** — shadowing lagi, cuma arahnya objek menutupi class, bukan function menutupi file.
+
+Dengan `Cat.MEOWS`, pencarian itu **dilewati**: langsung ke class, tidak peduli objeknya punya nama yang sama atau tidak.
+
+### del
+
+Keyword baru yang saya temui waktu percobaan, bukan dari lecture. `del` singkatan dari delete, gunanya menghapus **nama**:
+
+```
+del x             hapus variabel
+del b.MEOWS       hapus atribut milik objek
+del daftar[0]     hapus item di posisi
+del kamus["a"]    hapus satu pasangan di dict
+```
+
+Buktinya bahwa yang di class tidak pernah tersentuh:
+
+```python
+del b.MEOWS
+print(b.MEOWS)      # 3, bayangannya hilang jadi naik ke class lagi
+
+del Cat.MEOWS
+print(a.MEOWS)      # AttributeError, pencariannya mentok
+```
+
+---
+
+## Type hints
+
+Notasinya dua, dan saya sudah melihatnya duluan tanggal 21 di `help(pdf.set_y)` tanpa tahu namanya:
+
+```python
+def tambah(n: int) -> int:
+    return n + n
+```
+
+```
+n: int      parameter n maunya diisi integer
+-> int      FUNCTION ini menyerahkan integer
+```
+
+Yang perlu diperjelas: `-> int` itu milik **functionnya**, bukan milik `n`. Letaknya juga menegaskan — ditulis sesudah kurung tutup, di luar wilayah parameter. Yang di dalam kurung tentang masukan, yang sesudah kurung tentang keluaran.
+
+```python
+def sapa(nama: str) -> None:
+    print(f"halo, {nama}")
+```
+
+`-> None` karena isinya cuma print, tidak ada return. Jadi sekarang saya bisa membaca `set_y(y: float) -> None` tanpa menebak-nebak.
+
+### Python TIDAK memeriksanya
+
+Ini yang saya kira cuma keyword biasa, ternyata ada pembagian:
+
+```
+MENULIS type hints    tidak butuh tool apa-apa, cuma notasi : dan ->
+MEMERIKSA type hints  butuh tool luar, yaitu mypy
+```
+
+Buktinya:
+
+```python
+def tambah(n: int) -> int:
+    return n + n
+
+print(tambah("halo"))   # jalan mulus, keluar halohalo
+```
+
+Type hintnya bilang `int`, isinya string, Python diam saja. Ini pola lama yang bertambah satu:
+
+```
+nilai default   bukan pengumuman tipe
+type hint       bukan pemeriksaan
+```
+
+### mypy
+
+Program terpisah yang membaca kode lalu mengadukan ketidakcocokan. Dia **tidak menjalankan** programnya, cuma membacanya.
+
+```
+python file.py    menjalankan
+mypy file.py      memeriksa, tanpa menjalankan
+```
+
+Bukan bawaan Python, harus `pip install mypy` dulu — sama seperti cowsay, fpdf2, dan tabulate.
+
+Contoh David yang paling mengena:
+
+```python
+number: int = input("Number: ")
+```
+
+mypy menemukannya di **baris 6**, padahal `meow(number)` baru dipanggil di baris 7. Pesannya: `Incompatible types in assignment (expression has type "str", variable has type "int")`.
+
+Kalau dijalankan Python biasa, baris itu **tidak error sama sekali** — `number` berisi string, dan baru meledak nanti di `range(n)`. Jadi gunanya type hints bukan mencegah, tapi **memajukan waktu ketahuannya**.
+
+Dan yang diperiksa mypy itu `your own type hints` — aturan yang **saya** tulis sendiri. Kalau saya tidak menulis type hints sama sekali, mypy tidak punya apa-apa untuk diperiksa.
+
+Jadi daftar rambu-bukan-gembok sekarang bertambah satu, dan yang terakhir ini punya penjaganya:
+
+```
+_balance    garis bawah   jangan disentuh dari luar      tidak ada penjaganya
+JUZ         huruf besar   jangan diubah                  tidak ada penjaganya
+n: int      type hint     maunya diisi integer           PENJAGANYA mypy
+```
+
+## Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| accidentally | TIDAK sengaja (lawan dari on purpose). Saya sempat mengira artinya sengaja |
+| readily | dengan mudah, tanpa susah payah |
+| adhere to | mematuhi, menaati, berpegang pada. Arti harfiahnya melekat, seakar dengan adhesive (lem) |
+| frankly | terus terang, sejujurnya |
+| a little more quickly | sedikit lebih cepat. `a little` itu pelunak, seperti tend to |
+| dynamically | Python menentukan tipenya sendiri saat program jalan, tidak perlu diberi tahu |
+
+Catatan: `frankly` sudah pernah masuk catatan 15 November, jadi ini ulangan. Keluarga katanya `to be fair` dan `honestly` — semuanya menandai bahwa yang disebut sesudahnya itu pengakuan, bukan klaim.
+
+## Yang mau dicoba
+
+- Lanjut Lecture 9 dari **menit 37**.
+- Coba `pip install mypy` lalu jalankan pada salah satu file lama saya, lihat apa yang diadukan.
