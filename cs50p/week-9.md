@@ -998,3 +998,377 @@ Catatan: `frankly` sudah pernah masuk catatan 15 November, jadi ini ulangan. Kel
 
 - Lanjut Lecture 9 dari **menit 37**.
 - Coba `pip install mypy` lalu jalankan pada salah satu file lama saya, lihat apa yang diadukan.
+
+---
+
+## Hari 5 – 25 November 2026
+
+Lanjut Lecture 9 dari menit 37 sampai sekitar **menit 52**. Selesai type hints dan mypy, masuk **docstring**. Pagi: Kuis Harian #26 dan pemanasan.
+
+### Kuis Harian #26
+
+16 soal, giliran Hari ke-6: Week 5 dan Week 2. Hasilnya **14/16**, dan yang salah dua-duanya **Week 2** — materi yang paling lama tidak saya sentuh.
+
+| No | Materi | Koreksinya |
+|---|---|---|
+| 10 | `range(1, 10, 2)` | Angka ketiga itu LANGKAH, bukan batas |
+| 11 | `.get(item, 0)` | Angka 0 itu nilai CADANGAN kalau kuncinya belum ada |
+
+Percobaan nomor 10:
+
+```python
+print(list(range(1, 10)))       # [1..9]
+print(list(range(1, 10, 2)))    # [1, 3, 5, 7, 9]
+print(list(range(0, 10, 2)))    # [0, 2, 4, 6, 8]
+```
+
+Bacanya `range(mulai, batas, langkah)`. Mulai ikut, batas TIDAK ikut, langkah bawaannya 1. Angka 9 masih ikut karena di bawah 10; berikutnya 11, sudah lewat, berhenti.
+
+Percobaan nomor 11:
+
+```python
+d = {"apel": 2}
+print(d.get("apel", 0))    # 2
+print(d.get("jeruk", 0))   # 0, walaupun jeruk tidak ada
+print(d["jeruk"])          # KeyError
+```
+
+Jadi `d[x] = d.get(x, 0) + 1` artinya: ambil hitungan lama, kalau belum pernah ada anggap 0, lalu tambah 1. Ini pola Grocery List saya 7 Oktober.
+
+### Pemanasan murojaah
+
+Lima pertanyaan dari materi kemarin. Empat benar, termasuk nomor 2 yang paling panjang (kenapa `self.MEOWS` jalan tapi David tetap memilih `Cat.MEOWS`).
+
+Nomor 5 belum kena intinya. Saya bilang "yang satu program kita, yang satu tools" — benar tapi belum menjawab bedanya. Yang penting: **mypy tidak menjalankan apa pun.**
+
+```
+python file.py    MENJALANKAN     input muncul, print keluar
+mypy file.py      MEMBACA saja    tidak ada yang dijalankan
+```
+
+Dari situ keunggulannya: mypy bisa menemukan masalah di baris 6 padahal baris 7 belum pernah dieksekusi. Kalau dia harus menjalankan dulu, dia tidak akan lebih cepat dari Python. Buktinya, `mypy` pada file yang ada `input()`-nya **tidak bertanya apa-apa** — langsung keluar laporannya.
+
+---
+
+## Kenapa Python longgar soal tipe
+
+David menjelaskan alasannya, dan ini pertukaran yang menarik. Python sengaja dirancang `versatile` dan `flexible`, supaya `doesn't have to bother checking these kinds of details`.
+
+```
+longgar   cepat ditulis, cepat jalan, tapi salah tipe lolos diam-diam
+ketat     lebih repot, tapi kesalahannya ketahuan lebih awal
+```
+
+Tapi dia jujur mengakui sisi lainnya: `strong type checks do tend to be a good thing for the correctness of your code`. Itu sebabnya mypy ada — menambahkan ketatnya **tanpa** memaksakannya ke seluruh bahasa. Saya yang memilih.
+
+Dan `but to date, Python itself does not enforce these conventions` — kata `to date` menyisakan kemungkinan suatu saat berubah. Dia tidak bilang tidak akan pernah.
+
+Istilah resmi untuk apa yang selama ini saya sebut rambu ternyata **convention**: huruf besar untuk konstanta, garis bawah untuk privat, `self` untuk parameter pertama. Semuanya convention, bukan aturan bahasa.
+
+Alasan tim profesional tetap memakai type hints, kata David, cukup satu kalimat: `if it just decreases the probability of bugs`.
+
+## mypy menangkap function yang tidak mengembalikan apa-apa
+
+Contoh berikutnya yang paling mengena buat saya:
+
+```python
+def meow(n: int) -> None:
+    for _ in range(n):
+        print("meow")
+
+meows: str = meow(number)
+```
+
+Pesan mypy: `"meow" does not return a value`.
+
+**Ini persis masalah hello.py di Week 5 saya**, dan juga shuffle yang tiga kali saya tabrak:
+
+```
+function yang cuma print   ->  mengembalikan None
+ditampung ke variabel      ->  variabelnya berisi None
+```
+
+Bedanya: dulu saya baru tahu setelah tesnya merah. Sekarang mypy mengadukannya **sebelum dijalankan**.
+
+Pertanyaan saya: kalau `meow` benar-benar mengembalikan sesuatu tapi tipenya beda dengan kotaknya, apakah mypy juga mengadu? **Iya.** Dibuktikan:
+
+```python
+def meow(n: int) -> int:
+    return n * 2
+
+meows: str = meow(3)
+```
+
+```
+python   jalan mulus, keluar 6
+mypy     error: Incompatible types in assignment
+         (expression has type "int", variable has type "str")
+```
+
+Python-nya tetap diam. Yang mengadu cuma mypy.
+
+Koreksi untuk saya: di kasus aslinya isi `meow(number)` itu bukan integer tapi **None**. `number` memang integer, tapi itu yang MASUK; yang KELUAR tidak ada.
+
+```
+number        int      yang masuk
+meow(...)     None     yang keluar
+meows: str             kotak yang menunggu str
+```
+
+Dan solusi David: `let's practice what we preached in our focus on unit tests, having a function like meow not have side effects like printing itself, but let's have it return the actual string`. Obatnya sama dengan catatan saya 18 Oktober — **function yang mudah dites adalah function yang me-return hasilnya**, urusan print diserahkan ke main.
+
+Bentuk akhirnya:
+
+```python
+def meow(n: int) -> str:
+    return "meow\n" * n
+
+number: int = int(input("Number: "))
+meows: str = meow(number)
+print(meows, end="")
+```
+
+`end=""` dipakai karena `\n`-nya sudah ada di dalam string, kalau tidak barisnya dobel di akhir. Pola yang sama dengan `readlines` di Week 6.
+
+### Pertanyaan mahasiswa: kenapa \n tidak dianggap tulisan biasa?
+
+Padahal ada di dalam tanda kutip. Jawabannya: `\` di dalam string itu **tanda khusus**, dia dan huruf sesudahnya dibaca berpasangan.
+
+```
+\n    baris baru
+\t    tab
+\\    satu backslash sungguhan
+\"    tanda kutip yang tidak menutup string
+```
+
+Percobaan:
+
+```python
+print("meow\n" * 3)      # tiga baris
+print(r"meow\n" * 3)     # satu baris, tulisannya meow\n tiga kali
+print(len("\n"))         # 1
+```
+
+Yang ketiga keluar `1` — `\n` itu **satu karakter**, bukan dua, walaupun diketik dengan dua tombol.
+
+Jadi tanda kutip menentukan "ini teks", tapi tidak membuat isinya mentah. Yang membuat mentah itu huruf `r` di depannya — **raw string** dari Week 7.
+
+### typecasting lawan converting
+
+David mengoreksi istilahnya sendiri:
+
+```
+C / C++    typecasting   menafsir ulang data yang SAMA sebagai tipe lain
+Python     converting    MEMBUAT nilai baru dari yang lama
+```
+
+`int("50")` tidak menyulap string itu jadi angka. Dia menghasilkan angka BARU, dan stringnya tetap utuh — persis pelajaran lama saya bahwa `int(x)` tidak mengubah `x`.
+
+Dan satu hal yang sering bikin bingung, kata `int` dipakai di dua tempat berbeda:
+
+```python
+number: int = int(input("Number: "))
+#       ^^^       ^^^
+#    type hint   dipanggil, menghasilkan nilai baru
+```
+
+Yang pertama cuma catatan, yang kedua benar-benar bekerja. **Type hint tidak menggantikan konversi** — `number: int` tidak membuat Python mengubah stringnya, `int(...)` tetap wajib ditulis.
+
+Catatan: David menyebut `int itself is still a function`, padahal `int` itu **class** — saya buktikan sendiri 13 November lewat dokumentasi resmi yang menulis `class int(x, base=10)`.
+
+---
+
+## Docstring
+
+String yang ditaruh di **baris pertama di dalam** function, pakai tanda kutip tiga.
+
+```python
+def meow(n: int) -> str:
+    """Return a string of n meows, one per line."""
+    return "meow\n" * n
+```
+
+Dan ini yang paling membuka: **docstring itulah yang selama ini saya baca lewat `help()`**. Waktu saya menjalankan `help(pdf.set_y)` tanggal 21, yang muncul itu docstring yang ditulis pembuat fpdf.
+
+Jadi urutan lama saya sekarang lebih masuk akal:
+
+```
+dir(objek)    namanya
+help(nama)    docstringnya  <- DITULIS MANUSIA, bukan dihasilkan Python
+dokumentasi   celah dan jebakannya
+```
+
+### Letaknya menentukan, bukan selera
+
+```python
+# penjelasan di sini          <- cuma komentar, TIDAK masuk __doc__
+def meow(n):
+    """penjelasan di sini"""  <- INI yang jadi docstring
+    return n
+```
+
+Yang di atas dibuang Python begitu selesai dibaca. Yang di dalam disimpan. Salah tempat berarti `help()` kosong.
+
+### function ternyata punya atribut
+
+Ini yang paling mengagetkan hari ini. Saya kira atribut cuma ada pada objek yang dibuat dari class.
+
+```python
+print(meow.__name__)   # meow
+print(meow.__doc__)    # isi docstringnya
+```
+
+Koreksinya: **tidak ada function tanpa class.** `meow` itu sudah objek, dan classnya bernama `function`. Python membuatnya begitu baris `def` dibaca.
+
+```python
+print(type(meow))      # <class 'function'>
+```
+
+Jadi aturan lama tetap berlaku, objek memang lahir dari class. Yang baru: class `function` itu bawaan Python, bukan yang saya tulis. Ini kelanjutan temuan 13 November bahwa `int` dan `str` pun class.
+
+```
+"azka"    objek dari class str
+[1, 2]    objek dari class list
+meow      objek dari class function
+```
+
+Koreksi istilah kedua, dan ini persis koreksi yang saya dapat 20 November soal `.size`:
+
+```
+special method    dunder yang DIPANGGIL, pakai kurung    __init__()  __add__()
+atribut dunder    dunder yang berisi DATA, tanpa kurung  __doc__  __name__
+```
+
+`meow.__doc__` tanpa kurung, jadi atribut. Dugaan saya bahwa dunder cuma ada di class memang wajar karena semua dunder yang saya temui selama ini ditulis di dalam class, tapi aturan sebenarnya lebih sederhana: **dunder itu nama yang sudah dipesan Python**, di mana pun letaknya.
+
+### Beda __name__ dan __doc__
+
+```python
+def diam(n):
+    return n
+
+print(diam.__name__)   # diam
+print(diam.__doc__)    # None
+```
+
+```
+__name__   PYTHON yang isi    selalu ada
+__doc__    SAYA yang isi      None kalau tidak ditulis
+```
+
+Itu sebabnya `help()` pada function orang lain kadang cuma menampilkan tanda tangannya saja — pembuatnya tidak menulis docstring.
+
+Dan `__name__` yang sama isinya menyesuaikan tempatnya:
+
+```
+__name__ pada file       __main__ atau nama modulnya
+__name__ pada function   nama functionnya
+__name__ pada class      nama classnya
+```
+
+### Beda help() dan __doc__
+
+```
+meow.__doc__    mengambil ISI mentahnya
+help(meow)      membacakannya RAPI, plus tanda tangan dan tipenya
+```
+
+Terbukti di terminal saya: `help` menampilkan `meow(n: int) -> str` beserta docstringnya, sedangkan `__doc__` cuma barisnya saja.
+
+### Berapa banyak dunder bawaan Python
+
+Tidak ada angka pasti yang perlu dihafal, puluhan dan bertambah tiap versi. Cara melihatnya pakai alat yang sudah saya punya:
+
+```python
+print([x for x in dir(list) if x.startswith("__")])
+```
+
+Yang sudah saya pakai sejauh ini: `__init__`, `__str__`, `__add__`, `__sub__`, `__name__`, `__doc__`, `__dict__`, `__main__`. Itu sudah cukup. Yang perlu nempel cuma polanya: `__...__` berarti nama yang sudah dipesan, jangan bikin sendiri dengan bentuk itu.
+
+### Bentuk baku PEP 257
+
+```
+:param n:         penjelasan parameter n, kalimat manusia
+:type n: int      jenis isi parameter n
+:raise TypeError: error apa yang bisa dilempar, dan kapan
+:return:          apa yang diserahkan, kalimat manusia
+:rtype: str       jenis yang diserahkan
+```
+
+`rtype` = **return type**. Jadi berpasangan: `:return:` menjelaskan APA isinya, `:rtype:` menyebut JENISnya. Sama polanya dengan `:param` dan `:type`.
+
+Soal titik dua di depan dan belakang: itu bukan aturan Python dan bukan aturan VS Code. Namanya **reStructuredText**, bahasa penanda mirip Markdown untuk dokumentasi. Buat Python semuanya cuma teks biasa; yang membacanya alat pembuat dokumentasi, yang mengubahnya jadi halaman web rapi.
+
+PEP sendiri = **Python Enhancement Proposal**, dokumen usulan resmi. PEP 257 mengatur docstring, PEP 8 mengatur gaya penulisan kode.
+
+Dan PEP itu kesepakatan, bukan paksaan. Docstring boleh ditulis asal-asalan:
+
+```python
+def meow(n):
+    """asdfgh"""
+    return n
+```
+
+Jalan mulus, tapi `help(meow)` menampilkan `asdfgh` dan pembacanya tidak dapat apa-apa.
+
+Jadi daftar rambu-bukan-gembok sekarang empat:
+
+```
+_balance      garis bawah
+JUZ           huruf besar
+n: int        type hint        (punya penjaga: mypy)
+"""..."""     docstring PEP 257
+```
+
+### Tumpang tindih docstring dan type hints
+
+```python
+def meow(n: int) -> str:     <- type hint, dibaca MYPY
+    """
+    :type n: int             <- teks, dibaca MANUSIA dan alat dokumentasi
+    :rtype: str
+    """
+```
+
+Tipenya ditulis dua kali untuk pembaca yang berbeda. Makanya David bilang `this does not have anything to do fundamentally with type hints`.
+
+Pertanyaan saya: kalau dua-duanya bertentangan, apakah bertabrakan saat mypy dijalankan? **Tidak**, dan justru itu masalahnya. Dibuktikan dengan menulis docstring yang sengaja kebalikan dari type hintnya — mypy tetap **hijau**, karena buat dia docstring cuma string biasa.
+
+```
+type hint     diperiksa mypy      ketahuan kalau salah
+docstring     tidak diperiksa     bisa bohong selamanya
+```
+
+Jadi bahayanya bukan tabrakan, tapi **tidak ada yang menabrak**. Kalau parameternya suatu saat diubah tapi docstringnya lupa diperbarui, pembacanya tersesat tanpa satu pun error. Daftar "salah tanpa error" lagi, bentuk baru: bukan programnya yang salah, tapi **keterangannya**.
+
+Itu alasan praktis kenapa sekarang banyak yang membuang `:type:` dan `:rtype:` dan mengandalkan type hints saja — satu sumber kebenaran lebih aman daripada dua yang bisa menyimpang. Tapi bentuk lengkapnya masih sering ketemu `in the wild`, terutama di kode lama.
+
+## Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| versatile | serbaguna, bisa dipakai macam-macam keperluan |
+| flexible | luwes, tidak kaku |
+| writeability | kemudahan menulisnya |
+| bother | repot-repot (`doesn't have to bother checking`) |
+| a matter of opinion | soal selera, bukan benar-salah |
+| to date | sampai saat ini, hingga sekarang. Sinonim so far |
+| convention | kesepakatan, kebiasaan yang disepakati bersama |
+| code base | seluruh kumpulan kode satu project |
+| in the wild | di dunia nyata, di kode orang lain yang beredar |
+| foolish | bodoh, konyol (dari fool) |
+| practice what we preached | jalankan sendiri apa yang kita khotbahkan |
+| side effects | efek samping, kerja sampingan di luar menyerahkan hasil |
+| typecasting | menafsir ulang tipe (istilah C/C++), BUKAN yang terjadi di Python |
+| converting | mengubah dengan membuat nilai baru — ini yang dilakukan Python |
+| doc string | string penjelas di dalam function |
+| PEP | Python Enhancement Proposal, dokumen usulan resmi |
+| reStructuredText | bahasa penanda mirip Markdown untuk dokumentasi |
+| rtype | return type, jenis nilai kembalian |
+| proactively annotated | ditandai duluan sebelum diminta |
+
+## Yang mau dicoba
+
+- Lanjut Lecture 9 dari **menit 52**.
+- Pasang `pip install mypy` lalu jalankan pada salah satu file lama, lihat apa yang diadukan.
+- Tambahkan docstring ke satu function lama saya, lalu cek dengan `help()`.
