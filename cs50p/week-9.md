@@ -1372,3 +1372,242 @@ Itu alasan praktis kenapa sekarang banyak yang membuang `:type:` dan `:rtype:` d
 - Lanjut Lecture 9 dari **menit 52**.
 - Pasang `pip install mypy` lalu jalankan pada salah satu file lama, lihat apa yang diadukan.
 - Tambahkan docstring ke satu function lama saya, lalu cek dengan `help()`.
+
+---
+
+## Hari 6 – 26 November 2026
+
+Lanjut Lecture 9 dari menit 52 sampai sekitar **menit 55**. Selesai docstring, lewat doctest, lalu masuk **argparse**. Sebagian besar waktu habis di argparse, karena saya minta praktek jadi usernya dulu supaya paham.
+
+### Kuis Harian #27
+
+Giliran Hari ke-7. Yang salah cuma **nomor 14**, soal `__name__` dan `__doc__`. Dua-duanya dunder, tapi isinya beda urusan:
+
+```
+__name__    nama modulnya        "__main__" kalau dijalankan langsung
+__doc__     isi docstringnya     None kalau tidak ada docstring
+```
+
+Nomor ini masuk daftar ulangan untuk kuis besok.
+
+### Pemanasan murojaah
+
+Pertanyaan soal letak docstring. Jawaban saya: kalau stringnya ditaruh **di atas** function, Python cuma menganggapnya komentar biasa, bukan docstring. Supaya terbaca jadi `__doc__`, dia harus **di dalam** function, tepat di baris pertama.
+
+```python
+# penjelasan di sini        <- komentar, TIDAK masuk __doc__
+
+def meow(n):
+    """penjelasan di sini"""   <- docstring, masuk __doc__
+```
+
+---
+
+## Docstring yang dipanen jadi dokumentasi
+
+Ini yang awalnya bikin saya bingung. Saya kira maksudnya docstring saya **berubah** jadi PDF. Bukan.
+
+Yang terjadi: ada alat yang **membaca** semua docstring di kode saya, lalu menyusunnya jadi dokumen — bisa halaman web, bisa PDF. Docstringnya tetap di tempatnya, cuma disalin keluar.
+
+Jadi alurnya satu arah:
+
+```
+docstring di kode  ->  dipanen alat  ->  halaman web / PDF
+```
+
+Dan ini bukan hal asing. Yang selama ini saya baca di docs.python.org itu sumbernya sama dengan yang keluar kalau saya ketik `help()` di terminal. Satu tulisan, dua pintu keluar.
+
+Inilah alasan kenapa PEP 257 bikin aturan bentuk penulisan docstring. Kalau bentuknya seragam, alat pemanennya tahu mana judul mana keterangan. Kalau tiap orang menulis sesuka hati, hasil panennya berantakan.
+
+## doctest
+
+Di docstring juga boleh ditulis **contoh pemakaian** lengkap dengan hasilnya, pakai tanda `>>>` seperti di terminal. Gunanya dobel: manusia yang membaca langsung lihat contohnya, dan ada alat yang bisa **menjalankan** contoh itu lalu mengecek hasilnya cocok atau tidak.
+
+Jadi contoh di dokumentasi tidak cuma pajangan, dia bisa ikut diuji.
+
+---
+
+## argparse
+
+Kata `parse` artinya **membedah dan memahami**. `argparse` berarti alat yang membedah argumen dari terminal.
+
+Selama ini di Figlet saya mengurus sendiri: hitung `len(sys.argv)`, periksa `sys.argv[1]`, lalu `sys.exit("Invalid usage")` kalau tidak cocok. Itu yang dimaksud "diurus sendiri". Dengan argparse, pekerjaan itu diambil alih.
+
+Kode latihan saya:
+
+```python
+import argparse
+
+parser = argparse.ArgumentParser(description="Meow like a cat")
+parser.add_argument("-n", default=1, help="number of times to meow", type=int)
+args = parser.parse_args()
+
+for _ in range(args.n):
+    print("meow")
+```
+
+Dua baris yang sering saya tertukar:
+
+```
+baris 1   argparse.ArgumentParser(...)   instantiation, bikin objeknya
+baris 2   parser.add_argument(...)       pemanggilan method pada objek yang sudah jadi
+```
+
+Percobaan print penanda, untuk melihat isi tiap tahap:
+
+```
+1. parser itu: ArgumentParser(prog='train.py', description='Meow like a cat', ...)
+2. sudah didaftarkan
+3. args itu: Namespace(n=1)
+4. args.n itu: 1 <class 'int'>
+```
+
+Yang penting dari sini: angka 1 di `Namespace(n=1)` itu muncul **padahal saya tidak mengetik apa-apa**. Dia datang dari `default=1`.
+
+## Praktek jadi user
+
+Saya jalankan satu per satu, menebak dulu tiap kali.
+
+```
+python train.py           meow  (sekali, dari default)
+python train.py -n 3      meow meow meow
+python train.py --help    keluar daftar options
+```
+
+Hasil `--help`:
+
+```
+usage: train.py [-h] [-n N]
+
+Meow like a cat
+
+options:
+  -h, --help  show this help message and exit
+  -n N        number of times to meow
+```
+
+Baris `-n N` itu bacanya: labelnya `-n`, lalu isinya menyusul. Huruf `N` besar cuma tempat kosong yang mewakili angka.
+
+Yang berubah antara perintah pertama dan kedua **cuma satu angka**, yaitu isi `args.n`. Kodenya tidak saya sentuh sama sekali. `for _ in range(args.n)` tetap baris yang sama.
+
+Dan yang saya ketik di terminal itu sebenarnya **teks**, bukan angka. Yang mengubahnya jadi angka beneran adalah `type=int`.
+
+## Strip dihilangkan: positional
+
+Saya tanya, boleh tidak stripnya dihapus jadi `"n"` saja, biar lebih jelas namanya. Ternyata boleh — tapi yang berubah bukan namanya, melainkan **aturan mainnya**.
+
+```python
+parser.add_argument("n", default=1, help="number of times to meow", type=int)
+```
+
+Empat percobaan, dan tiga di antaranya terbalik dari kemarin:
+
+```
+python train.py        error: the following arguments are required: n
+python train.py -n 3   error: unrecognized arguments: -n
+python train.py n 3    error: argument n: invalid int value: 'n'
+python train.py 3      meow meow meow
+```
+
+Perintah ketiga itu saya jalankan iseng, dan justru itu yang paling membuka. Saya mengetik huruf `n` dengan harapan dikenali sebagai **nama**. Tapi argparse tidak melihat nama — dia melihat huruf `n` sebagai **isi**, lalu mencoba `int("n")` dan gagal.
+
+Pelajarannya:
+
+```
+positional   namanya cuma hidup di dalam kode (args.n), user tidak pernah mengetiknya
+flag         namanya diketik user di terminal (-n 3)
+```
+
+Saya sebenarnya sudah lama memakai positional tanpa sadar: `python train.py` itu sendiri. Saya tidak pernah mengetik `python --file train.py`.
+
+Satu lagi yang halus. Error kedua bunyinya `unrecognized arguments: -n`, **bukan** `required: n`. Artinya angka 3-nya sebenarnya **diterima** dan sudah mengisi n. Yang bikin gagal cuma `-n`, yang tidak punya tempat lagi. Jadi dua error itu beda sebab: yang satu kosong, yang satu kelebihan.
+
+Dan `default=1` jadi mubazir di versi positional. Masuk akal kalau dipikir: kalau sesuatu sudah **wajib**, buat apa punya cadangan. Cadangan cuma berguna untuk yang boleh kosong.
+
+## Label versus urutan
+
+Ini inti segmennya. Penampungnya **sama** di dua versi, yaitu `args.n`. Buktinya baris terakhir tidak pernah saya ubah: `for _ in range(args.n)`. Yang saya ketik di terminal itu bukan penampungnya, tapi **alamatnya**.
+
+Ada dua cara argparse tahu angka itu untuk siapa:
+
+```
+-n 3    dikenali lewat LABEL,  "ini untuk n"
+3       dikenali lewat URUTAN, "yang pertama itu n"
+```
+
+Yang dimaksud urutan itu urutan kata yang diketik di terminal, dihitung dari kiri:
+
+```
+python   train.py   3   5
+                    ^   ^
+                 kata1  kata2 (setelah nama file)
+```
+
+Ini sama persis dengan `sys.argv[1]` dan `sys.argv[2]` yang saya pakai waktu bikin Figlet. Angka di dalam kurung siku itu memang urutan. Bedanya sekarang argparse yang menghitung, bukan saya.
+
+Kenapa label harus diketik kalau pakai flag? Karena flag **boleh dilewat**. Begitu sesuatu boleh dilewat, menghitung urutan jadi mustahil. Kalau ada dua flag `-n` dan `-v` lalu user mengetik `python train.py 3`, tidak ada yang bisa menjawab angka itu untuk siapa.
+
+Sebaliknya positional **tidak boleh dilewat**, dan justru karena itu urutannya bisa diandalkan.
+
+Untuk flag, yang berlaku bukan urutan tapi **menempel**:
+
+```
+python train.py -v 5 -n 3
+                      ^^ ^
+                      3 milik n karena menempel di belakang -n
+```
+
+Angka 3 di situ ada di posisi keempat, bukan pertama, tapi tetap masuk ke n.
+
+Kesimpulan yang saya susun sendiri, dan ternyata pas:
+
+```
+flag        mirip dictionary   {"n": 3}   dikenali lewat key
+positional  mirip list         [3, 5]     dikenali lewat urutan
+```
+
+`Namespace(n=1)` yang muncul di layar itu memang betul-betul disimpan sebagai pasangan nama dan nilai, bukan deretan.
+
+Dan ini menyambung ke yang sudah lama saya pegang:
+
+```
+student[0]        list, bergantung urutan
+student["name"]   dictionary, bergantung nama
+```
+
+Sama persis. Cuma kali ini pelakunya si user di terminal, bukan saya di dalam kode. Makanya positional punya bahaya lama itu lagi: kalau dua positional tertukar urutannya, programnya tetap jalan tanpa error, cuma isinya salah. **Salah tanpa error** lagi.
+
+Tentang tulisan di `add_argument`, tugasnya bisa satu atau dua tergantung ada strip atau tidak:
+
+```
+"-n"   label yang diketik user  +  nama penampung (args.n)
+"n"    nama penampung saja (args.n)
+```
+
+Waktu pakai strip, argparse membuang stripnya lalu sisanya dipakai jadi nama penampung. Itu sebabnya saya menulis `args.n`, bukan `args.-n`.
+
+Catatan supaya tidak salah hafal: tugas utama strip itu "dikenali lewat label". Boleh-kosongnya itu akibat bawaan, bukan definisinya. Di luar lecture ada flag yang justru diwajibkan — bentuknya tetap `-n` tapi tidak boleh dilewat.
+
+## Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| parse | membedah lalu memahami. Asal kata argparse |
+| blinking | berkedip |
+| positional | berdasarkan posisi, urutan ke berapa |
+| optional | boleh diisi boleh tidak |
+| flag | bendera, argumen berlabel seperti `-n` |
+| unrecognized | tidak dikenali |
+| required | diwajibkan |
+| harvest | memanen, mengambil hasil untuk dipakai di tempat lain |
+
+## Yang mau dicoba
+
+- **PR dari tadi malam**: kembalikan ke `"-n"`, lalu jalankan `python train.py 3`. Tebak dulu ditolak atau tidak.
+- Hapus `type=int`, lalu jalankan `python train.py -n 3`. Lihat `range` meledak di mana.
+- Hapus `default=1`, lalu jalankan `python train.py` tanpa `-n`. Isi `args.n` jadi apa kalau cadangannya tidak ada.
+- Daftarkan dua argumen sekaligus, lalu bandingkan: versi flag `-n 3 -v 5` dibolak-balik tetap sama, versi positional `3 5` dibalik jadi `5 3` tetap jalan tapi isinya tertukar.
+- Bandingkan `help(str.strip)` di terminal dengan halaman `str.strip` di docs.python.org, buktikan sumbernya sama.
+- Lanjut Lecture 9 dari **menit 55**.
+- Pasang `pip install mypy` lalu jalankan pada salah satu file lama, lihat apa yang diadukan.
+- Tambahkan docstring ke satu function lama saya, lalu cek dengan `help()`.
