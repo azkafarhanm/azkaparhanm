@@ -1611,3 +1611,315 @@ Catatan supaya tidak salah hafal: tugas utama strip itu "dikenali lewat label". 
 - Lanjut Lecture 9 dari **menit 55**.
 - Pasang `pip install mypy` lalu jalankan pada salah satu file lama, lihat apa yang diadukan.
 - Tambahkan docstring ke satu function lama saya, lalu cek dengan `help()`.
+
+---
+
+## Hari 7 – 27 November 2026
+
+Lanjut Lecture 9 dari menit 55 sampai sekitar **menit 1:05**. Tapi sebagian besar waktu habis membongkar `Namespace` sampai tuntas, karena di situ saya paling banyak salah paham.
+
+### Kuis Harian #28
+
+Giliran Hari ke-1 (Week 0 dan Week 4). **Bersih semua**, dan tiga soal ulangan (`range` dengan langkah, `.get` dengan cadangan, `__name__` lawan `__doc__`) nempel semuanya.
+
+Satu nomor saya tandai sebagai **soal yang cacat, bukan jawaban yang salah**: nomor 12 punya dua pilihan yang bedanya cuma spasi di ujung (`"  Azka Parhan  "` lawan `"Azka Parhan"`), dan tampilan kuis memakan spasi di ujung sehingga dua pilihan itu terlihat identik. Aturannya sekarang: kalau spasi jadi pembeda, tanda kutipnya harus ditulis kelihatan.
+
+### Pemanasan murojaah
+
+Lima soal: nomor 1 dan 5 benar, nomor 3 separuh, nomor 2 dan 4 belum kena.
+
+Nomor 2 saya menjelaskan **akibatnya** (positional wajib diisi, default jadi mubazir), padahal yang ditanya **kenapa labelnya wajib diketik**. Jawabannya: karena flag boleh dilewat, dan begitu boleh dilewat, menghitung urutan jadi mustahil.
+
+Nomor 3 saya jawab bagian keduanya saja (`int("n")` gagal), yang pertama terlewat: huruf `n` dianggap isi karena **nama positional tidak pernah diketik user**.
+
+Nomor 4 saya malah masuk ke pembahasan atribut lawan special method, padahal jawabannya sederhana — yang keluar dari `help()` itu **tulisan manusia**, docstring yang diketik pembuat library.
+
+Nomor 5 benar, satu koreksi letak: pada sebuah **function**, `__name__` berisi nama functionnya, bukan nama file.
+
+```
+meow.__name__     "meow"        diisi Python
+meow.__doc__      docstring     diisi saya
+```
+
+---
+
+## PR kemarin: flag tanpa label
+
+Tebakan saya benar — `python train.py 3` dengan `-n` terdaftar ditolak:
+
+```
+unrecognized arguments: 3
+```
+
+Lalu dibuktikan lebih tajam dengan DUA flag:
+
+```python
+parser.add_argument("-n", default=1, type=int)
+parser.add_argument("-v", default=1, type=int)
+```
+
+`python train.py 3` tetap ditolak, dan sekarang alasannya kelihatan: **angka 3 itu untuk `n` atau untuk `v`?** Tidak ada yang bisa menjawab. Dengan satu flag saya masih bisa berkilah "ya jelas untuk n, kan cuma dia satu-satunya"; dengan dua flag kilah itu hilang.
+
+```
+flag        boleh dilewat  ->  urutan tidak bisa dihitung  ->  butuh label
+positional  wajib ada      ->  urutan pasti bisa dihitung  ->  tidak butuh label
+```
+
+## Namespace, dibongkar sampai tuntas
+
+Ini bagian terpanjang hari ini. Saya kira `Namespace` itu cuma istilah, ternyata itu **nama class**.
+
+```
+namespace    istilah umum, lembar absen        (sudah saya pakai sejak Week 4)
+Namespace    nama class di argparse            (huruf besar)
+```
+
+Jadi bukan yang satu menggantikan yang lain. Argparse menamai classnya dengan istilah itu karena tugasnya memang memegang daftar nama.
+
+Susunannya:
+
+```
+args                 variabel, nama panggilan
+  └─ Namespace(...)  WADAHNYA, si lembar absen
+        └─ n = 1     satu baris isi di dalamnya
+```
+
+Percobaan yang paling membuka, `print(n)` dan `print(args.n)` berdampingan:
+
+```
+NameError: name 'n' is not defined
+```
+
+Jadi `n` memang **bukan variabel**. Dia ada, tapi di dalam absen milik `args`, bukan di absen file saya. Ini error yang sama persis dengan soal nomor 15 di kuis pagi itu:
+
+```
+import random     lalu  choice([1,2,3])    NameError
+parse_args()      lalu  print(n)           NameError
+```
+
+Dan `print(args.n)` di baris bawahnya tidak sempat jalan, karena program berhenti begitu error muncul.
+
+### Membuat Namespace sendiri
+
+Percobaan ini yang bikin semuanya klik — saya jadi argparse-nya sendiri:
+
+```python
+import argparse
+
+kosong = argparse.Namespace()
+print("1.", kosong)
+
+kosong.n = 3
+print("2.", kosong)
+print("3.", kosong.n)
+```
+
+Hasilnya:
+
+```
+1. Namespace()
+2. Namespace(n=3)
+3. 3
+```
+
+Yang saya lakukan di baris `kosong.n = 3` itu **persis yang argparse lakukan untuk saya**. Label `-n` cuma memberitahu dia nama apa yang harus dipakai.
+
+### Atribut tidak harus lahir di `__init__`
+
+Ini salah paham saya yang terbesar hari ini. Saya kira atribut cuma bisa dibuat di dalam `__init__`. Padahal saya sudah membuktikan kebalikannya 24 November lewat `b.MEOWS = 10`.
+
+Aturannya cuma satu, dan dia berlaku di mana saja:
+
+```
+objek.nama = nilai
+
+nama belum ada  ->  LAHIR     (kosong.n = 3)
+nama sudah ada  ->  DITIMPA   (a.n = 99)
+```
+
+`self.x = x` di dalam `__init__` itu cuma **salah satu tempat** aturan ini berlaku. `self` kebetulan objeknya, `__init__` kebetulan tempatnya.
+
+### Dua error yang jadi pasangan
+
+Dalam satu pagi saya menabrak dua error yang membentuk pasangan rapi:
+
+```
+print(n)     NameError        nama n tidak ada di absen FILE
+args.n       AttributeError   objeknya ADA, tapi n tidak ada di absen OBJEK
+```
+
+Yang kedua saya dapat dengan mendaftarkan `-v` saja lalu memanggil `args.n`:
+
+```
+AttributeError: 'Namespace' object has no attribute 'n'
+```
+
+Bedanya: `NameError` berarti Python tidak tahu harus mencari ke mana. `AttributeError` berarti dia sudah sampai ke objeknya, lalu tidak menemukan namanya di dalam. Sama dengan yang saya tabrak 24 November waktu `del Cat.MEOWS`.
+
+Lalu `args.n()` keluar `'int' object is not callable` — bukti `n` itu **data, bukan function**. Kembaran `jar.capacity(12)` dan `print = 5`.
+
+Jadi namanya **atribut**, bukan property. Property itu yang pakai `@property` dengan getter dan setter, seperti `house` dan `capacity` di Cookie Jar. Istilah ini pernah tertukar juga 20 November waktu membahas `.size`.
+
+## Urutan tidak berpengaruh untuk flag
+
+Dibuktikan dengan dua flag dibolak-balik:
+
+```
+python train.py -v 5 -n 3     Namespace(v=5, n=3)
+python train.py -n 3 -v 5     Namespace(v=5, n=3)
+```
+
+Sama persis. Dan David mengatakan hal yang sama di menit 1:03 — `no matter what order they appeared in`, bahkan tidak perlu alfabetis. Saya sampai di kesimpulan ini sehari lebih dulu dari lecture-nya.
+
+Yang saya perhatikan sendiri: tampilannya selalu `v` dulu, dan itu mengikuti **urutan pendaftaran** di kode saya (`-v` baris 24, `-n` baris 25), bukan urutan ketikan.
+
+Dan urutan pendaftaran punya dua akibat yang sangat berbeda:
+
+```
+flag        urutan pendaftaran  ->  cuma urutan TAMPILAN dan urutan di --help
+positional  urutan pendaftaran  ->  MENENTUKAN kata keberapa masuk ke mana
+```
+
+Untuk flag itu kosmetik. Untuk positional itu seluruh mekanismenya.
+
+### Dua istilah saya yang dikoreksi
+
+Saya sempat menyebut sifat menempelnya flag itu "kayak hardcode". Bukan.
+
+```
+hardcoded    nilainya tetap, tidak bisa diganti siapa pun
+menempel     nilainya bebas, tapi PASANGANNYA terkunci
+```
+
+Lalu saya menyebut positional "kayak random". Juga bukan, dan ini yang lebih penting. Positional sama sekali tidak acak — kata pertama masuk ke yang didaftarkan pertama, selalu. Yang rawan bukan mesinnya tapi **manusianya**:
+
+```
+positional   mesinnya pasti, MANUSIANYA yang bisa salah urut, tidak ada yang menegur
+flag         manusianya menyebut namanya, salah urut pun tidak berakibat
+```
+
+Itu sebabnya ini masuk daftar "salah tanpa error" — bukan karena programnya tidak bisa diandalkan, tapi karena kesalahan manusianya lewat tanpa ketahuan.
+
+## Dua class, bukan class di dalam class
+
+Pertanyaan saya: ini sebenarnya pakai objek dari berapa class?
+
+```python
+print(type(parser))    <class 'argparse.ArgumentParser'>
+print(type(args))      <class 'argparse.Namespace'>
+```
+
+Dua class, dan **sejajar di dalam satu file**, bukan bersarang. Ini yang saya pelajari 23 November: satu file bisa berisi variabel, function, dan class sekaligus (`math.pi`, `random.choice`, `datetime.date`, `fpdf.FPDF`). Titiknya artinya tetap sama: ambil yang di dalamnya.
+
+Hubungan keduanya: `parser` yang bekerja, `Namespace` yang jadi hasilnya. Method `parse_args()` itu **membuat dan menyerahkan** objek baru.
+
+Waktu kalimat "satu objek melahirkan objek lain" tidak masuk, yang menyelesaikan bukan penjelasan tambahan tapi kodenya:
+
+```python
+def buat_namespace():
+    hasil = argparse.Namespace()
+    hasil.n = 3
+    return hasil
+
+args = buat_namespace()
+```
+
+Itu function yang kerjanya membuat objek lalu menyerahkannya. `parse_args()` kerjanya sama, bedanya dia tidak memaku angka 3 — dia membaca dulu apa yang saya ketik di terminal.
+
+Koreksi untuk saya: `args = buat_namespace()` itu **bukan instantiation**. Instantiationnya cuma satu dan letaknya di dalam, yaitu `argparse.Namespace()`. Yang di luar cuma memanggil dan menampung, sama saja dengan `x = tambah(3, 5)`.
+
+Koreksi kedua: function **tidak menyimpan apa pun**. Tiap dipanggil dia membuat objek baru dari nol. Dibuktikan:
+
+```python
+a = buat_namespace()
+b = buat_namespace()
+a.n = 99
+```
+
+```
+Namespace(n=99)
+Namespace(n=3)
+```
+
+`b` tidak tersentuh. Temuan lama 6 November waktu `a.cat` tidak menyentuh `b`.
+
+## Yang paling berharga hari ini: urutan baris menentukan siapa menang
+
+Saya sempat bilang kalau `n = 1` dipaku di dalam `parse_args()`, ketikan user akan diabaikan. Saya tanya balik: bukannya ditimpa? Ternyata pertanyaan saya yang benar, dan kalimat sebelumnya yang kurang tepat.
+
+Yang menentukan bukan kata "dipaku" atau "default", tapi **baris mana yang jalan belakangan**:
+
+```python
+def versi_a(ketikan):
+    ns = argparse.Namespace()
+    ns.n = ketikan      # isi dari user
+    ns.n = 1            # MENIMPA tulisan user
+    return ns
+
+def versi_b(ketikan):
+    ns = argparse.Namespace()
+    ns.n = 1            # dipasang duluan
+    ns.n = ketikan      # user MENIMPA angka 1
+    return ns
+```
+
+Dua function itu isinya sama persis, cuma dua barisnya ditukar, dan hasilnya beda. `versi_b` itu yang dipakai argparse beneran.
+
+Jadi koreksi penting: **`default` bukan cadangan yang diperiksa di akhir, tapi nilai yang dipasang di awal lalu boleh ditimpa.** Bedanya dengan yang dipaku:
+
+```
+dipaku      SELALU jalan, tidak peduli user mengetik apa
+default     dipasang duluan, lalu MUNDUR kalau user mengisi
+```
+
+Aturan "yang belakangan menang" ini sama dengan temuan 11 November waktu dekorator `@property` dihapus dan `def house` kedua menimpa yang pertama, persis `x = 5` lalu `x = 10`.
+
+Dan satu catatan cara belajar yang saya sadari sendiri: kalau penjelasannya mulai berputar, **minta kodenya**. Lebih cepat sampai daripada menambah kalimat.
+
+## Di lecture
+
+David menulis versi manual dulu sebelum argparse:
+
+```python
+import sys
+
+if len(sys.argv) == 1:
+    print("meow")
+else:
+    print("usage: meows.py")
+```
+
+`usage` artinya **cara pakai** — kebiasaan baku program terminal: kalau user salah mengetik, program memberitahu bentuk yang benar. Saya sudah dua kali ketemu kata ini: `sys.exit("Invalid usage")` yang saya tulis sendiri di Figlet, dan baris paling atas `--help` kemarin.
+
+David juga menyebut `switches or flags` — dua nama untuk benda yang sama. Nama `switch` datang dari bendera yang tidak butuh nilai sama sekali, cuma hidup atau mati seperti saklar; `--help` itu saklar murni, `-n 3` lebih mirip pengaturan.
+
+Terakhir, David kena `TypeError: int() argument must be a string... not 'NoneType'`. Sebabnya dia **tidak menulis** `default`, jadi `args.n` isinya `None`, lalu `int(None)` meledak. Ini jawaban PR saya yang belum sempat dijalankan.
+
+```
+-n tidak diketik, ada default=1    args.n = 1
+-n tidak diketik, tanpa default    args.n = None
+```
+
+Catatan supaya tidak salah obat: `type=int` **tidak** menyelamatkan di sini, karena dia cuma mengubah apa yang diketik user; kalau tidak ada yang diketik, tidak ada yang bisa diubah. Kode saya kemarin punya dua-duanya, makanya tidak pernah kena.
+
+Dan kode David pakai `range(int(args.n))` sedangkan punya saya `range(args.n)` — karena saya menulis `type=int`, konversinya sudah terjadi lebih awal. Punya saya lebih aman: `-n cat` ditolak argparse dengan pesan rapi, sedangkan versi David meledak `ValueError` di dalam `range`.
+
+## Kosakata
+
+| Kata/frasa | Arti dalam konteks |
+|---|---|
+| usage | cara pakai; baris yang memberitahu bentuk perintah yang benar |
+| switch | saklar, nama lain untuk flag, terutama yang tanpa nilai |
+| no matter what order | tidak peduli urutannya seperti apa |
+| compact | ringkas, padat |
+| NoneType | jenis dari nilai `None` |
+
+## Yang mau dicoba
+
+- Tukar dua baris `add_argument`, lihat urutan tampilan `Namespace` ikut bertukar.
+- Hapus `type=int`, lalu jalankan `python train.py -n 3`. Lihat `range` meledak di mana.
+- Jalankan `a, b = [1, 2, 3]` dan `date(1998)` terpisah, catat nama errornya masing-masing. Patokan baru: salah jumlah saat **memanggil function** jadi `TypeError`, salah jumlah saat **unpacking** jadi `ValueError`.
+- Bandingkan `help(str.strip)` di terminal dengan halaman `str.strip` di docs.python.org, buktikan sumbernya sama.
+- Lanjut Lecture 9 dari **menit 1:05**.
+- Pasang `pip install mypy` lalu jalankan pada salah satu file lama, lihat apa yang diadukan.
+- Tambahkan docstring ke satu function lama saya, lalu cek dengan `help()`.
