@@ -1923,3 +1923,69 @@ Dan kode David pakai `range(int(args.n))` sedangkan punya saya `range(args.n)` �
 - Lanjut Lecture 9 dari **menit 1:05**.
 - Pasang `pip install mypy` lalu jalankan pada salah satu file lama, lihat apa yang diadukan.
 - Tambahkan docstring ke satu function lama saya, lalu cek dengan `help()`.
+
+---
+
+## Hari 8 – 28 November 2026
+
+Hari pendek. Banyak kerjaan dan baru sampai dari perjalanan, jadi **lecture tidak dilanjut sama sekali**, masih di menit 1:05. Yang jalan cuma kuis dan pemanasan.
+
+### Kuis Harian #29
+
+Giliran Hari ke-2 (Week 1 dan Week 5). Yang salah cuma **nomor 14**, soal pytest.
+
+Patokannya: **pytest hanya menjalankan function yang namanya diawali `test_`.** Nama lain diabaikan total, jadi `assert` di dalamnya tidak pernah dijalankan.
+
+Ini melengkapi temuan saya 18 November soal `jar.py`. Dua aturan yang berbeda:
+
+```
+baris di DASAR file   selalu jalan waktu file di-import atau dijalankan
+isi sebuah FUNCTION   cuma jalan kalau dipanggil, atau kalau pytest memungutnya
+```
+
+Waktu itu `jar.deposit(1)` meledak karena letaknya di dasar file. Kalau baris yang sama ditaruh di dalam `def periksa():` tanpa awalan `test_`, dia tidak akan meledak sama sekali — dan itu justru lebih berbahaya, karena diam.
+
+Satu koreksi atas soal kuisnya sendiri: kalau di sebuah file **tidak ada satu pun** function berawalan `test_`, pytest tidak melaporkan hijau, melainkan `collected 0 items` dan `no tests ran`. Yang hijau itu kalau ada tetangganya yang berawalan `test_`. Intinya tetap sama — isinya tidak pernah dibaca.
+
+Nomor 12 di kuis kemarin juga diulang hari ini dengan pilihan yang diperbaiki, dan kali ini benar.
+
+### Pemanasan murojaah
+
+Lima soal dari materi argparse kemarin. Nomor 2 dan 5 benar penuh. Tiga lainnya **jawabannya benar tapi buktinya meleset**, dan itu pola yang perlu saya waspadai — jawaban benar dengan alasan karangan akan runtuh di soal yang bentuknya beda. Ini kedua kalinya terjadi; yang pertama 13 November waktu saya bilang "karena punya method" padahal buktinya `print(type(Student.house))`.
+
+**Nomor 1.** Saya bilang namespace itu "isi lembaran absennya". Bukan isinya, tapi **lembarannya**.
+
+```
+namespace    lembar absennya      (wadahnya)
+n            nama yang tercatat   (barisnya)
+1            isinya
+```
+
+**Nomor 3.** Jawaban benar (atribut bisa dibuat di luar `__init__`), tapi contohnya salah — saya bilang atributnya "ditempel dengan classnya". Yang saya lakukan kemarin bukan itu:
+
+```python
+kosong = argparse.Namespace()   # kosong itu OBJEK
+kosong.n = 3                    # nempel ke OBJEK, bukan ke class
+```
+
+Dan temuan 24 November justru menegaskan arah ini: `b.MEOWS = 10` membuat atribut di objek `b`, sementara `Cat.MEOWS` di class tidak tersentuh.
+
+**Nomor 4.** Jawabannya benar (`default` itu nilai yang dipasang di awal), tapi alasan yang saya sebut justru **alasan jawaban yang salah** — saya bilang "kalau user tidak mengetik apa pun, defaultnya jadi cadangan yang keluar", dan kalimat itu menggambarkan cadangan yang diperiksa di akhir, yang barusan saya tolak sendiri.
+
+Bukti yang benar itu dua function kemarin:
+
+```
+ns.n = ketikan  lalu  ns.n = 1        user kalah
+ns.n = 1        lalu  ns.n = ketikan  user menang
+```
+
+Isinya sama persis, cuma barisnya ditukar, hasilnya beda.
+
+**Nomor 2** benar: `NameError` berarti namanya tidak ada di absen file, `AttributeError` berarti Python sudah masuk ke objeknya lalu tidak menemukan namanya di dalam.
+
+**Nomor 5** benar: yang muncul di `help()` itu docstring, dan yang menulisnya manusia pembuat library.
+
+## Yang mau dicoba
+
+- Jalankan percobaan pytest: satu file berisi `periksa_angka()` dengan `assert 1 == 2` dan `test_angka()` dengan `assert 1 == 1`, lalu ganti nama yang pertama jadi `test_periksa` dan bandingkan hasilnya.
+- Lanjut Lecture 9 dari **menit 1:05**.
